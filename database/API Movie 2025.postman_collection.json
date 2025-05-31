@@ -1,0 +1,483 @@
+{
+	"info": {
+		"_postman_id": "6b03e9f5-ea6f-4f2c-8744-409a21bfbb87",
+		"name": "API Movie 2025",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7418211"
+	},
+	"item": [
+		{
+			"name": "Director",
+			"item": [
+				{
+					"name": "Listar Directores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:81/apimovie/director",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"director"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Director",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:81/apimovie/director/1",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"director",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Peliculas",
+			"item": [
+				{
+					"name": "Lista de Peliculas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/movie",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"movie"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Pelicula",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/movie/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"movie",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Pelicula",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"1 Noche Pusher 1\",\r\n    \"year\": \"2024\",\r\n    \"time\": \"160\",\r\n    \"lang\": \"Español\",\r\n    \"director_id\": 2,\r\n    \"genres\":[5,6],\r\n    \"actors\": [\r\n        {\"actor_id\":5,\"role\":\"actor 1\"},\r\n        {\"actor_id\":6,\"role\":\"actor 2\"}]    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:81/apimovie/movie/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"movie",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Pelicula",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":9,\r\n    \"title\": \"1.1 Noche Pusher\",\r\n    \"year\": \"2024\",\r\n    \"time\": \"160\",\r\n    \"lang\": \"Español\",\r\n    \"director_id\": 1,\r\n    \"genres\":[5,8],\r\n    \"actors\": [\r\n        {\"actor_id\":5,\"role\":\"actor 1.1\"},\r\n        {\"actor_id\":6,\"role\":\"actor 1.2\"}\r\n    ]   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:81/apimovie/movie/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"movie",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Peliculas por Tienda",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/movie/moviesByShopRental/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"movie",
+								"moviesByShopRental",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Generos",
+			"item": [
+				{
+					"name": "Lista de Generos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/genre",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"genre"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Genero",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/genre/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"genre",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generos de una pelicula",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/genre/getGenreMovie/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"genre",
+								"getGenreMovie",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Actores",
+			"item": [
+				{
+					"name": "Lista de Actores",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEiLCJlbWFpbCI6ImFkbWluQHBydWViYS5jb20iLCJyb2wiOnsiaWQiOiIxIiwibmFtZSI6IkFkbWluaXN0cmFkb3IifSwiaWF0IjoxNzMxNTQ1NTIxLCJleHAiOjE3MzE1NDkxMjF9.hF7QuW9QSaEPvii-ogu0vt5RtgdP8eTAsl2hYWYiGjk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/actor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"actor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Actor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/actor/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"actor",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actores de una pelicula",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/actor/getActorMovie/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"actor",
+								"getActorMovie",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Image",
+			"item": [
+				{
+					"name": "Upload",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "movie_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/D:/Downloads/avatar1.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:81/apiMovie/image",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apiMovie",
+								"image"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"admin@prueba.com\",\r\n    \"password\":\"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:81/apimovie/user/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Usuario Noche 1\",\r\n    \"email\":\"usuario.noche1@prueba.com\",\r\n    \"password\":\"123456\",\r\n    \"rol_id\":\"2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:81/apimovie/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Alquiler",
+			"item": [
+				{
+					"name": "Lista de Alquileres",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/rental",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"rental"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rental",
+			"item": [
+				{
+					"name": "rentalMonthbyShop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:81/apimovie/rental/rentalMonthbyShop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "81",
+							"path": [
+								"apimovie",
+								"rental",
+								"rentalMonthbyShop"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,14 @@
+# Esto te permite hacer uso del módulo mod_rewrite 
+# para poder reescribir o redireccionar URLs.
+RewriteEngine On 
+# Si las siguientes condiciones son verdaderas, entonces 
+# se redirecciona a la URL:
+# si el nombre de fichero solicitado no es un archivo que 
+# ya exista (podría existir a nivel de servidor)
+RewriteCond %{REQUEST_FILENAME} !-f
+# Entonces sobreescribe la URL de la siguiente forma:
+# Toma el fichero solicitado y se convierte en
+# un parámetro de URL. Esto además añade cualquier texto
+# de la URL original como parámetros adicionales [QSA]
+#QSA : añade la cadena de la consulta a la URL que sustituye.
+RewriteRule ^ index.php [QSA,L]
