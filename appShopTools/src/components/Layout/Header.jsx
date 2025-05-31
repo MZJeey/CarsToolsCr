@@ -66,10 +66,10 @@ export default function Header() {
   ];
   //Lista enlaces menu principal
   const navItems = [
-    { name: "Peliculas", link: "/movie",roles:null },
-    { name: "Cátalogo de Peliculas", link: "/catalog-movies/", roles:null },
-    { name: "Filtrar Peliculas", link: "/movie/filter", roles:null },
-    { name: "Mantenimiento Peliculas", link: "/movie-table/", roles:['Administrador'] },
+    { name: "Vehiculos", link: "/movie",roles:null },
+    { name: "Cátalogo de Repuestos", link: "/catalog-movies/", roles:null },
+    { name: "Filtrar Repuestos", link: "/movie/filter", roles:null },
+    { name: "Mantenimiento Vehiculos", link: "/movie-table/", roles:['Administrador'] },
   ];
   //Identificador menu principal
   const menuIdPrincipal = "menu-appbar";
