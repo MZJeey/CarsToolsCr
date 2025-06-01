@@ -1,5 +1,5 @@
 {
-  "name":"appShopTools",
+  "name": "appShopTools",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -23,6 +23,7 @@
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
     "jwt-decode": "^4.0.0",
+    "mdb-react-ui-kit": "^9.0.0",
     "nodemon": "^3.1.9",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
