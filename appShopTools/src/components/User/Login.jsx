@@ -1,10 +1,14 @@
+// Este nuevo diseño usa MUI mejorado con un layout más atractivo para la tienda de repuestos
 import { useState, useContext } from 'react';
-import FormControl from '@mui/material/FormControl';
-import Grid from '@mui/material/Grid2';
-import Typography from '@mui/material/Typography';
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Paper,
+} from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
@@ -16,130 +20,123 @@ import { UserContext } from '../../context/UserContext';
 export function Login() {
   const navigate = useNavigate();
   const { saveUser } = useContext(UserContext);
-  // Esquema de validación
+
   const loginSchema = yup.object({
-    email: yup
-      .string()
-      .required('El email es requerido')
-      .email('Formato email'),
-    password: yup.string().required('El password es requerido'),
+    email: yup.string().required('El email es requerido').email('Formato email inválido'),
+    password: yup.string().required('La contraseña es requerida'),
   });
+
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    // Valores iniciales
     defaultValues: {
       email: '',
       password: '',
     },
-    // Asignación de validaciones
     resolver: yupResolver(loginSchema),
   });
 
-  // Valores de formulario
-
   const [error, setError] = useState(null);
-  // Accion submit
-  const onSubmit = (DataForm) => {
+
+  const onSubmit = (data) => {
     try {
-      UserService.loginUser(DataForm)
+      UserService.loginUser(data)
         .then((response) => {
-          console.log(response);
-         //Validar la respuesta
-         if(response.data !=null 
-          && response.data !='undefined'
-          && response.data !='Usuario no valido'
-         ){
-          //Usuario válido o identificado
-          //Guardar el token
-          saveUser(response.data)
-          toast.success('Bienvenido, usuario',{
-            duration:4000
-          })
-          return navigate('/')
-         }else{
-          //Usuario No válido
-          toast.error('Usuario No válido',{
-            duration:4000
-          })
-         }
-        })
-        .catch((error) => {
-          if (error instanceof SyntaxError) {
-            console.log(error);
-            setError(error);
-            throw new Error('Respuesta no válida del servidor');
+          if (
+            response.data &&
+            response.data !== 'undefined' &&
+            response.data !== 'Usuario no valido'
+          ) {
+            saveUser(response.data);
+            toast.success('¡Bienvenido!', { duration: 4000 });
+            return navigate('/');
+          } else {
+            toast.error('Usuario No válido', { duration: 4000 });
           }
+        })
+        .catch((err) => {
+          setError(err);
+          console.error('Error:', err);
         });
     } catch (e) {
       console.error('Error:', e);
     }
   };
 
-  // Si ocurre error al realizar el submit
-  const onError = (errors, e) => console.log(errors, e);
-
-  if (error) return <p>Error: {error.message}</p>;
   return (
-    <>
+    <Container maxWidth="sm">
       <Toaster />
-      <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
-        <Grid container spacing={1}>
-          <Grid size={12} sm={12}>
-            <Typography variant="h5" gutterBottom>
-              Login
-            </Typography>
-          </Grid>
-          <Grid size={12} sm={4}>
-            {/* ['filled','outlined','standard']. */}
-            <FormControl variant="standard" fullWidth sx={{ m: 1 }}>
+      <Paper elevation={4} sx={{ p: 4, mt: 8, borderRadius: 3 }}>
+        <Typography variant="h4" align="center" gutterBottom color="primary">
+          Iniciar Sesión
+        </Typography>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
               <Controller
                 name="email"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    id="email"
-                    label="Email"
-                    error={Boolean(errors.email)}
-                    helperText={errors.email ? errors.email.message : ' '}
+                    label="Correo Electrónico"
+                    fullWidth
+                    error={!!errors.email}
+                    helperText={errors.email?.message || ' '}
                   />
                 )}
               />
-            </FormControl>
-          </Grid>
-          <Grid size={12} sm={4}>
-            <FormControl variant="standard" fullWidth sx={{ m: 1 }}>
+            </Grid>
+            <Grid item xs={12}>
               <Controller
                 name="password"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    id="password"
-                    label="Password"
+                    label="Contraseña"
                     type="password"
-                    error={Boolean(errors.password)}
-                    helperText={errors.password ? errors.password.message : ' '}
+                    fullWidth
+                    error={!!errors.password}
+                    helperText={errors.password?.message || ' '}
                   />
                 )}
               />
-            </FormControl>
+            </Grid>
+
+
+            <Grid item xs={12} sx={{ textAlign: 'right' }}>
+              <Typography
+                variant="body2"
+                color="primary"
+                sx={{ cursor: 'pointer', textDecoration: 'underline' }}
+                onClick={() => navigate('/recuperar-contrasena')}
+              >
+                ¿Olvidaste tu contraseña?
+              </Typography>
+            </Grid>
+
+
+
+
+
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                size="large"
+                sx={{ mt: 1, borderRadius: 2 }}
+              >
+                Iniciar Sesión
+              </Button>
+            </Grid>
           </Grid>
-          <Grid size={12} sm={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              sx={{ m: 1 }}
-            >
-              Login
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
-    </>
+        </form>
+        {error && <Typography color="error">Error: {error.message}</Typography>}
+      </Paper>
+    </Container>
   );
 }

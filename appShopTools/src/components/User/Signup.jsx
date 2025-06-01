@@ -1,155 +1,180 @@
-/* eslint-disable no-unused-vars */
-import React from 'react';
-import { useEffect, useState } from 'react';
-import FormControl from '@mui/material/FormControl';
-import Grid from '@mui/material/Grid2';
-import Typography from '@mui/material/Typography';
+// Formulario de registro mejorado para tienda de repuestos
+import { useState } from 'react';
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Paper,
+} from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import UserService from '../../services/UserService';
-import { yupResolver } from '@hookform/resolvers/yup';
+
+
+
+
+
+
+
 
 export function Signup() {
   const navigate = useNavigate();
-  // Esquema de validación
-  const loginSchema = yup.object({
+
+  const signupSchema = yup.object({
     name: yup.string().required('El nombre es requerido'),
-    email: yup
+    email: yup.string().required('El email es requerido').email('Formato email inválido'),
+    password: yup.string().required('La contraseña es requerida'),
+    confirmPassword: yup
       .string()
-      .required('El email es requerido')
-      .email('Formato email'),
-    password: yup.string().required('El password es requerido'),
-    rol_id: yup.number().required('El rol es requerido'),
+      .oneOf([yup.ref('password')], 'Las contraseñas no coinciden')
+      .required('Confirma tu contraseña'),
+    birthdate: yup.date().required('La fecha de nacimiento es requerida'),
+    rol_id: yup.number().required(),
   });
+
   const {
     control,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm({
-    // Valores iniciales
     defaultValues: {
       name: '',
       email: '',
       password: '',
+      confirmPassword: '',
+      birthdate: '',
       rol_id: 2,
     },
-    // Asignación de validaciones
-    resolver: yupResolver(loginSchema),
+    resolver: yupResolver(signupSchema),
   });
 
   const [error, setError] = useState(null);
-  const notify = () =>
-    toast.success('Usuario registrado', {
-      duration: 4000,
-      position: 'top-center',
-    });
-  // Accion submit
-  const onSubmit = (DataForm) => {
+
+  const onSubmit = (data) => {
     try {
-      console.log(DataForm);
-      //Registrar usuario
-      //Asignar por defector rol
       setValue('rol_id', 2);
-      UserService.createUser(DataForm)
+      UserService.createUser(data)
         .then((response) => {
-          console.log(response);
-          notify();
+          toast.success('Usuario registrado', { duration: 4000, position: 'top-center' });
           return navigate('/user/login/');
         })
-        .catch((error) => {
-          if (error instanceof SyntaxError) {
-            console.log(error);
-            setError(error);
-            throw new Error('Respuesta no válida del servidor');
-          }
+        .catch((err) => {
+          setError(err);
+          console.error('Error:', err);
         });
     } catch (e) {
-      // handle your error
+      console.error('Error:', e);
     }
   };
 
-  // Si ocurre error al realizar el submit
-  const onError = (errors, e) => console.log(errors, e);
-
-  if (error) return <p>Error: {error.message}</p>;
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
-        <Grid container spacing={1}>
-          <Grid size={12} sm={12}>
-            <Typography variant="h5" gutterBottom>
-              Registrar Usuario
-            </Typography>
-          </Grid>
-          <Grid size={12} sm={12}>
-            <FormControl variant="standard" fullWidth sx={{ m: 1 }}>
+    <Container maxWidth="sm">
+      <Paper elevation={4} sx={{ p: 4, mt: 8, borderRadius: 3 }}>
+        <Typography variant="h4" align="center" gutterBottom color="primary">
+          Registrar Usuario
+        </Typography>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
               <Controller
                 name="name"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    id="name"
                     label="Nombre"
-                    error={Boolean(errors.name)}
-                    helperText={errors.name ? errors.name.message : ' '}
+                    fullWidth
+                    error={!!errors.name}
+                    helperText={errors.name?.message || ' '}
                   />
                 )}
               />
-            </FormControl>
-          </Grid>
-          <Grid size={12} sm={6}>
-            <FormControl variant="standard" fullWidth sx={{ m: 1 }}>
+            </Grid>
+            <Grid item xs={12}>
               <Controller
                 name="email"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    id="email"
-                    label="Email"
-                    error={Boolean(errors.email)}
-                    helperText={errors.email ? errors.email.message : ' '}
+                    label="Correo Electrónico"
+                    fullWidth
+                    error={!!errors.email}
+                    helperText={errors.email?.message || ' '}
                   />
                 )}
               />
-            </FormControl>
-          </Grid>
-          <Grid size={12} sm={6}>
-            <FormControl variant="standard" fullWidth sx={{ m: 1 }}>
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                name="birthdate"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Fecha de Nacimiento"
+                    type="date"
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    error={!!errors.birthdate}
+                    helperText={errors.birthdate?.message || ' '}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
               <Controller
                 name="password"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    id="password"
-                    label="Password"
+                    label="Contraseña"
                     type="password"
-                    error={Boolean(errors.password)}
-                    helperText={errors.password ? errors.password.message : ' '}
+                    fullWidth
+                    error={!!errors.password}
+                    helperText={errors.password?.message || ' '}
                   />
                 )}
               />
-            </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                name="confirmPassword"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Confirmar Contraseña"
+                    type="password"
+                    fullWidth
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword?.message || ' '}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                size="large"
+                sx={{ mt: 1, borderRadius: 2 }}
+              >
+                Registrarse
+              </Button>
+            </Grid>
           </Grid>
-          <Grid size={12} sm={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              sx={{ m: 1 }}
-            >
-              Login
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
-    </>
+        </form>
+        {error && <Typography color="error">Error: {error.message}</Typography>}
+      </Paper>
+    </Container>
   );
 }
