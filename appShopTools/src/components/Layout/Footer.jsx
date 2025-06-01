@@ -19,8 +19,7 @@ export function Footer() {
     <Box
       component="footer"
       sx={{
-        position: "fixed",
-        bottom: 0,
+      
         left: 0,
         width: "100%",
         background: "linear-gradient(90deg, #1976d2 0%, #1565c0 100%)",
