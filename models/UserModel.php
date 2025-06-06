@@ -5,22 +5,17 @@ use Firebase\JWT\JWT;
 class UserModel
 {
 	public $enlace;
+
 	public function __construct()
 	{
-
 		$this->enlace = new MySqlConnect();
 	}
+
 	public function all()
 	{
 		try {
-			//Consulta sql
-			$vSql = "SELECT * FROM user;";
-
-			//Ejecutar la consulta
-			$vResultado = $this->enlace->ExecuteSQL($vSql);
-
-			// Retornar el objeto
-			return $vResultado;
+			$vSql = "SELECT * FROM carstoolscr.usuario;";
+			return $this->enlace->ExecuteSQL($vSql);
 		} catch (Exception $e) {
 			die($e->getMessage());
 		}
@@ -30,16 +25,13 @@ class UserModel
 	{
 		try {
 			$rolM = new RolModel();
-
-			//Consulta sql
-			$vSql = "SELECT * FROM user where id=$id";
-			//Ejecutar la consulta
+			$vSql = "SELECT * FROM carstoolscr.usuario WHERE id = $id";
 			$vResultado = $this->enlace->ExecuteSQL($vSql);
+
 			if ($vResultado) {
 				$vResultado = $vResultado[0];
 				$rol = $rolM->getRolUser($id);
 				$vResultado->rol = $rol;
-				// Retornar el objeto
 				return $vResultado;
 			} else {
 				return null;
@@ -48,88 +40,74 @@ class UserModel
 			die($e->getMessage());
 		}
 	}
+
 	public function allCustomer()
 	{
 		try {
-			//Consulta sql
-			$vSql = "SELECT * FROM movie_rental.user
-					where rol_id=2;";
-
-			//Ejecutar la consulta
-			$vResultado = $this->enlace->ExecuteSQL($vSql);
-
-			// Retornar el objeto
-			return $vResultado;
+			$vSql = "SELECT * FROM carstoolscr.usuario WHERE rol_id = 2;"; // rol_id = 2 -> cliente
+			return $this->enlace->ExecuteSQL($vSql);
 		} catch (Exception $e) {
 			die($e->getMessage());
 		}
 	}
+
 	public function customerbyShopRental($idShopRental)
 	{
 		try {
-			//Consulta sql
-			$vSql = "SELECT * FROM movie_rental.user
-					where rol_id=2 and shop_id=$idShopRental;";
-
-			//Ejecutar la consulta
-			$vResultado = $this->enlace->ExecuteSQL($vSql);
-
-			// Retornar el objeto
-			return $vResultado;
+			$vSql = "SELECT * FROM carstoolscr.usuario WHERE rol_id = 2 AND shop_id = $idShopRental;";
+			return $this->enlace->ExecuteSQL($vSql);
 		} catch (Exception $e) {
 			die($e->getMessage());
 		}
 	}
+
 	public function login($objeto)
 	{
 		try {
-
-			$vSql = "SELECT * from User where email='$objeto->email'";
-
-			//Ejecutar la consulta
+			$vSql = "SELECT * FROM carstoolscr.usuario WHERE correo = '$objeto->correo'";
 			$vResultado = $this->enlace->ExecuteSQL($vSql);
-			if (is_object($vResultado[0])) {
+
+			if (isset($vResultado[0]) && is_object($vResultado[0])) {
 				$user = $vResultado[0];
-				if (password_verify($objeto->password, $user->password)) {
+
+				if (password_verify($objeto->clave, $user->contraseña_hash)) {
 					$usuario = $this->get($user->id);
+
 					if (!empty($usuario)) {
-						// Datos para el token JWT
 						$data = [
 							'id' => $usuario->id,
-							'email' => $usuario->email,
+							'correo' => $usuario->correo,
 							'rol' => $usuario->rol,
-							'iat' => time(),  // Hora de emisión
-							'exp' => time() + 3600 // Expiración en 1 hora
+							'iat' => time(),
+							'exp' => time() + 3600
 						];
 
-						// Generar el token JWT
 						$jwt_token = JWT::encode($data, config::get('SECRET_KEY'), 'HS256');
-
-						// Enviar el token como respuesta
 						return $jwt_token;
 					}
 				}
-			} else {
-				return false;
 			}
+
+			return false;
 		} catch (Exception $e) {
 			handleException($e);
 		}
 	}
+
 	public function create($objeto)
 	{
 		try {
-			if (isset($objeto->password) && $objeto->password != null) {
-				$crypt = password_hash($objeto->password, PASSWORD_BCRYPT);
-				$objeto->password = $crypt;
+			if (isset($objeto->clave) && $objeto->clave != null) {
+				$hash = password_hash($objeto->clave, PASSWORD_BCRYPT);
+				$objeto->clave = $hash;
 			}
-			//Consulta sql            
-			$vSql = "Insert into user (name,email,password,rol_id)" .
-				" Values ('$objeto->name','$objeto->email','$objeto->password',$objeto->rol_id)";
 
-			//Ejecutar la consulta
+			$vSql = "INSERT INTO carstoolscr.usuario 
+						(nombre_usuario, correo, clave, rol_id)
+					 VALUES 
+						('$objeto->nombre_usuario', '$objeto->correo', '$objeto->clave', $objeto->rol_id)";
+
 			$vResultado = $this->enlace->executeSQL_DML_last($vSql);
-			// Retornar el objeto creado
 			return $this->get($vResultado);
 		} catch (Exception $e) {
 			handleException($e);

@@ -1,5 +1,4 @@
-// Este nuevo diseño usa MUI mejorado con un layout más atractivo para la tienda de repuestos
-import { useState, useContext } from 'react';
+import { useState, useContext } from "react";
 import {
   Container,
   Typography,
@@ -7,23 +6,26 @@ import {
   Button,
   Grid,
   Paper,
-} from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import toast from 'react-hot-toast';
-import UserService from '../../services/UserService';
-import { UserContext } from '../../context/UserContext';
+} from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import UserService from "../../services/UserService";
+import { UserContext } from "../../context/UserContext";
 
 export function Login() {
   const navigate = useNavigate();
   const { saveUser } = useContext(UserContext);
 
   const loginSchema = yup.object({
-    email: yup.string().required('El email es requerido').email('Formato email inválido'),
-    password: yup.string().required('La contraseña es requerida'),
+    correo: yup
+      .string()
+      .required("El correo es requerido")
+      .email("Formato correo inválido"),
+    clave: yup.string().required("La contraseña es requerida"),
   });
 
   const {
@@ -32,8 +34,8 @@ export function Login() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: '',
-      password: '',
+      correo: "",
+      clave: "",
     },
     resolver: yupResolver(loginSchema),
   });
@@ -46,22 +48,22 @@ export function Login() {
         .then((response) => {
           if (
             response.data &&
-            response.data !== 'undefined' &&
-            response.data !== 'Usuario no valido'
+            response.data !== "undefined" &&
+            response.data !== "Usuario no valido"
           ) {
             saveUser(response.data);
-            toast.success('¡Bienvenido!', { duration: 4000 });
-            return navigate('/');
+            toast.success("¡Bienvenido!", { duration: 4000 });
+            return navigate("/");
           } else {
-            toast.error('Usuario No válido', { duration: 4000 });
+            toast.error("Usuario No válido", { duration: 4000 });
           }
         })
         .catch((err) => {
           setError(err);
-          console.error('Error:', err);
+          console.error("Error:", err);
         });
     } catch (e) {
-      console.error('Error:', e);
+      console.error("Error:", e);
     }
   };
 
@@ -76,22 +78,22 @@ export function Login() {
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Controller
-                name="email"
+                name="correo"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     label="Correo Electrónico"
                     fullWidth
-                    error={!!errors.email}
-                    helperText={errors.email?.message || ' '}
+                    error={!!errors.correo}
+                    helperText={errors.correo?.message || " "}
                   />
                 )}
               />
             </Grid>
             <Grid item xs={12}>
               <Controller
-                name="password"
+                name="clave"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -99,28 +101,23 @@ export function Login() {
                     label="Contraseña"
                     type="password"
                     fullWidth
-                    error={!!errors.password}
-                    helperText={errors.password?.message || ' '}
+                    error={!!errors.clave}
+                    helperText={errors.clave?.message || " "}
                   />
                 )}
               />
             </Grid>
 
-
-            <Grid item xs={12} sx={{ textAlign: 'right' }}>
+            <Grid item xs={12} sx={{ textAlign: "right" }}>
               <Typography
                 variant="body2"
                 color="primary"
-                sx={{ cursor: 'pointer', textDecoration: 'underline' }}
-                onClick={() => navigate('/recuperar-contrasena')}
+                sx={{ cursor: "pointer", textDecoration: "underline" }}
+                onClick={() => navigate("/recuperar-contrasena")}
               >
                 ¿Olvidaste tu contraseña?
               </Typography>
             </Grid>
-
-
-
-
 
             <Grid item xs={12}>
               <Button
