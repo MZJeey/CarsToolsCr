@@ -23,101 +23,107 @@ import { Login } from "./components/User/Login";
 import { Logout } from "./components/User/Logout";
 import { Signup } from "./components/User/Signup";
 import { Auth } from "./components/User/Auth";
-const rutas=createBrowserRouter(
-  [
-    {
-      element: <App />,
-      children:[
-        {
-          path:'/',
-          element: <Home />
-        },
-        {
-          path: '*',
-          element: <PageNotFound />
-        },
-        //Grupos de rutas a autorizar
-        //Grupo 1: Administrador
-        //Grupo 2: Cliente
-        //Grupo 3: Administrador y el Cliente
-        {
-          //Grupo 1
-          path:'/',
-          element: <Auth requiredRoles={['Administrador']} />,
-          children:[
-            {
-              path:'/movie-table',
-              element: <TableMovies />
-            },
-            {
-              path:'/movie/crear/',
-              element: <CreateMovie />
-            },
-            {
-              path:'/movie/update/:id',
-              element: <UpdateMovie />
-            },
-          ]
-        },
-        {
-          path:'/movie/',
-          element: <ListMovies />
-        },
-        {
-          path: '/catalog-movies/',
-          element: <CatalogMovies />,
-        },
-        {
-          path:'/movie/:id',
-          element: <DetailMovie />
-        },
-        {
-          path: 'movie/image/',
-          element: <MovieUploadImage />
-        },
-        
-        {
-          path:'/rental',
-          element: <ListRentals />
-        },
-        {
-          path:'/retal/:id',
-          element: <DetailRental />
-        },
-       
-        {
-          path: '/rental/crear/',
-          element: <CreateMovieRental />,
-        },
-        {
-          path: '/rental/graph',
-          element: <GraphRetal />,
-        },
-        {
-          path: '/unauthorized',
-          element: <Unauthorized />
-        },
-        {
-          path: '/user/login',
-          element: <Login />
-        },
-        {
-          path:'/user/logout',
-          element: <Logout />
-        },
-        {
-          path: '/user/create',
-          element: <Signup />
-        }
-      ]
-    }
-  ]
-)
+import Productos from "./components/Productos/productos";
+
+const rutas = createBrowserRouter([
+  {
+    element: <App />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "*",
+        element: <PageNotFound />,
+      },
+      //Grupos de rutas a autorizar
+      //Grupo 1: Administrador
+      //Grupo 2: Cliente
+      //Grupo 3: Administrador y el Cliente
+
+      {
+        path: "/productos",
+        element: <Productos />,
+      },
+
+      {
+        //Grupo 1
+        path: "/",
+        element: <Auth requiredRoles={["Administrador"]} />,
+        children: [
+          {
+            path: "/movie-table",
+            element: <TableMovies />,
+          },
+          {
+            path: "/movie/crear/",
+            element: <CreateMovie />,
+          },
+          {
+            path: "/movie/update/:id",
+            element: <UpdateMovie />,
+          },
+        ],
+      },
+      {
+        path: "/movie/",
+        element: <ListMovies />,
+      },
+      {
+        path: "/catalog-movies/",
+        element: <CatalogMovies />,
+      },
+      {
+        path: "/movie/:id",
+        element: <DetailMovie />,
+      },
+      {
+        path: "movie/image/",
+        element: <MovieUploadImage />,
+      },
+
+      {
+        path: "/rental",
+        element: <ListRentals />,
+      },
+      {
+        path: "/retal/:id",
+        element: <DetailRental />,
+      },
+
+      {
+        path: "/rental/crear/",
+        element: <CreateMovieRental />,
+      },
+      {
+        path: "/rental/graph",
+        element: <GraphRetal />,
+      },
+      {
+        path: "/unauthorized",
+        element: <Unauthorized />,
+      },
+      {
+        path: "/user/login",
+        element: <Login />,
+      },
+      {
+        path: "/user/logout",
+        element: <Logout />,
+      },
+      {
+        path: "/user/create",
+        element: <Signup />,
+      },
+    ],
+  },
+]);
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode> 
+  <StrictMode>
     <UserProvider>
-      <RouterProvider router={rutas} /> 
+      <RouterProvider router={rutas} />
     </UserProvider>
-</StrictMode>, 
+  </StrictMode>
 );

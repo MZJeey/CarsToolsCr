@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "@mui/icons-material": "^7.1.0"
+    "@mui/icons-material": "^7.1.0",
+    "@toolpad/core": "^0.15.0"
+  },
+  "devDependencies": {
+    "react-router-dom": "^7.6.2"
   }
 }
