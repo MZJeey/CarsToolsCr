@@ -61,7 +61,7 @@ class ProductoModel
         try {
             // Crear producto
             $sql = "INSERT INTO Producto 
-                (nombre, descripcion, precio, categoria_id, stock, promedio_valoraciones, año_compatible, marca_compatible, modelo_compatible, motor_compatible, certificaciones)
+                (nombre, descripcion, precio, categoria_id, stock, promedio_valoraciones, ano_compatible, marca_compatible, modelo_compatible, motor_compatible, certificaciones)
                 VALUES (
                     '{$data['nombre']}',
                     '{$data['descripcion']}',
@@ -69,7 +69,7 @@ class ProductoModel
                     {$data['categoria_id']},
                     " . ($data['stock'] ?? 0) . ",
                     0.00,
-                    '{$data['año_compatible']}',
+                    '{$data['ano_compatible']}',
                     '{$data['marca_compatible']}',
                     '{$data['modelo_compatible']}',
                     '{$data['motor_compatible']}',
@@ -112,6 +112,37 @@ class ProductoModel
             }
 
             return $producto;
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+    public function update($id, $data)
+    {
+        try {
+            $sql = "UPDATE Producto 
+                SET nombre = '{$data['nombre']}',
+                    descripcion = '{$data['descripcion']}',
+                    precio = {$data['precio']},
+                    categoria_id = {$data['categoria_id']},
+                    stock = " . ($data['stock'] ?? 0) . ",
+                    promedio_valoraciones = {$data['promedio_valoraciones']},
+                    ano_compatible = '{$data['ano_compatible']}',
+                    marca_compatible = '{$data['marca_compatible']}',
+                    modelo_compatible = '{$data['modelo_compatible']}',
+                    motor_compatible = '{$data['motor_compatible']}',
+                    certificaciones = '{$data['certificaciones']}'
+                WHERE id = $id";
+
+            return $this->enlace->executeSQL_DML($sql);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+    public function delete($id)
+    {
+        try {
+            $sql = "UPDATE Producto SET estado = true WHERE id = $id";
+            return $this->enlace->executeSQL_DML($sql);
         } catch (Exception $e) {
             handleException($e);
         }
