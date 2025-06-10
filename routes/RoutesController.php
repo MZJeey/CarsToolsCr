@@ -15,7 +15,7 @@ class RoutesController
     {
         // Registrar rutas protegidas
         //---------------------  Metodo,path (en minuscula),controlador, accion, array de nombres de roles
-        $this->addProtectedRoute('GET', '/carstoolcr/user', 'user', 'index', ['Administrador']);
+        $this->addProtectedRoute('GET', '/appShopTools/user', 'user', 'index', ['Administrador']);
     }
 
     public function routes()

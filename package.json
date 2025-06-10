@@ -1,5 +1,26 @@
 {
   "dependencies": {
-    "@mui/icons-material": "^7.1.0"
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fontsource/roboto": "^5.2.6",
+    "@hookform/resolvers": "^5.1.0",
+    "@mui/icons-material": "^7.1.1",
+    "@mui/material": "^7.1.1",
+    "@mui/styled-engine-sc": "^7.1.1",
+    "@toolpad/core": "^0.15.0",
+    "jwt-decode": "^4.0.0",
+    "nodemon": "^3.1.10",
+    "prop-types": "^15.8.1",
+    "react-hook-form": "^7.57.0",
+    "react-hot-toast": "^2.5.2",
+    "styled-components": "^6.1.18",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "prettier": "^3.5.3",
+    "react-router-dom": "^7.6.2",
+    "vite-jsconfig-paths": "^2.0.1"
   }
 }

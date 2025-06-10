@@ -37,22 +37,27 @@ export default function Header() {
   const [mobileOpcionesAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [anchorElPrincipal, setAnchorElPrincipal] = useState(null);
 
+  // Nuevo estado para el menú desplegable de Mantenimiento Vehículos
+  const [anchorElMantenimiento, setAnchorElMantenimiento] = useState(null);
+
   const isMobileOpcionesMenuOpen = Boolean(mobileOpcionesAnchorEl);
 
-  const handleUserMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleUserMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleUserMenuClose = () => {
     setAnchorEl(null);
     handleOpcionesMenuClose();
   };
-  const handleOpenPrincipalMenu = (event) =>
-    setAnchorElPrincipal(event.currentTarget);
+  const handleOpenPrincipalMenu = (e) => setAnchorElPrincipal(e.currentTarget);
   const handleClosePrincipalMenu = () => setAnchorElPrincipal(null);
-  const handleOpcionesMenuOpen = (event) =>
-    setMobileMoreAnchorEl(event.currentTarget);
+  const handleOpcionesMenuOpen = (e) => setMobileMoreAnchorEl(e.currentTarget);
   const handleOpcionesMenuClose = () => setMobileMoreAnchorEl(null);
 
-  const [searchQuery, setSearchQuery] = useState("");
+  // Handlers para menú de Mantenimiento Vehículos
+  const handleMantenimientoOpen = (e) =>
+    setAnchorElMantenimiento(e.currentTarget);
+  const handleMantenimientoClose = () => setAnchorElMantenimiento(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
   const handleSearch = () => {
     if (searchQuery.trim()) {
       navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
@@ -69,23 +74,75 @@ export default function Header() {
     { name: "Vehiculos", link: "/movie", roles: null },
     { name: "Cátalogo de Repuestos", link: "/catalog-movies/", roles: null },
     { name: "Filtrar Repuestos", link: "/movie/filter", roles: null },
-    {
-      name: "Mantenimiento Vehiculos",
-      link: "/movie-table/",
-      roles: ["Administrador"],
-    },
+    // Para mantenimiento vehículos, removemos el link y agregamos submenu
+    { name: "Mantenimientos", link: null, roles: [] },
   ];
 
-  const menuIdPrincipal = "menu-appbar";
+  const mantenimientoOpciones = [
+    { name: "Productos", link: "/productos" },
+    { name: "Ver Mantenimientos", link: "/movie-table/list" },
+    // Puedes agregar más opciones aquí
+  ];
 
   const menuPrincipal = (
-    <Box sx={{ display: { xs: "none", sm: "block" } }}>
-      {navItems.map((item, index) => {
-        if (userData && item.roles) {
-          if (autorize({ requiredRoles: item.roles })) {
+    <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
+      {navItems.map((item, idx) => {
+        if (item.name === "Mantenimientos") {
+          // Menú desplegable para mantenimiento vehículos
+          return (
+            <Box key={idx}>
+              <Button
+                sx={{ color: "white" }}
+                aria-controls={
+                  Boolean(anchorElMantenimiento)
+                    ? "mantenimiento-menu"
+                    : undefined
+                }
+                aria-haspopup="true"
+                aria-expanded={
+                  Boolean(anchorElMantenimiento) ? "true" : undefined
+                }
+                onClick={handleMantenimientoOpen}
+              >
+                <Typography textAlign="center">{item.name}</Typography>
+              </Button>
+              <Menu
+                id="mantenimiento-menu"
+                anchorEl={anchorElMantenimiento}
+                open={Boolean(anchorElMantenimiento)}
+                onClose={handleMantenimientoClose}
+                MenuListProps={{
+                  "aria-labelledby": "mantenimiento-button",
+                }}
+                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                transformOrigin={{ vertical: "top", horizontal: "left" }}
+              >
+                {mantenimientoOpciones.map((opt, idxOpt) => (
+                  <MenuItem
+                    key={idxOpt}
+                    component={Link}
+                    to={opt.link}
+                    onClick={() => {
+                      handleMantenimientoClose();
+                      handleClosePrincipalMenu();
+                    }}
+                  >
+                    {opt.name}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          );
+        }
+
+        if (Array.isArray(item.roles)) {
+          if (
+            userData &&
+            (item.roles.length === 0 || autorize({ requiredRoles: item.roles }))
+          ) {
             return (
               <Button
-                key={index}
+                key={idx}
                 component={Link}
                 to={item.link}
                 sx={{ color: "white" }}
@@ -94,10 +151,10 @@ export default function Header() {
               </Button>
             );
           }
-        } else if (item.roles == null) {
+        } else if (item.roles === null) {
           return (
             <Button
-              key={index}
+              key={idx}
               component={Link}
               to={item.link}
               sx={{ color: "white" }}
@@ -111,51 +168,103 @@ export default function Header() {
     </Box>
   );
 
-  const menuPrincipalMobile = navItems.map((page, index) => (
-    <MenuItem key={index} component={Link} to={page.link}>
-      <Typography textAlign="center">{page.name}</Typography>
-    </MenuItem>
-  ));
-
-  const userMenuId = "user-menu";
+  // Menú móvil: mantengo simple sin submenu, si quieres podemos agregar submenu también
+  const menuPrincipalMobile = (
+    <Box>
+      {navItems.map((item, idx) => {
+        if (item.name === "Mantenimientos") {
+          return (
+            <Box key={idx}>
+              <MenuItem onClick={handleMantenimientoOpen}>
+                <Typography textAlign="center">{item.name}</Typography>
+              </MenuItem>
+              <Menu
+                id="mantenimiento-menu-mobile"
+                anchorEl={anchorElMantenimiento}
+                open={Boolean(anchorElMantenimiento)}
+                onClose={handleMantenimientoClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                transformOrigin={{ vertical: "top", horizontal: "left" }}
+              >
+                {mantenimientoOpciones.map((opt, idxOpt) => (
+                  <MenuItem
+                    key={idxOpt}
+                    component={Link}
+                    to={opt.link}
+                    onClick={() => {
+                      handleMantenimientoClose();
+                      handleClosePrincipalMenu();
+                    }}
+                  >
+                    {opt.name}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          );
+        }
+        return (
+          <MenuItem
+            key={idx}
+            component={Link}
+            to={item.link}
+            onClick={handleClosePrincipalMenu}
+          >
+            <Typography textAlign="center">{item.name}</Typography>
+          </MenuItem>
+        );
+      })}
+    </Box>
+  );
 
   const userMenu = (
     <Box sx={{ flexGrow: 0 }}>
       <IconButton
         size="large"
         edge="end"
+        aria-label="abrir menú de usuario"
+        aria-controls="user-menu"
+        aria-haspopup="true"
         onClick={handleUserMenuOpen}
         sx={{ color: "white" }}
       >
         <AccountCircle />
       </IconButton>
       <Menu
-        sx={{ mt: "45px" }}
-        id={userMenuId}
+        id="user-menu"
         anchorEl={anchorElUser}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
         open={Boolean(anchorElUser)}
         onClose={handleUserMenuClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        sx={{ mt: "45px" }}
       >
         {userData && (
           <MenuItem>
-            <Typography variant="subtitle1" gutterBottom>
-              {userData?.email}
-            </Typography>
+            <Typography variant="subtitle1">{userData.email}</Typography>
           </MenuItem>
         )}
-        {userItems.map((setting, index) => {
+        {userItems.map((setting, idx) => {
           if (setting.login && userData && Object.keys(userData).length > 0) {
             return (
-              <MenuItem key={index} component={Link} to={setting.link}>
-                <Typography textAlign="center">{setting.name}</Typography>
+              <MenuItem
+                key={idx}
+                component={Link}
+                to={setting.link}
+                onClick={handleUserMenuClose}
+              >
+                <Typography>{setting.name}</Typography>
               </MenuItem>
             );
           } else if (!setting.login && Object.keys(userData).length === 0) {
             return (
-              <MenuItem key={index} component={Link} to={setting.link}>
-                <Typography textAlign="center">{setting.name}</Typography>
+              <MenuItem
+                key={idx}
+                component={Link}
+                to={setting.link}
+                onClick={handleUserMenuClose}
+              >
+                <Typography>{setting.name}</Typography>
               </MenuItem>
             );
           }
@@ -165,38 +274,64 @@ export default function Header() {
     </Box>
   );
 
-  const menuOpcionesId = "badge-menu-mobile";
   const menuOpcionesMobile = (
     <Menu
+      id="badge-menu-mobile"
       anchorEl={mobileOpcionesAnchorEl}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
-      id={menuOpcionesId}
-      keepMounted
       open={isMobileOpcionesMenuOpen}
       onClose={handleOpcionesMenuClose}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      transformOrigin={{ vertical: "top", horizontal: "right" }}
     >
       <MenuItem>
-        <IconButton size="large" color="inherit">
-          <Badge
-            badgeContent={getCountItems(cart)}
-            color="primary"
-            component={Link}
-            to="/rental/crear/"
-          >
+        <IconButton
+          size="large"
+          color="inherit"
+          component={Link}
+          to="/rental/crear/"
+        >
+          <Badge badgeContent={getCountItems(cart)} color="primary">
             <ShoppingCartIcon />
           </Badge>
         </IconButton>
-        <p>Compras</p>
+        <Typography>Compras</Typography>
       </MenuItem>
+
       <MenuItem>
         <IconButton size="large" color="inherit">
           <Badge badgeContent={17} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
-        <p>Notificaciones</p>
+        <Typography>Notificaciones</Typography>
       </MenuItem>
+
+      {userItems.map((setting, idx) => {
+        if (setting.login && userData && Object.keys(userData).length > 0) {
+          return (
+            <MenuItem
+              key={idx}
+              component={Link}
+              to={setting.link}
+              onClick={handleOpcionesMenuClose}
+            >
+              <Typography>{setting.name}</Typography>
+            </MenuItem>
+          );
+        } else if (!setting.login && Object.keys(userData).length === 0) {
+          return (
+            <MenuItem
+              key={idx}
+              component={Link}
+              to={setting.link}
+              onClick={handleOpcionesMenuClose}
+            >
+              <Typography>{setting.name}</Typography>
+            </MenuItem>
+          );
+        }
+        return null;
+      })}
     </Menu>
   );
 
@@ -211,29 +346,34 @@ export default function Header() {
         <Toolbar>
           <IconButton
             size="large"
-            sx={{ color: "white", mr: 2 }}
+            aria-label="abrir menú principal"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
             onClick={handleOpenPrincipalMenu}
+            sx={{ color: "white", mr: 2 }}
           >
             <MenuIcon />
           </IconButton>
+
           <Menu
-            id={menuIdPrincipal}
+            id="menu-appbar"
             anchorEl={anchorElPrincipal}
-            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-            transformOrigin={{ vertical: "top", horizontal: "left" }}
             open={Boolean(anchorElPrincipal)}
             onClose={handleClosePrincipalMenu}
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            transformOrigin={{ vertical: "top", horizontal: "left" }}
             sx={{ display: { xs: "block", md: "none" } }}
           >
             {menuPrincipalMobile}
           </Menu>
-          <Tooltip title="Alquiler peliculas">
+
+          <Tooltip title="Alquiler películas">
             <IconButton
               size="large"
-              edge="end"
-              component="a"
-              href="/"
-              aria-label="Alquiler peliculas"
+              edge="start"
+              component={Link}
+              to="/"
+              aria-label="Inicio"
               sx={{ color: "white" }}
             >
               <LiveTvIcon />
@@ -255,51 +395,60 @@ export default function Header() {
               placeholder="Buscar repuesto..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{
-                backgroundColor: "white",
-                borderRadius: 1,
-                mr: 1,
-              }}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              sx={{ bgcolor: "white", borderRadius: 1 }}
             />
             <Button
               variant="contained"
               color="secondary"
               onClick={handleSearch}
+              sx={{ ml: 1 }}
             >
               Buscar
             </Button>
           </Box>
 
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton size="large" sx={{ color: "white" }}>
-              <Badge
-                badgeContent={getCountItems(cart)}
-                color="error"
-                component={Link}
-                to="/rental/crear/"
-              >
+
+          <Box
+            sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}
+          >
+            <IconButton
+              size="large"
+              aria-label="ver carrito"
+              color="inherit"
+              component={Link}
+              to="/rental/crear/"
+            >
+              <Badge badgeContent={getCountItems(cart)} color="primary">
                 <ShoppingCartIcon />
               </Badge>
             </IconButton>
-            <IconButton size="large" sx={{ color: "white" }}>
+
+            <IconButton size="large" color="inherit">
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
+
+            {userMenu}
           </Box>
-          <div>{userMenu}</div>
+
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
+              aria-label="mostrar opciones"
+              aria-controls="badge-menu-mobile"
+              aria-haspopup="true"
               onClick={handleOpcionesMenuOpen}
-              sx={{ color: "white" }}
+              color="inherit"
             >
               <MoreIcon />
             </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
+
       {menuOpcionesMobile}
     </Box>
   );
