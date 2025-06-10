@@ -14,7 +14,7 @@ class ImageModel
     {
         try {
             $file = $object['file'];
-            $movie_id = $object['movie_id'];
+            $idProduct = $object['id'];
             //Obtener la información del archivo
             $fileName = $file['name'];
             $tempPath = $file['tmp_name'];
@@ -25,7 +25,7 @@ class ImageModel
                 //Crear un nombre único para el archivo
                 $fileExt = explode('.', $fileName);
                 $fileActExt = strtolower(end($fileExt));
-                $fileName = "movie-" . uniqid() . "." . $fileActExt;
+                $fileName = "producto" . uniqid() . "." . $fileActExt;
                 //Validar el tipo de archivo
                 if (in_array($fileActExt, $this->valid_extensions)) {
                     //Validar que no exista
@@ -35,7 +35,7 @@ class ImageModel
                             //Moverlo a la carpeta del servidor del API
                             if (move_uploaded_file($tempPath, $this->upload_path . $fileName)) {
                                 //Guardarlo en la BD
-                                $sql = "INSERT INTO movie_image (movie_id,image) VALUES ($movie_id, '$fileName')";
+                                $sql = "INSERT INTO ImagenProducto (id,image) VALUES ($idProduct, '$fileName')";
                                 $vResultado = $this->enlace->executeSQL_DML($sql);
                                 if ($vResultado > 0) {
                                     return 'Imagen creada';
@@ -51,19 +51,18 @@ class ImageModel
         }
     }
     //Obtener una imagen de una pelicula
-    public function getImageMovie($idMovie)
+    public function getImagen($idProducto)
     {
         try {
-            
+
             //Consulta sql
-            $vSql = "SELECT * FROM movie_image where movie_id=$idMovie";
+            $vSql = "SELECT * FROM ImagenProducto where id=$idProducto";
 
             //Ejecutar la consulta
             $vResultado = $this->enlace->ExecuteSQL($vSql);
             if (!empty($vResultado)) {
                 // Retornar el objeto
                 return $vResultado[0];
-                
             }
             return $vResultado;
         } catch (Exception $e) {

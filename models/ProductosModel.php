@@ -1,86 +1,119 @@
 <?php
-class Producto
+class ProductoModel
 {
-    private $pdo;
+    //Conectarse a la BD
+    private $enlace;
 
-    public function __construct(PDO $pdo)
+    public function __construct()
     {
-        $this->pdo = $pdo;
+        $this->enlace = new MySqlConnect();
     }
+    /**
+     * Listar productos
+     * @param 
+     * @return $vResultado - Lista de objetos
+     */
 
-    // Obtener todos los productos con sus imágenes (solo nombres de imagenes o IDs)
-    public function getAll()
+
+
+    public function all()
     {
-        $sql = "SELECT p.*, c.nombre as categoria_nombre
-                FROM Producto p
-                JOIN Categoria c ON p.categoria_id = c.id";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
-        $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $imagenM = new ImageModel();
+            //Consulta SQL
+            $vSQL = "SELECT p.*, c.nombre as categoria_nombre
+            FROM Producto p
+            JOIN Categoria c ON p.categoria_id = c.id";
+            //Ejecutar la consulta
+            $vResultado = $this->enlace->ExecuteSQL($vSQL);
+            //Incluir imagenes
+            if (!empty($vResultado) && is_array($vResultado)) {
+                for ($i = 0; $i < count($vResultado); $i++) {
+                    $vResultado[$i] = $this->get($vResultado[$i]->id);
 
-        // Obtener imágenes para cada producto
-        foreach ($productos as &$producto) {
-            $producto['imagenes'] = $this->getImagenesByProductoId($producto['id']);
+                    //$vResultado[$i]->imagen=$imagenM->getImageMovie(($vResultado[$i]->id));
+                }
+            }
+
+            //Retornar la respuesta
+
+            return $vResultado;
+        } catch (Exception $e) {
+            handleException($e);
         }
-
-        return $productos;
     }
+
+
+
 
     // Obtener imágenes asociadas a un producto
     public function getImagenesByProductoId($producto_id)
     {
-        $stmt = $this->pdo->prepare("SELECT id FROM ImagenProducto WHERE producto_id = :pid");
-        $stmt->execute(['pid' => $producto_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $vResultado = $this->enlace->executeSQL("SELECT id FROM ImagenProducto WHERE producto_id = $producto_id;");
+        if (!empty($vResultado)) {
+            $vResultado = $vResultado[0];
+        }
     }
 
     // Crear producto junto con imágenes
     public function create($data, $imagenes)
     {
         try {
-            $this->pdo->beginTransaction();
-
+            // Crear producto
             $sql = "INSERT INTO Producto 
-                    (nombre, descripcion, precio, categoria_id, stock, promedio_valoraciones, año_compatible, marca_compatible, modelo_compatible, motor_compatible, certificaciones)
-                    VALUES
-                    (:nombre, :descripcion, :precio, :categoria_id, :stock, :promedio_valoraciones, :año_compatible, :marca_compatible, :modelo_compatible, :motor_compatible, :certificaciones)";
+                (nombre, descripcion, precio, categoria_id, stock, promedio_valoraciones, año_compatible, marca_compatible, modelo_compatible, motor_compatible, certificaciones)
+                VALUES (
+                    '{$data['nombre']}',
+                    '{$data['descripcion']}',
+                    {$data['precio']},
+                    {$data['categoria_id']},
+                    " . ($data['stock'] ?? 0) . ",
+                    0.00,
+                    '{$data['año_compatible']}',
+                    '{$data['marca_compatible']}',
+                    '{$data['modelo_compatible']}',
+                    '{$data['motor_compatible']}',
+                    '{$data['certificaciones']}'
+                )";
 
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([
-                'nombre' => $data['nombre'],
-                'descripcion' => $data['descripcion'],
-                'precio' => $data['precio'],
-                'categoria_id' => $data['categoria_id'],
-                'stock' => $data['stock'] ?? 0,
-                'promedio_valoraciones' => 0.00,
-                'año_compatible' => $data['año_compatible'] ?? null,
-                'marca_compatible' => $data['marca_compatible'] ?? null,
-                'modelo_compatible' => $data['modelo_compatible'] ?? null,
-                'motor_compatible' => $data['motor_compatible'] ?? null,
-                'certificaciones' => $data['certificaciones'] ?? null
-            ]);
-
-            $producto_id = $this->pdo->lastInsertId();
+            $producto_id = $this->enlace->executeSQL_DML_last($sql);
 
             // Guardar imágenes
-            if (!empty($imagenes)) {
-                $stmtImg = $this->pdo->prepare("INSERT INTO ImagenProducto (producto_id, imagen) VALUES (:producto_id, :imagen)");
+            if (!empty($imagenes) && $producto_id > 0) {
                 foreach ($imagenes as $imagen) {
-                    // Asumiendo $imagen es un archivo binario (blob) o base64 decodificado
-                    $stmtImg->bindParam(':producto_id', $producto_id, PDO::PARAM_INT);
-                    $stmtImg->bindParam(':imagen', $imagen, PDO::PARAM_LOB);
-                    $stmtImg->execute();
+                    $imgData = addslashes(file_get_contents($imagen)); // si viene como path de archivo
+                    $imgSql = "INSERT INTO ImagenProducto (producto_id, imagen) VALUES ($producto_id, '$imgData')";
+                    $this->enlace->executeSQL_DML($imgSql);
                 }
             }
 
-            $this->pdo->commit();
             return true;
         } catch (Exception $e) {
-            $this->pdo->rollBack();
             error_log("Error al crear producto: " . $e->getMessage());
             return false;
         }
     }
 
-    // Otros métodos como update, delete, getById se pueden implementar similarmente
+    public function get($id)
+    {
+        try {
+            $imagenP = new ImageModel();
+            $sql = "SELECT p.*, c.nombre as categoria_nombre
+                FROM Producto p
+                JOIN Categoria c ON p.categoria_id = c.id
+                WHERE p.id = $id";
+
+            $producto = $this->enlace->executeSQL($sql);
+
+            if (!empty($producto)) {
+                $producto = $producto[0];
+                // Obtener imágenes asociadas al producto
+                $producto->imagen = $imagenP->getImagen($producto->id);
+            }
+
+            return $producto;
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
 }
