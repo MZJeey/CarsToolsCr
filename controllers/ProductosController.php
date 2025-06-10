@@ -10,6 +10,7 @@ class producto
             //Método del modelo
             $result = $productoM->All();
             //Dar respuesta
+
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
