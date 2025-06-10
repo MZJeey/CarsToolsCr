@@ -30,6 +30,9 @@ require_once "models/RentalModel.php";
 require_once "models/RentalMovieModel.php";
 require_once "models/ImageModel.php";
 
+//Modelo de api de carstools
+require_once "models/ProductosModel.php";
+
 /***--- Agregar todos los controladores*/
 require_once "controllers/UserController.php";
 require_once "controllers/DirectorController.php";
@@ -41,9 +44,11 @@ require_once "controllers/InventoryController.php";
 require_once "controllers/RentalController.php";
 require_once "controllers/ImageController.php";
 
+//Controller de Productos y del api de carstools
+require_once "controllers/ProductosController.php";
+
+
 //Enrutador
 require_once "routes/RoutesController.php";
 $index = new RoutesController();
 $index->index();
-
-
