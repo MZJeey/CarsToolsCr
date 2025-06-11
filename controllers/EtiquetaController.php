@@ -51,15 +51,24 @@ class etiqueta
     {
         try {
             $response = new Response();
-            $request = new Request();
-            $data = $request->getJSON();
+
+            // Convertir el JSON recibido a array
+            $data = json_decode(file_get_contents("php://input"), true);
+
+            // Si viene envuelto en "data", extraerlo
+            if (isset($data['data'])) {
+                $data = $data['data'];
+            }
+
             $model = new EtiquetaModel();
             $result = $model->update($id, $data);
+
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
+
 
     public function delete($id)
     {

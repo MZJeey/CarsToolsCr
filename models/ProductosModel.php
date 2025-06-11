@@ -147,6 +147,7 @@ class ProductoModel
             handleException($e);
         }
     }
+
     public function update($id, $data)
     {
         try {
