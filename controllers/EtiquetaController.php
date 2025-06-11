@@ -47,31 +47,46 @@ class etiqueta
 
 
 
-    public function update($id)
-    {
-        try {
-            $response = new Response();
-            $request = new Request();
-            $data = $request->getJSON();
-            $model = new EtiquetaModel();
-            $result = $model->update($id, $data);
-            $response->toJSON($result);
-        } catch (Exception $e) {
-            handleException($e);
-        }
-    }
+public function update()
+{
+    try {
+        $response = new Response();
+        $request = new Request();
+        $data = (array) $request->getJSON(); // convertir objeto en array
 
-    public function delete($id)
-    {
-        try {
-            $response = new Response();
-            $model = new EtiquetaModel();
-            $result = $model->delete($id);
-            $response->toJSON($result);
-        } catch (Exception $e) {
-            handleException($e);
-        }
+        // Extraer el ID desde la URL
+        $url = $_SERVER['REQUEST_URI'];
+        $partes = explode('/', $url);
+        $id = end($partes); // último valor de la URL
+
+        $model = new EtiquetaModel();
+        $result = $model->update($id, $data);
+        $response->toJSON($result);
+    } catch (Exception $e) {
+        handleException($e);
     }
+}
+
+
+public function delete()
+{
+    try {
+        $response = new Response();
+        $request = new Request();
+
+        // Obtener el ID desde la URL
+        $url = $_SERVER['REQUEST_URI'];
+        $partes = explode('/', $url);
+        $id = end($partes); // Toma el último segmento de la URL
+
+        $model = new EtiquetaModel();
+        $result = $model->delete($id);
+        $response->toJSON($result);
+    } catch (Exception $e) {
+        handleException($e);
+    }
+}
+
 
     public function getByProducto($producto_id)
     {
