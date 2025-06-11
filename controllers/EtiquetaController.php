@@ -47,6 +47,7 @@ class etiqueta
 
 
 
+<<<<<<< HEAD
     public function update($id)
     {
         try {
@@ -80,7 +81,48 @@ class etiqueta
         } catch (Exception $e) {
             handleException($e);
         }
+=======
+public function update()
+{
+    try {
+        $response = new Response();
+        $request = new Request();
+        $data = (array) $request->getJSON(); // convertir objeto en array
+
+        // Extraer el ID desde la URL
+        $url = $_SERVER['REQUEST_URI'];
+        $partes = explode('/', $url);
+        $id = end($partes); // último valor de la URL
+
+        $model = new EtiquetaModel();
+        $result = $model->update($id, $data);
+        $response->toJSON($result);
+    } catch (Exception $e) {
+        handleException($e);
+>>>>>>> 69c52454c0084bc93859baf1357361a6895a0ee2
     }
+}
+
+
+public function delete()
+{
+    try {
+        $response = new Response();
+        $request = new Request();
+
+        // Obtener el ID desde la URL
+        $url = $_SERVER['REQUEST_URI'];
+        $partes = explode('/', $url);
+        $id = end($partes); // Toma el último segmento de la URL
+
+        $model = new EtiquetaModel();
+        $result = $model->delete($id);
+        $response->toJSON($result);
+    } catch (Exception $e) {
+        handleException($e);
+    }
+}
+
 
     public function getByProducto($producto_id)
     {
