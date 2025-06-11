@@ -24,20 +24,28 @@ class etiqueta
             handleException($e);
         }
     }
-
     public function create()
     {
         try {
             $response = new Response();
             $request = new Request();
-            $data = $request->getJSON();
+
+            // Convertir JSON a array
+            $input = (array) $request->getJSON();
+
+            // Extraer 'data' si existe
+            $data = isset($input['data']) ? (array) $input['data'] : $input;
+
             $model = new EtiquetaModel();
             $result = $model->create($data);
+
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
+
+
 
     public function update($id)
     {
@@ -65,16 +73,15 @@ class etiqueta
         }
     }
 
-public function getByProducto($producto_id)
-{
-    try {
-        $response = new Response();
-        $model = new EtiquetaModel();
-        $result = $model->getByProducto($producto_id);
-        $response->toJSON($result);
-    } catch (Exception $e) {
-        handleException($e);
+    public function getByProducto($producto_id)
+    {
+        try {
+            $response = new Response();
+            $model = new EtiquetaModel();
+            $result = $model->getByProducto($producto_id);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
     }
-}
-
 }
