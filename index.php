@@ -32,6 +32,7 @@ require_once "models/ImageModel.php";
 
 //Modelo de api de carstools
 require_once "models/ProductosModel.php";
+require_once "models/EtiquetaModel.php";
 
 /***--- Agregar todos los controladores*/
 require_once "controllers/UserController.php";
@@ -46,6 +47,8 @@ require_once "controllers/ImageController.php";
 
 //Controller de Productos y del api de carstools
 require_once "controllers/ProductosController.php";
+//Controller de Etiqueta y del api de carstools
+require_once "controllers/EtiquetaController.php";
 
 
 //Enrutador
