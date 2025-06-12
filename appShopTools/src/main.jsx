@@ -23,7 +23,8 @@ import { Login } from "./components/User/Login";
 import { Logout } from "./components/User/Logout";
 import { Signup } from "./components/User/Signup";
 import { Auth } from "./components/User/Auth";
-import Productos from "./components/Productos/productos";
+import { ListaProductos } from "./components/Productos/listaProductos";
+import { CrearProducto } from "./components/Productos/crearProducto";
 
 const rutas = createBrowserRouter([
   {
@@ -44,7 +45,11 @@ const rutas = createBrowserRouter([
 
       {
         path: "/productos",
-        element: <Productos />,
+        element: <ListaProductos />,
+      },
+      {
+        path: "/crear",
+        element: <CrearProducto />,
       },
 
       {

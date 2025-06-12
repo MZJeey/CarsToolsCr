@@ -73,7 +73,8 @@ class ProductoModel
                     '{$data['marca_compatible']}',
                     '{$data['modelo_compatible']}',
                     '{$data['motor_compatible']}',
-                    '{$data['certificaciones']}'
+                    '{$data['certificaciones']}',
+                    '{$data['estado']}'
                 )";
 
             $producto_id = $this->enlace->executeSQL_DML_last($sql);
@@ -93,6 +94,36 @@ class ProductoModel
             return false;
         }
     }
+
+
+    public function createProducto($data)
+    {
+        try {
+            $sql = "INSERT INTO Producto 
+            (nombre, descripcion, precio, categoria_id, stock, promedio_valoraciones, ano_compatible, marca_compatible, modelo_compatible, motor_compatible, certificaciones,estado)
+            VALUES (
+                '{$data['nombre']}',
+                '{$data['descripcion']}',
+                {$data['precio']},
+                {$data['categoria_id']},
+                " . ($data['stock'] ?? 0) . ",
+                0.00,
+                '{$data['ano_compatible']}',
+                '{$data['marca_compatible']}',
+                '{$data['modelo_compatible']}',
+                '{$data['motor_compatible']}',
+                '{$data['certificaciones']}',
+                  '{$data['estado']}'
+
+            )";
+
+            return $this->enlace->executeSQL_DML_last($sql);
+        } catch (Exception $e) {
+            error_log("Error al crear producto (sin imágenes): " . $e->getMessage());
+            return false;
+        }
+    }
+
 
     public function get($id)
     {
@@ -116,28 +147,46 @@ class ProductoModel
             handleException($e);
         }
     }
+
     public function update($id, $data)
     {
         try {
+            $id = (int)$id; // ← Aquí fuerzas que sea un número
+
+            $nombre = $data['nombre'] ?? '';
+            $descripcion = $data['descripcion'] ?? '';
+            $precio = $data['precio'] ?? 0;
+            $categoria_id = $data['categoria_id'] ?? 0;
+            $stock = $data['stock'] ?? 0;
+            $promedio_valoraciones = $data['promedio_valoraciones'] ?? 0;
+            $ano_compatible = $data['ano_compatible'] ?? '';
+            $marca_compatible = $data['marca_compatible'] ?? '';
+            $modelo_compatible = $data['modelo_compatible'] ?? '';
+            $motor_compatible = $data['motor_compatible'] ?? '';
+            $certificaciones = $data['certificaciones'] ?? '';
+            $estado = isset($data['estado']) ? (int)$data['estado'] : 1;
+
             $sql = "UPDATE Producto 
-                SET nombre = '{$data['nombre']}',
-                    descripcion = '{$data['descripcion']}',
-                    precio = {$data['precio']},
-                    categoria_id = {$data['categoria_id']},
-                    stock = " . ($data['stock'] ?? 0) . ",
-                    promedio_valoraciones = {$data['promedio_valoraciones']},
-                    ano_compatible = '{$data['ano_compatible']}',
-                    marca_compatible = '{$data['marca_compatible']}',
-                    modelo_compatible = '{$data['modelo_compatible']}',
-                    motor_compatible = '{$data['motor_compatible']}',
-                    certificaciones = '{$data['certificaciones']}'
-                WHERE id = $id";
+            SET nombre = '{$nombre}',
+                descripcion = '{$descripcion}',
+                precio = {$precio},
+                categoria_id = {$categoria_id},
+                stock = {$stock},
+                promedio_valoraciones = {$promedio_valoraciones},
+                ano_compatible = '{$ano_compatible}',
+                marca_compatible = '{$marca_compatible}',
+                modelo_compatible = '{$modelo_compatible}',
+                motor_compatible = '{$motor_compatible}',
+                certificaciones = '{$certificaciones}',
+                estado = {$estado}
+            WHERE id = {$id}";
 
             return $this->enlace->executeSQL_DML($sql);
         } catch (Exception $e) {
             handleException($e);
         }
     }
+
     public function delete($id)
     {
         try {
