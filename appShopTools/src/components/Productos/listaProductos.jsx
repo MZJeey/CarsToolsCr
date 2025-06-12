@@ -18,18 +18,19 @@ import {
   DialogActions,
   Snackbar,
   IconButton,
-  Tooltip
+  Tooltip,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
   ShoppingCart as ShoppingCartIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  Add as AddIcon
+  Add as AddIcon,
 } from "@mui/icons-material";
 import ProductoService from "../../services/ProductoService";
-
+import { useNavigate } from "react-router-dom";
 export function ListaProductos() {
+  const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [confirmarEliminar, setConfirmarEliminar] = useState(false);
@@ -39,13 +40,14 @@ export function ListaProductos() {
 
   // Función para formatear el precio de manera segura
   const formatPrecio = (precio) => {
-    if (precio === null || precio === undefined) return '₡0.00';
-    
-    const precioNum = typeof precio === 'string' ? 
-                    parseFloat(precio.replace(/[^0-9.-]/g, '')) : 
-                    Number(precio);
-    
-    return isNaN(precioNum) ? '₡0.00' : `₡${precioNum.toFixed(2)}`;
+    if (precio === null || precio === undefined) return "₡0.00";
+
+    const precioNum =
+      typeof precio === "string"
+        ? parseFloat(precio.replace(/[^0-9.-]/g, ""))
+        : Number(precio);
+
+    return isNaN(precioNum) ? "₡0.00" : `₡${precioNum.toFixed(2)}`;
   };
 
   const fetchProductos = async () => {
@@ -53,13 +55,14 @@ export function ListaProductos() {
       setLoading(true);
       setError(null);
       const response = await ProductoService.getProductos();
-      
+
       if (response.data && Array.isArray(response.data)) {
-        const productosNormalizados = response.data.map(producto => ({
+        const productosNormalizados = response.data.map((producto) => ({
           ...producto,
-          precio: typeof producto.precio === 'string' ? 
-                parseFloat(producto.precio) : 
-                Number(producto.precio)
+          precio:
+            typeof producto.precio === "string"
+              ? parseFloat(producto.precio)
+              : Number(producto.precio),
         }));
         setProductos(productosNormalizados);
       } else {
@@ -109,12 +112,13 @@ export function ListaProductos() {
 
   const handleAgregarProducto = () => {
     console.log("Agregar nuevo producto");
-    // Implementar lógica para agregar nuevo producto
+    // Redirigir a la página de creación de producto
+    navigate("/crear");
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -124,7 +128,7 @@ export function ListaProductos() {
     return (
       <Alert severity="error" sx={{ m: 2 }}>
         {error}
-        <Box sx={{ mt: 1, fontSize: '0.8rem' }}>
+        <Box sx={{ mt: 1, fontSize: "0.8rem" }}>
           <div>Endpoint: {import.meta.env.VITE_BASE_URL}producto</div>
           <div>Verifica que el servidor esté disponible</div>
         </Box>
@@ -152,7 +156,14 @@ export function ListaProductos() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" fontWeight="bold">
           Catálogo de Productos
         </Typography>
@@ -169,60 +180,63 @@ export function ListaProductos() {
       <Grid container spacing={3}>
         {productos.map((producto) => (
           <Grid item xs={12} sm={6} md={4} key={producto.id}>
-            <Card sx={{ 
-              height: '100%', 
-              display: 'flex', 
-              flexDirection: 'column',
-              borderRadius: 2,
-              boxShadow: 2,
-              '&:hover': {
-                transform: 'scale(1.02)',
-                transition: 'transform 0.3s ease'
-              }
-            }}>
+            <Card
+              sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                borderRadius: 2,
+                boxShadow: 2,
+                "&:hover": {
+                  transform: "scale(1.02)",
+                  transition: "transform 0.3s ease",
+                },
+              }}
+            >
               <CardHeader
                 avatar={
-                  <Avatar 
-                    src={producto.imagen?.[0]?.url || '/default-product.png'} 
+                  <Avatar
+                    src={producto.imagen?.[0]?.url || "/default-product.png"}
                     alt={producto.nombre}
                     sx={{ width: 56, height: 56 }}
                   />
                 }
                 title={producto.nombre}
                 subheader={producto.categoria_nombre || "Sin categoría"}
-                titleTypographyProps={{ 
-                  variant: 'h6',
-                  fontWeight: 'bold'
+                titleTypographyProps={{
+                  variant: "h6",
+                  fontWeight: "bold",
                 }}
               />
-              
+
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography variant="body2" color="text.secondary" paragraph>
-                  {producto.descripcion?.substring(0, 100)}{producto.descripcion?.length > 100 ? '...' : ''}
+                  {producto.descripcion?.substring(0, 100)}
+                  {producto.descripcion?.length > 100 ? "..." : ""}
                 </Typography>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
                   <Typography variant="h6" color="primary" fontWeight="bold">
                     {formatPrecio(producto.precio)}
                   </Typography>
-                  <Chip 
-                    label={`Stock: ${producto.stock || 0}`} 
-                    size="small" 
-                    sx={{ ml: 'auto' }}
-                    color={producto.stock > 0 ? 'success' : 'error'}
+                  <Chip
+                    label={`Stock: ${producto.stock || 0}`}
+                    size="small"
+                    sx={{ ml: "auto" }}
+                    color={producto.stock > 0 ? "success" : "error"}
                   />
                 </Box>
 
                 {producto.marca_compatible && (
-                  <Chip 
-                    label={producto.marca_compatible} 
-                    size="small" 
+                  <Chip
+                    label={producto.marca_compatible}
+                    size="small"
                     sx={{ mr: 1, mb: 1 }}
                   />
                 )}
               </CardContent>
-              
-              <CardActions sx={{ justifyContent: 'space-between', p: 2 }}>
+
+              <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
                 <Button
                   variant="contained"
                   color="primary"
@@ -245,7 +259,7 @@ export function ListaProductos() {
                       <EditIcon />
                     </IconButton>
                   </Tooltip>
-                  
+
                   <Tooltip title="Eliminar">
                     <IconButton
                       aria-label="eliminar"
