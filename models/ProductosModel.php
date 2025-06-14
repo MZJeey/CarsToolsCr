@@ -56,7 +56,7 @@ class ProductoModel
     }
 
     // Crear producto junto con imágenes
-    public function create($data, $imagenes)
+    public function create($data)
     {
         try {
             // Crear producto

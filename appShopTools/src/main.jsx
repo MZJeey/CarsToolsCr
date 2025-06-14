@@ -26,6 +26,8 @@ import { Auth } from "./components/User/Auth";
 import { ListaProductos } from "./components/Productos/listaProductos";
 import { CrearProducto } from "./components/Productos/crearProducto";
 
+import DashboardLayoutBasic from "./components/Layout/dasboard";
+
 const rutas = createBrowserRouter([
   {
     element: <App />,
@@ -51,7 +53,10 @@ const rutas = createBrowserRouter([
         path: "/crear",
         element: <CrearProducto />,
       },
-
+      {
+        path: "/dasboard",
+        element: <DashboardLayoutBasic />,
+      },
       {
         //Grupo 1
         path: "/",

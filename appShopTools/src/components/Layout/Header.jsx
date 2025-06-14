@@ -17,7 +17,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import LiveTvIcon from "@mui/icons-material/LiveTv";
+import { TireRepair } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { UserContext } from "../../context/UserContext";
@@ -80,7 +80,7 @@ export default function Header() {
 
   const mantenimientoOpciones = [
     { name: "Productos", link: "/productos" },
-    { name: "Ver Mantenimientos", link: "/movie-table/list" },
+    { name: "Dashboard", link: "/dasboard" },
     // Puedes agregar más opciones aquí
   ];
 
@@ -367,7 +367,7 @@ export default function Header() {
             {menuPrincipalMobile}
           </Menu>
 
-          <Tooltip title="Alquiler películas">
+          <Tooltip title="Repuestos ">
             <IconButton
               size="large"
               edge="start"
@@ -375,9 +375,8 @@ export default function Header() {
               to="/"
               aria-label="Inicio"
               sx={{ color: "white" }}
-            >
-              <LiveTvIcon />
-            </IconButton>
+            ></IconButton>
+            <TireRepair sx={{ color: "white", fontSize: 30 }} />
           </Tooltip>
 
           {menuPrincipal}
