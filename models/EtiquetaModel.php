@@ -86,8 +86,4 @@ public function getByProducto($producto_id)
     }
 }
 
-
-
-
-
 }
