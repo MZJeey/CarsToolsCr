@@ -24,6 +24,7 @@ class etiqueta
             handleException($e);
         }
     }
+
     public function create()
     {
         try {
@@ -44,8 +45,6 @@ class etiqueta
             handleException($e);
         }
     }
-
-
 
     public function update($id)
     {
@@ -68,7 +67,6 @@ class etiqueta
             handleException($e);
         }
     }
-
 
     public function delete($id)
     {
