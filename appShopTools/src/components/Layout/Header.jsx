@@ -71,9 +71,9 @@ export default function Header() {
   ];
 
   const navItems = [
-    { name: "Vehiculos", link: "/movie", roles: null },
-    { name: "Cátalogo de Repuestos", link: "/catalog-movies/", roles: null },
-    { name: "Filtrar Repuestos", link: "/movie/filter", roles: null },
+    { name: "Repuestos", link: "/lista", roles: null },
+    { name: "Marcas", link: "/catalog-movies/", roles: null },
+    { name: "Servicios", link: "/movie/filter", roles: null },
     // Para mantenimiento vehículos, removemos el link y agregamos submenu
     { name: "Mantenimientos", link: null, roles: [] },
   ];

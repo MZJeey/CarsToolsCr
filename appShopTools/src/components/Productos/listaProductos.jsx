@@ -10,7 +10,6 @@ import {
   CircularProgress,
   Alert,
   Chip,
-  Avatar,
   Box,
   Dialog,
   DialogTitle,
@@ -19,8 +18,9 @@ import {
   Snackbar,
   IconButton,
   Tooltip,
+  CardMedia,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ShoppingCart as ShoppingCartIcon,
   Edit as EditIcon,
@@ -28,7 +28,8 @@ import {
   Add as AddIcon,
 } from "@mui/icons-material";
 import ProductoService from "../../services/ProductoService";
-import { useNavigate } from "react-router-dom";
+import Carousel from "react-material-ui-carousel";
+
 export function ListaProductos() {
   const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
@@ -37,16 +38,15 @@ export function ListaProductos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const BASE_URL =
+    import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
 
-  // Función para formatear el precio de manera segura
   const formatPrecio = (precio) => {
     if (precio === null || precio === undefined) return "₡0.00";
-
     const precioNum =
       typeof precio === "string"
         ? parseFloat(precio.replace(/[^0-9.-]/g, ""))
         : Number(precio);
-
     return isNaN(precioNum) ? "₡0.00" : `₡${precioNum.toFixed(2)}`;
   };
 
@@ -82,8 +82,7 @@ export function ListaProductos() {
 
   const handleEditar = (producto) => {
     setProductoSeleccionado(producto);
-    console.log("Editar producto:", producto);
-    // Redirigir a formulario de edición o abrir modal
+    // Aquí podrías redirigir a la página de edición o abrir un modal
   };
 
   const handleEliminar = (producto) => {
@@ -111,8 +110,6 @@ export function ListaProductos() {
   };
 
   const handleAgregarProducto = () => {
-    console.log("Agregar nuevo producto");
-    // Redirigir a la página de creación de producto
     navigate("/crear");
   };
 
@@ -194,13 +191,6 @@ export function ListaProductos() {
               }}
             >
               <CardHeader
-                avatar={
-                  <Avatar
-                    src={producto.imagen?.[0]?.url || "/default-product.png"}
-                    alt={producto.nombre}
-                    sx={{ width: 56, height: 56 }}
-                  />
-                }
                 title={producto.nombre}
                 subheader={producto.categoria_nombre || "Sin categoría"}
                 titleTypographyProps={{
@@ -208,6 +198,34 @@ export function ListaProductos() {
                   fontWeight: "bold",
                 }}
               />
+
+              {/* Carrusel de imágenes */}
+              {producto.imagen && producto.imagen.length > 0 ? (
+                <Carousel
+                  autoPlay={false}
+                  navButtonsAlwaysVisible={true}
+                  indicators={producto.imagen.length > 1}
+                  sx={{ height: 180, backgroundColor: "#f5f5f5" }}
+                >
+                  {producto.imagen.map((imgObj, idx) => (
+                    <CardMedia
+                      key={idx}
+                      component="img"
+                      image={`${BASE_URL}/${imgObj.imagen}`}
+                      alt={`${producto.nombre} - imagen ${idx + 1}`}
+                      sx={{ height: 180, width: "100%", objectFit: "contain" }}
+                    />
+                  ))}
+                </Carousel>
+              ) : (
+                <CardMedia
+                  component="img"
+                  image="placeholder-image-url"
+                  alt="Imagen no disponible"
+                  height="180"
+                  sx={{ objectFit: "contain", background: "#f5f5f5" }}
+                />
+              )}
 
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography variant="body2" color="text.secondary" paragraph>

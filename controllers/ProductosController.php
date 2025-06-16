@@ -34,54 +34,62 @@ class producto
     {
         try {
             $response = new Response();
-            $request = new Request();
 
-            // Obtener JSON enviado y convertir a array
-            $inputJSON = json_decode(file_get_contents("php://input"), true); // convierte a array
+            $raw = file_get_contents("php://input");
+            error_log("JSON recibido: $raw");
 
-            if (!isset($inputJSON['data']) || !isset($inputJSON['imagenes'])) {
-                $response->toJSON([
+            $input = json_decode($raw, true);
+
+            if (!$input || !isset($input['data'], $input['imagenes'])) {
+                return $response->toJSON([
                     'status' => 400,
-                    'result' => 'Datos incompletos: se requiere "data" e "imagenes".'
+                    'result' => 'JSON malformado o faltan campos requeridos: "data" e "imagenes".'
                 ]);
-                return;
             }
 
             $producto = new ProductoModel();
-            $result = $producto->create($inputJSON['data'], $inputJSON['imagenes']);
+            $exito = $producto->create($input['data'], $input['imagenes']);
 
-            $response->toJSON([
-                'status' => 200,
-                'result' => $result ? 'Producto creado exitosamente' : 'Error al crear el producto'
+            return $response->toJSON([
+                'status' => $exito ? 200 : 500,
+                'result' => $exito ? 'Producto creado exitosamente' : 'Error al crear el producto'
             ]);
         } catch (Exception $e) {
-            handleException($e); // asegúrate de tener esta función definida
+            handleException($e);
         }
     }
+
     public function createProducto()
     {
         try {
             $response = new Response();
             $inputJSON = json_decode(file_get_contents("php://input"), true);
 
-            if (!isset($inputJSON['data'])) {
+            if (!isset($inputJSON['data']) || !is_array($inputJSON['data'])) {
+                http_response_code(400);
                 return $response->toJSON([
                     'status' => 400,
-                    'result' => 'Datos incompletos: se requiere "data".'
+                    'result' => 'Datos incompletos o inválidos: se requiere "data".'
                 ]);
             }
 
             $producto = new ProductoModel();
-            $result = $producto->createProducto($inputJSON['data']); // método sin imágenes
+            $result = $producto->createProducto($inputJSON['data']);
 
+            http_response_code($result ? 200 : 500);
             return $response->toJSON([
                 'status' => $result ? 200 : 500,
                 'result' => $result ? 'Producto creado exitosamente' : 'Error al crear el producto'
             ]);
         } catch (Exception $e) {
-            handleException($e);
+            http_response_code(500);
+            return $response->toJSON([
+                'status' => 500,
+                'result' => 'Error interno del servidor: ' . $e->getMessage()
+            ]);
         }
     }
+
 
     public function update($id)
     {

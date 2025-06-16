@@ -50,20 +50,16 @@ class ImageModel
             handleException($e);
         }
     }
+
     //Obtener una imagen de una pelicula
     public function getImagen($idProducto)
     {
         try {
-
-            //Consulta sql
-            $vSql = "SELECT * FROM ImagenProducto where id=$idProducto";
-
-            //Ejecutar la consulta
+            // Consulta SQL
+            $vSql = "SELECT * FROM ImagenProducto WHERE producto_id = $idProducto";
+            // Ejecutar la consulta
             $vResultado = $this->enlace->ExecuteSQL($vSql);
-            if (!empty($vResultado)) {
-                // Retornar el objeto
-                return $vResultado[0];
-            }
+            // Retornar todas las imágenes (puede ser un array vacío si no hay)
             return $vResultado;
         } catch (Exception $e) {
             handleException($e);

@@ -23,10 +23,12 @@ import { Login } from "./components/User/Login";
 import { Logout } from "./components/User/Logout";
 import { Signup } from "./components/User/Signup";
 import { Auth } from "./components/User/Auth";
-import { ListaProductos } from "./components/Productos/listaProductos";
+
 import { CrearProducto } from "./components/Productos/crearProducto";
 
 import DashboardLayoutBasic from "./components/Layout/dasboard";
+import { ListaProductos } from "./components/Productos/listaProductos";
+import { Lista } from "./components/Productos/lista";
 
 const rutas = createBrowserRouter([
   {
@@ -56,6 +58,10 @@ const rutas = createBrowserRouter([
       {
         path: "/dasboard",
         element: <DashboardLayoutBasic />,
+      },
+      {
+        path: "/lista",
+        element: <Lista />,
       },
       {
         //Grupo 1

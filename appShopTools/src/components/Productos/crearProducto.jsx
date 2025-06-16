@@ -26,7 +26,7 @@ import {
 } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import ProductoService from "../../services/ProductoService";
-
+//import { SelectGenres } from "../Productos/Form/selectGenere";
 export function CrearProducto() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
