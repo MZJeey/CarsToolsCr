@@ -1,33 +1,75 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
+  Grid,
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
   Typography,
+  Button,
+  CircularProgress,
+  Alert,
+  Chip,
+  Avatar,
+  Box,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  Snackbar,
+  IconButton,
+  Tooltip
 } from "@mui/material";
+import { Link } from "react-router-dom";
+import {
+  ShoppingCart as ShoppingCartIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Add as AddIcon
+} from "@mui/icons-material";
+import ProductoService from "../../services/ProductoService";
 
-export default function ListaProductos() {
+export function ListaProductos() {
   const [productos, setProductos] = useState([]);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [confirmarEliminar, setConfirmarEliminar] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
-  // Obtener productos desde la API
+  // Función para formatear el precio de manera segura
+  const formatPrecio = (precio) => {
+    if (precio === null || precio === undefined) return '₡0.00';
+    
+    const precioNum = typeof precio === 'string' ? 
+                    parseFloat(precio.replace(/[^0-9.-]/g, '')) : 
+                    Number(precio);
+    
+    return isNaN(precioNum) ? '₡0.00' : `₡${precioNum.toFixed(2)}`;
+  };
+
   const fetchProductos = async () => {
     try {
-      const res = await fetch("/api/productos");
-      const data = await res.json();
-      setProductos(data);
-    } catch (error) {
-      console.error("Error al cargar productos", error);
+      setLoading(true);
+      setError(null);
+      const response = await ProductoService.getProductos();
+      
+      if (response.data && Array.isArray(response.data)) {
+        const productosNormalizados = response.data.map(producto => ({
+          ...producto,
+          precio: typeof producto.precio === 'string' ? 
+                parseFloat(producto.precio) : 
+                Number(producto.precio)
+        }));
+        setProductos(productosNormalizados);
+      } else {
+        throw new Error("Formato de respuesta inesperado");
+      }
+    } catch (err) {
+      console.error("Error al cargar productos:", err);
+      setError(err.message || "Error al cargar los productos");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,8 +79,8 @@ export default function ListaProductos() {
 
   const handleEditar = (producto) => {
     setProductoSeleccionado(producto);
-    // Aquí puedes abrir un modal o navegar al formulario con los datos del producto
     console.log("Editar producto:", producto);
+    // Redirigir a formulario de edición o abrir modal
   };
 
   const handleEliminar = (producto) => {
@@ -48,64 +90,179 @@ export default function ListaProductos() {
 
   const confirmarEliminacion = async () => {
     try {
-      await fetch(`/api/productos/${productoSeleccionado.id}`, {
-        method: "DELETE",
-      });
+      await ProductoService.deleteProducto(productoSeleccionado.id);
       setConfirmarEliminar(false);
-      fetchProductos(); // Recargar la lista
+      setSuccess(
+        `Producto "${productoSeleccionado.nombre}" eliminado correctamente`
+      );
+      fetchProductos();
     } catch (error) {
       console.error("Error al eliminar producto", error);
+      setError("Error al eliminar el producto. Por favor, intente nuevamente.");
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setError(null);
+    setSuccess(null);
+  };
+
+  const handleAgregarProducto = () => {
+    console.log("Agregar nuevo producto");
+    // Implementar lógica para agregar nuevo producto
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ m: 2 }}>
+        {error}
+        <Box sx={{ mt: 1, fontSize: '0.8rem' }}>
+          <div>Endpoint: {import.meta.env.VITE_BASE_URL}producto</div>
+          <div>Verifica que el servidor esté disponible</div>
+        </Box>
+      </Alert>
+    );
+  }
+
+  if (productos.length === 0) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="info" sx={{ mb: 3 }}>
+          No hay productos disponibles
+        </Alert>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleAgregarProducto}
+        >
+          Agregar Producto
+        </Button>
+      </Box>
+    );
+  }
+
   return (
-    <>
-      <Typography variant="h6" fontWeight="bold" gutterBottom>
-        Lista de Productos
-      </Typography>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" fontWeight="bold">
+          Catálogo de Productos
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleAgregarProducto}
+        >
+          Nuevo Producto
+        </Button>
+      </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Precio</TableCell>
-              <TableCell>Stock</TableCell>
-              <TableCell>Categoría</TableCell>
-              <TableCell>Acciones</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {productos.map((prod) => (
-              <TableRow key={prod.id}>
-                <TableCell>{prod.nombre}</TableCell>
-                <TableCell>₡{prod.precio.toFixed(2)}</TableCell>
-                <TableCell>{prod.stock}</TableCell>
-                <TableCell>{prod.categoria}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => handleEditar(prod)}
-                    sx={{ mr: 1 }}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleEliminar(prod)}
-                  >
-                    Eliminar
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Grid container spacing={3}>
+        {productos.map((producto) => (
+          <Grid item xs={12} sm={6} md={4} key={producto.id}>
+            <Card sx={{ 
+              height: '100%', 
+              display: 'flex', 
+              flexDirection: 'column',
+              borderRadius: 2,
+              boxShadow: 2,
+              '&:hover': {
+                transform: 'scale(1.02)',
+                transition: 'transform 0.3s ease'
+              }
+            }}>
+              <CardHeader
+                avatar={
+                  <Avatar 
+                    src={producto.imagen?.[0]?.url || '/default-product.png'} 
+                    alt={producto.nombre}
+                    sx={{ width: 56, height: 56 }}
+                  />
+                }
+                title={producto.nombre}
+                subheader={producto.categoria_nombre || "Sin categoría"}
+                titleTypographyProps={{ 
+                  variant: 'h6',
+                  fontWeight: 'bold'
+                }}
+              />
+              
+              <CardContent sx={{ flexGrow: 1 }}>
+                <Typography variant="body2" color="text.secondary" paragraph>
+                  {producto.descripcion?.substring(0, 100)}{producto.descripcion?.length > 100 ? '...' : ''}
+                </Typography>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <Typography variant="h6" color="primary" fontWeight="bold">
+                    {formatPrecio(producto.precio)}
+                  </Typography>
+                  <Chip 
+                    label={`Stock: ${producto.stock || 0}`} 
+                    size="small" 
+                    sx={{ ml: 'auto' }}
+                    color={producto.stock > 0 ? 'success' : 'error'}
+                  />
+                </Box>
 
-      {/* Diálogo de confirmación de eliminación */}
+                {producto.marca_compatible && (
+                  <Chip 
+                    label={producto.marca_compatible} 
+                    size="small" 
+                    sx={{ mr: 1, mb: 1 }}
+                  />
+                )}
+              </CardContent>
+              
+              <CardActions sx={{ justifyContent: 'space-between', p: 2 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component={Link}
+                  to={`/productos/${producto.id}`}
+                  startIcon={<ShoppingCartIcon />}
+                  sx={{ borderRadius: 1 }}
+                >
+                  Ver Detalles
+                </Button>
+
+                <Box>
+                  <Tooltip title="Editar">
+                    <IconButton
+                      aria-label="editar"
+                      color="primary"
+                      onClick={() => handleEditar(producto)}
+                      sx={{ ml: 1 }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                  
+                  <Tooltip title="Eliminar">
+                    <IconButton
+                      aria-label="eliminar"
+                      color="error"
+                      onClick={() => handleEliminar(producto)}
+                      sx={{ ml: 1 }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
       <Dialog
         open={confirmarEliminar}
         onClose={() => setConfirmarEliminar(false)}
@@ -122,6 +279,20 @@ export default function ListaProductos() {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+
+      <Snackbar
+        open={!!error || !!success}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={error ? "error" : "success"}
+          sx={{ width: "100%" }}
+        >
+          {error || success}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 }

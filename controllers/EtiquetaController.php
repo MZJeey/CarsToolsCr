@@ -24,6 +24,7 @@ class etiqueta
             handleException($e);
         }
     }
+
     public function create()
     {
         try {
@@ -45,48 +46,39 @@ class etiqueta
         }
     }
 
+    public function update($id)
+    {
+        try {
+            $response = new Response();
 
+            // Convertir el JSON recibido a array
+            $data = json_decode(file_get_contents("php://input"), true);
 
-public function update()
-{
-    try {
-        $response = new Response();
-        $request = new Request();
-        $data = (array) $request->getJSON(); // convertir objeto en array
+            // Si viene envuelto en "data", extraerlo
+            if (isset($data['data'])) {
+                $data = $data['data'];
+            }
 
-        // Extraer el ID desde la URL
-        $url = $_SERVER['REQUEST_URI'];
-        $partes = explode('/', $url);
-        $id = end($partes); // último valor de la URL
+            $model = new EtiquetaModel();
+            $result = $model->update($id, $data);
 
-        $model = new EtiquetaModel();
-        $result = $model->update($id, $data);
-        $response->toJSON($result);
-    } catch (Exception $e) {
-        handleException($e);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
     }
-}
 
-
-public function delete()
-{
-    try {
-        $response = new Response();
-        $request = new Request();
-
-        // Obtener el ID desde la URL
-        $url = $_SERVER['REQUEST_URI'];
-        $partes = explode('/', $url);
-        $id = end($partes); // Toma el último segmento de la URL
-
-        $model = new EtiquetaModel();
-        $result = $model->delete($id);
-        $response->toJSON($result);
-    } catch (Exception $e) {
-        handleException($e);
+    public function delete($id)
+    {
+        try {
+            $response = new Response();
+            $model = new EtiquetaModel();
+            $result = $model->delete($id);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
     }
-}
-
 
     public function getByProducto($producto_id)
     {
