@@ -81,7 +81,7 @@ export default function Header() {
   const mantenimientoOpciones = [
     { name: "Productos", link: "/productos" },
     { name: "Dashboard", link: "/dasboard" },
-    // Puedes agregar más opciones aquí
+    { name: "Reseñas", link: "/resena" },
   ];
 
   const menuPrincipal = (

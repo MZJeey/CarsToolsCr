@@ -33,12 +33,9 @@ require_once "models/ImageModel.php";
 //Modelo de api de carstools
 require_once "models/ProductosModel.php";
 require_once "models/EtiquetaModel.php";
-<<<<<<< HEAD
 require_once "models/ImageModel.php";
-=======
 require_once "models/ResenaModel.php";
 
->>>>>>> 3c18824ec173d4abe26454b094e42d37c3a90e22
 /***--- Agregar todos los controladores*/
 require_once "controllers/UserController.php";
 require_once "controllers/DirectorController.php";
@@ -54,14 +51,12 @@ require_once "controllers/ImageController.php";
 require_once "controllers/ProductosController.php";
 //Controller de Etiqueta y del api de carstools
 require_once "controllers/EtiquetaController.php";
-<<<<<<< HEAD
+
 //Controller de Imagenes y del api de carstools
 require_once "controllers/ImageController.php";
-=======
+
 //Controller de Resena y del api de carstools
 require_once "controllers/ResenaController.php";
-
->>>>>>> 3c18824ec173d4abe26454b094e42d37c3a90e22
 
 //Enrutador
 require_once "routes/RoutesController.php";

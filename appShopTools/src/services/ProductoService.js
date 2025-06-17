@@ -5,6 +5,22 @@ class ProductoService {
   getProductos() {
     return axios.get(BASE_URL);
   }
+  getDetalleProducto(id) {
+    return axios.get(BASE_URL + "/" + id);
+    // Asegúrate de que esta ruta coincida con el método `getDetalles($id)` en el controlador PHP
+  }
+  createProducto(producto) {
+    return axios.post(BASE_URL, producto);
+    // Asegúrate de que esta ruta coincida con el método `create()` en el controlador PHP
+  }
+  updateProducto(id, producto) {
+    return axios.put(BASE_URL + "/" + id, producto);
+    // Asegúrate de que esta ruta coincida con el método `update($id)` en el controlador PHP
+  }
+  deleteProducto(id) {
+    return axios.delete(BASE_URL + "/" + id);
+    // Asegúrate de que esta ruta coincida con el método `delete($id)` en el controlador PHP
+  }
 }
 
 export default new ProductoService();

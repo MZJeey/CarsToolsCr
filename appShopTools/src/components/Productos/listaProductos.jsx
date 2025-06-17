@@ -259,7 +259,7 @@ export function ListaProductos() {
                   variant="contained"
                   color="primary"
                   component={Link}
-                  to={`/productos/${producto.id}`}
+                  to={`/detalles/${producto.id}`}
                   startIcon={<ShoppingCartIcon />}
                   sx={{ borderRadius: 1 }}
                 >

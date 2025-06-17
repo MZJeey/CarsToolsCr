@@ -29,6 +29,8 @@ import { CrearProducto } from "./components/Productos/crearProducto";
 import DashboardLayoutBasic from "./components/Layout/dasboard";
 import { ListaProductos } from "./components/Productos/listaProductos";
 import { Lista } from "./components/Productos/lista";
+import ListaResenas from "./components/Productos/listaResena";
+import DetalleProducto from "./components/Productos/listaDetalles";
 
 const rutas = createBrowserRouter([
   {
@@ -63,6 +65,15 @@ const rutas = createBrowserRouter([
         path: "/lista",
         element: <Lista />,
       },
+      {
+        path: "/detalles/:id",
+        element: <DetalleProducto />,
+      },
+      {
+        path: "/resena",
+        element: <ListaResenas />,
+      },
+
       {
         //Grupo 1
         path: "/",

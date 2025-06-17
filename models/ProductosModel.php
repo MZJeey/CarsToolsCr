@@ -113,6 +113,7 @@ class ProductoModel
 
 
 
+
     public function createProducto($data)
     {
         try {
@@ -209,6 +210,45 @@ class ProductoModel
         try {
             $sql = "UPDATE Producto SET estado = true WHERE id = $id";
             return $this->enlace->executeSQL_DML($sql);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function Detalles($id)
+    {
+        try {
+            $sql = "SELECT 
+    p.id AS producto_id,
+    p.nombre AS producto_nombre,
+    p.descripcion,
+    p.precio,
+    c.nombre AS categoria,
+    GROUP_CONCAT(DISTINCT e.nombre SEPARATOR ', ') AS etiquetas,
+    GROUP_CONCAT(DISTINCT ip.imagen SEPARATOR ', ') AS imagenes,
+    r.id AS resena_id,
+    u.nombre_usuario,
+    r.fecha,
+    r.comentario,
+    r.valoracion
+FROM Producto p
+LEFT JOIN Categoria c ON p.categoria_id = c.id
+LEFT JOIN ProductoEtiqueta pe ON pe.producto_id = p.id
+LEFT JOIN Etiqueta e ON e.id = pe.etiqueta_id
+LEFT JOIN ImagenProducto ip ON ip.producto_id = p.id
+LEFT JOIN Resena r ON r.producto_id = p.id
+LEFT JOIN Usuario u ON u.id = r.usuario_id
+WHERE p.id = $id
+GROUP BY 
+    p.id, r.id
+ORDER BY 
+    r.fecha DESC
+";
+
+            // Ejecutar con parámetro
+            $productos = $this->enlace->executeSQL($sql, [$id]);
+
+            return $productos;
         } catch (Exception $e) {
             handleException($e);
         }

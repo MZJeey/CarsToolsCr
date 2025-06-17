@@ -30,6 +30,20 @@ class producto
             handleException($e);
         }
     }
+    public function getDetalles($id)
+    {
+        try {
+            $response = new Response();
+            //Instancia del modelo
+            $producto = new ProductoModel();
+            //Acción del modelo a ejecutar
+            $result = $producto->Detalles($id);
+            //Dar respuesta
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
     public function create()
     {
         try {

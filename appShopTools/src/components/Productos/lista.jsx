@@ -251,7 +251,7 @@ export function Lista() {
                     variant="contained"
                     startIcon={<Straighten />}
                     component={Link}
-                    to={`/productos/${producto.id}?tab=talles`}
+                    to={`/detalles/${producto.id}?tab=talles`}
                   >
                     Detalles
                   </SecondaryActionButton>
