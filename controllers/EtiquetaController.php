@@ -46,32 +46,48 @@ class etiqueta
         }
     }
 
+<<<<<<< HEAD
     public function update($id)
+=======
+
+
+    public function update()
+>>>>>>> main
     {
         try {
             $response = new Response();
+            $request = new Request();
+            $data = (array) $request->getJSON(); // convertir objeto en array
 
-            // Convertir el JSON recibido a array
-            $data = json_decode(file_get_contents("php://input"), true);
-
-            // Si viene envuelto en "data", extraerlo
-            if (isset($data['data'])) {
-                $data = $data['data'];
-            }
+            // Extraer el ID desde la URL
+            $url = $_SERVER['REQUEST_URI'];
+            $partes = explode('/', $url);
+            $id = end($partes); // último valor de la URL
 
             $model = new EtiquetaModel();
             $result = $model->update($id, $data);
-
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
 
+<<<<<<< HEAD
     public function delete($id)
+=======
+
+    public function delete()
+>>>>>>> main
     {
         try {
             $response = new Response();
+            $request = new Request();
+
+            // Obtener el ID desde la URL
+            $url = $_SERVER['REQUEST_URI'];
+            $partes = explode('/', $url);
+            $id = end($partes); // Toma el último segmento de la URL
+
             $model = new EtiquetaModel();
             $result = $model->delete($id);
             $response->toJSON($result);
@@ -79,16 +95,19 @@ class etiqueta
             handleException($e);
         }
     }
+public function update($id)
+{
+    try {
+        $response = new Response();
+        $request = new Request();
+        $data = (array) $request->getJSON();
 
-    public function getByProducto($producto_id)
-    {
-        try {
-            $response = new Response();
-            $model = new EtiquetaModel();
-            $result = $model->getByProducto($producto_id);
-            $response->toJSON($result);
-        } catch (Exception $e) {
-            handleException($e);
-        }
+        $model = new EtiquetaModel();
+        $result = $model->update($id, $data);
+        $response->toJSON($result);
+    } catch (Exception $e) {
+        handleException($e);
     }
+}
+
 }

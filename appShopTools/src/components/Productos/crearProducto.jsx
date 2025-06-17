@@ -479,7 +479,6 @@ export function CrearProducto() {
                     variant="contained"
                     color="primary"
                     startIcon={<SaveIcon />}
-                    disabled={loading || !isFormValid()}
                   >
                     {loading ? (
                       <CircularProgress size={24} />
