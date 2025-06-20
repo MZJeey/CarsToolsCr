@@ -35,6 +35,8 @@ require_once "models/ProductosModel.php";
 require_once "models/EtiquetaModel.php";
 require_once "models/ImageModel.php";
 require_once "models/ResenaModel.php";
+require_once "models/ProductoEtiquetaModel.php";
+require_once "models/PromocionModel.php";
 
 /***--- Agregar todos los controladores*/
 require_once "controllers/UserController.php";
@@ -57,6 +59,12 @@ require_once "controllers/ImageController.php";
 
 //Controller de Resena y del api de carstools
 require_once "controllers/ResenaController.php";
+
+
+//Controller de ProductoEtiqueta y del api de carstools
+require_once "controllers/ProductoEtiquetaController.php";
+//Controller de Promocion y del api de carstools
+require_once "controllers/PromocionController.php";
 
 //Enrutador
 require_once "routes/RoutesController.php";

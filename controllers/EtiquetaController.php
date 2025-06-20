@@ -46,17 +46,14 @@ class etiqueta
         }
     }
 
-    public function update()
+
+    public function update($id)
+
     {
         try {
             $response = new Response();
             $request = new Request();
-            $data = (array) $request->getJSON(); // convertir objeto en array
-
-            // Extraer el ID desde la URL
-            $url = $_SERVER['REQUEST_URI'];
-            $partes = explode('/', $url);
-            $id = end($partes); // último valor de la URL
+            $data = (array) $request->getJSON();
 
             $model = new EtiquetaModel();
             $result = $model->update($id, $data);
@@ -66,17 +63,12 @@ class etiqueta
         }
     }
 
-    public function delete()
+
+    public function delete($id)
+
     {
         try {
             $response = new Response();
-            $request = new Request();
-
-            // Obtener el ID desde la URL
-            $url = $_SERVER['REQUEST_URI'];
-            $partes = explode('/', $url);
-            $id = end($partes); // Toma el último segmento de la URL
-
             $model = new EtiquetaModel();
             $result = $model->delete($id);
             $response->toJSON($result);
