@@ -1,14 +1,14 @@
 import axios from "axios";
-const BASE_URL = import.meta.env.VITE_BASE_URL + "resena";
-class ResenaService {
+const BASE_URL = import.meta.env.VITE_BASE_URL + "etiqueta";
+class EtiquetaService {
   // Obtener lista de resenas
-  getResenas() {
+  getetiquetas() {
     return axios.get(BASE_URL);
   }
-  getResenasPorProducto(id) {
+  getEtiquetasPorProducto(id) {
     return axios.get(BASE_URL + "/" + id);
     // Asegúrate de que esta ruta coincida con el método `getDetalles($id)` en el controlador PHP
   }
 }
 
-export default new ResenaService();
+export default new EtiquetaService();

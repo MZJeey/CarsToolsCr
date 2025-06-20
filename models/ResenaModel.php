@@ -38,10 +38,9 @@ ORDER BY r.fecha DESC;
     public function getByProducto($producto_id)
     {
         $sql = "SELECT r.*, u.nombre_usuario as usuario_nombre
-
-                FROM resena r
-                JOIN usuario u ON r.usuario_id = u.id
-                WHERE r.producto_id = $producto_id AND r.moderado = 0";
+FROM resena r
+JOIN usuario u ON r.usuario_id = u.id
+WHERE r.producto_id = $producto_id;";
         return $this->enlace->executeSQL($sql);
     }
 

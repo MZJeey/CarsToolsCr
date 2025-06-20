@@ -1,69 +1,32 @@
 import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import ProductoService from "../../services/ProductoService";
 import {
-  Card,
-  CardContent,
-  Typography,
-  Avatar,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Chip,
-  Divider,
   Box,
   CircularProgress,
   Alert,
+  Button,
+  Card,
+  CardContent,
+  Typography,
   IconButton,
   Rating,
-  Button,
-  useTheme,
   Grid,
+  Divider,
 } from "@mui/material";
-import {
-  FavoriteBorder,
-  Favorite,
-  ShoppingCart,
-  ArrowBack,
-} from "@mui/icons-material";
-import { useNavigate, useParams } from "react-router-dom"; // Asegúrate de importar useParams
-import ProductoService from "../../services/ProductoService";
-import { styled } from "@mui/system";
-
-// Estilos personalizados
-const ProductImage = styled("img")(({ theme }) => ({
-  width: "100%",
-  maxHeight: 500,
-  objectFit: "contain",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.background.default,
-  marginBottom: theme.spacing(2),
-}));
-
-const PriceText = styled(Typography)(({ theme }) => ({
-  color: theme.palette.success.main,
-  fontWeight: "bold",
-  margin: theme.spacing(2, 0),
-}));
-
-const DetailSection = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(3),
-  padding: theme.spacing(2),
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: theme.shape.borderRadius,
-}));
+import { Favorite, FavoriteBorder, ShoppingCart } from "@mui/icons-material";
+import Etiquetas from "../Productos/Etiqueta";
+import Resenas from "../Productos/resena";
 
 const DetalleProducto = () => {
-  const { id } = useParams(); // Obtener el id desde la URL
-  const theme = useTheme();
+  const { id } = useParams();
   const navigate = useNavigate();
+
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
-
-  const BASE_URL =
-    (import.meta.env.VITE_BASE_URL || "").replace(/\/$/, "") + "/uploads";
 
   useEffect(() => {
     const fetchProducto = async () => {
@@ -71,31 +34,12 @@ const DetalleProducto = () => {
       setError(null);
       try {
         const response = await ProductoService.getDetalleProducto(id);
-        if (!response.data) {
-          throw new Error("Producto no encontrado");
-        }
-        const productData = response.data;
-
-        // Imagen
-        if (productData.imagen) {
-          if (Array.isArray(productData.imagen)) {
-            productData.imageUrl = `${BASE_URL}/${productData.imagen[0]?.imagen}`;
-          } else if (
-            typeof productData.imagen === "string" &&
-            !productData.imagen.startsWith("data:image")
-          ) {
-            productData.imageUrl = `${BASE_URL}/${productData.imagen}`;
-          } else {
-            productData.imageUrl = productData.imagen;
-          }
-        }
-
-        setProducto(productData);
+        if (!response.data) throw new Error("Producto no encontrado");
+        setProducto(response.data);
 
         const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-        setIsFavorite(favorites.includes(productData.id));
+        setIsFavorite(favorites.includes(response.data.id));
       } catch (err) {
-        console.error("Error al cargar producto:", err);
         setError(err.message || "Error al cargar el producto");
       } finally {
         setLoading(false);
@@ -118,8 +62,7 @@ const DetalleProducto = () => {
 
   const handleAddToCart = () => {
     if (!producto) return;
-    console.log("Producto agregado al carrito:", producto);
-    // Aquí puedes integrar con tu sistema de carrito
+    console.log("Agregado al carrito:", producto);
   };
 
   if (loading) {
@@ -140,11 +83,7 @@ const DetalleProducto = () => {
       <Alert
         severity="error"
         sx={{ m: 3 }}
-        action={
-          <Button color="inherit" size="small" onClick={() => navigate(-1)}>
-            Volver
-          </Button>
-        }
+        action={<Button onClick={() => navigate(-1)}>Volver</Button>}
       >
         {error}
       </Alert>
@@ -159,21 +98,41 @@ const DetalleProducto = () => {
     );
   }
 
+  const BASE_URL =
+    (import.meta.env.VITE_BASE_URL || "").replace(/\/$/, "") + "/uploads";
+  let imageUrl = "";
+  if (producto.imagen) {
+    if (Array.isArray(producto.imagen)) {
+      imageUrl = `${BASE_URL}/${producto.imagen[0]?.imagen}`;
+    } else if (
+      typeof producto.imagen === "string" &&
+      !producto.imagen.startsWith("data:image")
+    ) {
+      imageUrl = `${BASE_URL}/${producto.imagen}`;
+    } else {
+      imageUrl = producto.imagen;
+    }
+  }
+
   return (
-    <Box sx={{ maxWidth: 1200, margin: "auto", p: { xs: 1, md: 3 } }}>
-      <Button
-        startIcon={<ArrowBack />}
-        onClick={() => navigate(-1)}
-        sx={{ mb: 2 }}
-      >
-        Volver a productos
+    <Box sx={{ maxWidth: 1300, margin: "auto", p: 3 }}>
+      <Button variant="outlined" sx={{ mb: 3 }} onClick={() => navigate(-1)}>
+        ⬅ Volver
       </Button>
 
-      <Card elevation={3}>
-        <CardContent>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={6}>
-              <Box position="relative">
+      <Grid container spacing={4}>
+        {/* Columna Izquierda: Producto */}
+        <Grid item xs={12} md={7}>
+          <Card elevation={3} sx={{ borderRadius: 3 }}>
+            <CardContent>
+              <Box
+                sx={{
+                  position: "relative",
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  mb: 2,
+                }}
+              >
                 {imageLoading && (
                   <Box
                     display="flex"
@@ -181,170 +140,109 @@ const DetalleProducto = () => {
                     alignItems="center"
                     height={300}
                   >
-                    <CircularProgress />
+                    <Typography>Cargando imagen...</Typography>
                   </Box>
                 )}
-                <ProductImage
-                  src={producto.imageUrl}
+                <Box
+                  component="img"
+                  src={imageUrl}
                   alt={`Imagen de ${producto.nombre}`}
+                  sx={{
+                    width: "100%",
+                    maxHeight: 400,
+                    objectFit: "contain",
+                    display: imageLoading ? "none" : "block",
+                    backgroundColor: "#fafafa",
+                    borderRadius: 2,
+                    boxShadow: 1,
+                  }}
                   onLoad={() => setImageLoading(false)}
-                  style={{ display: imageLoading ? "none" : "block" }}
                 />
                 <IconButton
                   sx={{
                     position: "absolute",
                     top: 16,
                     right: 16,
-                    backgroundColor: "rgba(255,255,255,0.8)",
-                    "&:hover": { backgroundColor: "rgba(255,255,255,0.9)" },
+                    backgroundColor: "white",
+                    boxShadow: 1,
                   }}
                   onClick={handleToggleFavorite}
                 >
                   {isFavorite ? <Favorite color="error" /> : <FavoriteBorder />}
                 </IconButton>
               </Box>
-            </Grid>
 
-            <Grid item xs={12} md={6}>
-              <Typography variant="h3" component="h1" gutterBottom>
+              <Typography variant="h4" gutterBottom fontWeight={700}>
                 {producto.nombre}
               </Typography>
 
-              <Box display="flex" alignItems="center" mb={2}>
-                <Rating
-                  value={producto.promedio_valoraciones || 0}
-                  precision={0.5}
-                  readOnly
-                />
-                <Typography variant="body2" color="text.secondary" ml={1}>
-                  ({producto.resenas?.length || 0} reseñas)
-                </Typography>
-              </Box>
-
-              <PriceText variant="h4">
+              <Typography
+                variant="h5"
+                sx={{ color: "success.main", fontWeight: "bold", mb: 2 }}
+              >
                 {new Intl.NumberFormat("es-CR", {
                   style: "currency",
                   currency: "CRC",
                 }).format(producto.precio)}
-              </PriceText>
-
-              <Typography variant="body1" paragraph>
-                {producto.descripcion}
               </Typography>
 
-              <Box mt={3} mb={2}>
+              <Typography variant="body1" paragraph sx={{ color: "#444" }}>
+                {producto.descripcion}
+              </Typography>
+              {producto.motor_compatible && (
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  <strong>Motor compatible:</strong> {producto.motor_compatible}
+                </Typography>
+              )}
+
+              {/* 🗂️ Categorías */}
+
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mt={2}
+              >
+                {producto.categoria_nombre && (
+                  <Typography variant="body2">
+                    <strong>Categoría:</strong> {producto.categoria_nombre}
+                  </Typography>
+                )}
                 <Button
                   variant="contained"
                   color="primary"
                   size="large"
                   startIcon={<ShoppingCart />}
                   onClick={handleAddToCart}
-                  sx={{ mr: 2 }}
                 >
                   Agregar al carrito
                 </Button>
               </Box>
+            </CardContent>
+          </Card>
+        </Grid>
 
-              <DetailSection>
-                <Typography variant="h6" gutterBottom>
-                  Detalles del producto
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2">
-                      <strong>Categoría:</strong> {producto.categoria}
-                      {console.log(producto.categoria)}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2">
-                      <strong>Marca:</strong>{" "}
-                      {producto.marca_compatible || "N/A"}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </DetailSection>
-            </Grid>
-          </Grid>
-
-          {producto.etiquetas && (
-            <DetailSection>
-              <Typography variant="h6" gutterBottom>
-                Etiquetas
+        {/* Columna Derecha: Etiquetas y Reseñas */}
+        <Grid item xs={12} md={5}>
+          <Card elevation={3} sx={{ borderRadius: 3, mb: 3 }}>
+            <CardContent>
+              <Typography variant="h6" fontWeight={600} gutterBottom>
+                Etiquetas del Producto
               </Typography>
-              <Box>
-                {producto.etiquetas.split(", ").map((tag, index) => (
-                  <Chip
-                    key={index}
-                    label={tag}
-                    sx={{ mr: 1, mb: 1 }}
-                    variant="outlined"
-                  />
-                ))}
-              </Box>
-            </DetailSection>
-          )}
+              <Etiquetas idProducto={producto.id} />
+            </CardContent>
+          </Card>
 
-          <DetailSection>
-            <Typography variant="h5" gutterBottom>
-              Reseñas ({producto.resenas?.length || 0})
-            </Typography>
-
-            {producto.resenas?.length > 0 ? (
-              <List>
-                {producto.resenas.map((resena, idx) => (
-                  <React.Fragment key={idx}>
-                    <ListItem alignItems="flex-start">
-                      <ListItemAvatar>
-                        <Avatar>{resena.nombre_usuario.charAt(0)}</Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          <Box display="flex" alignItems="center">
-                            <Typography fontWeight="bold" mr={1}>
-                              {resena.nombre_usuario}
-                            </Typography>
-                            <Rating
-                              value={resena.valoracion}
-                              precision={0.5}
-                              readOnly
-                              size="small"
-                            />
-                          </Box>
-                        }
-                        secondary={
-                          <>
-                            <Typography variant="body2" color="text.secondary">
-                              {new Date(resena.fecha).toLocaleDateString(
-                                "es-ES",
-                                {
-                                  year: "numeric",
-                                  month: "long",
-                                  day: "numeric",
-                                }
-                              )}
-                            </Typography>
-                            <Typography variant="body1" component="div">
-                              {resena.comentario}
-                            </Typography>
-                          </>
-                        }
-                      />
-                    </ListItem>
-                    {idx < producto.comentario.length - 1 && (
-                      <Divider variant="inset" component="li" />
-                    )}
-                  </React.Fragment>
-                ))}
-              </List>
-            ) : (
-              <Typography variant="body2" color="text.secondary">
-                No hay reseñas disponibles para este producto.
+          <Card elevation={3} sx={{ borderRadius: 3 }}>
+            <CardContent>
+              <Typography variant="h6" fontWeight={600} gutterBottom>
+                Reseñas de Clientes
               </Typography>
-            )}
-          </DetailSection>
-        </CardContent>
-      </Card>
+              <Resenas idProducto={producto.id} />
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

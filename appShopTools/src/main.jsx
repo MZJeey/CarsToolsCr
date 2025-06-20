@@ -75,7 +75,7 @@ const rutas = createBrowserRouter([
       },
 
       {
-        //Grupo 1
+        //Grupo 1S
         path: "/",
         element: <Auth requiredRoles={["Administrador"]} />,
         children: [

@@ -226,7 +226,7 @@ class ProductoModel
     c.nombre AS categoria,
     GROUP_CONCAT(DISTINCT e.nombre SEPARATOR ', ') AS etiquetas,
     GROUP_CONCAT(DISTINCT ip.imagen SEPARATOR ', ') AS imagenes,
-    r.id AS resena_id,
+
     u.nombre_usuario,
     r.fecha,
     r.comentario,

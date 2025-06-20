@@ -18,7 +18,7 @@ class etiqueta
         try {
             $response = new Response();
             $model = new EtiquetaModel();
-            $result = $model->get($id);
+            $result = $model->getByProducto($id);
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
@@ -46,13 +46,7 @@ class etiqueta
         }
     }
 
-<<<<<<< HEAD
-    public function update($id)
-=======
-
-
     public function update()
->>>>>>> berny
     {
         try {
             $response = new Response();
@@ -72,12 +66,7 @@ class etiqueta
         }
     }
 
-<<<<<<< HEAD
-    public function delete($id)
-=======
-
     public function delete()
->>>>>>> berny
     {
         try {
             $response = new Response();
@@ -95,11 +84,6 @@ class etiqueta
             handleException($e);
         }
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> berny
-
 
     public function getByProducto($producto_id)
     {
