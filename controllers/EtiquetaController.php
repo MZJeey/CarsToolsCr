@@ -18,7 +18,7 @@ class etiqueta
         try {
             $response = new Response();
             $model = new EtiquetaModel();
-            $result = $model->get($id);
+            $result = $model->getByProducto($id);
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
@@ -46,29 +46,26 @@ class etiqueta
         }
     }
 
+
     public function update($id)
+
     {
         try {
             $response = new Response();
-
-            // Convertir el JSON recibido a array
-            $data = json_decode(file_get_contents("php://input"), true);
-
-            // Si viene envuelto en "data", extraerlo
-            if (isset($data['data'])) {
-                $data = $data['data'];
-            }
+            $request = new Request();
+            $data = (array) $request->getJSON();
 
             $model = new EtiquetaModel();
             $result = $model->update($id, $data);
-
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
 
+
     public function delete($id)
+
     {
         try {
             $response = new Response();

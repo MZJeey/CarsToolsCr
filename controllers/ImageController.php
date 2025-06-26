@@ -1,6 +1,7 @@
 <?php
 //class Genre
-class image{
+class image
+{
     //POST Crear
     public function create()
     {
@@ -17,7 +18,21 @@ class image{
             $movie = new ImageModel();
             //Acción del modelo a ejecutar
             $result = $movie->uploadFile($inputFILE);
-           
+
+            //Dar respuesta
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+    public function get($id)
+    {
+        try {
+            $response = new Response();
+            //Instancia del modelo
+            $image = new ImageModel();
+            //Acción del modelo a ejecutar
+            $result = $image->getImagen($id);
             //Dar respuesta
             $response->toJSON($result);
         } catch (Exception $e) {

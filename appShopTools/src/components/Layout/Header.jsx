@@ -17,7 +17,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import LiveTvIcon from "@mui/icons-material/LiveTv";
+import { TireRepair } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { UserContext } from "../../context/UserContext";
@@ -71,17 +71,17 @@ export default function Header() {
   ];
 
   const navItems = [
-    { name: "Vehiculos", link: "/movie", roles: null },
-    { name: "Cátalogo de Repuestos", link: "/catalog-movies/", roles: null },
-    { name: "Filtrar Repuestos", link: "/movie/filter", roles: null },
+    { name: "Repuestos", link: "/lista", roles: null },
+    { name: "Marcas", link: "/catalog-movies/", roles: null },
+    { name: "Servicios", link: "/movie/filter", roles: null },
     // Para mantenimiento vehículos, removemos el link y agregamos submenu
     { name: "Mantenimientos", link: null, roles: [] },
   ];
 
   const mantenimientoOpciones = [
     { name: "Productos", link: "/productos" },
-    { name: "Ver Mantenimientos", link: "/movie-table/list" },
-    // Puedes agregar más opciones aquí
+    { name: "Dashboard", link: "/dasboard" },
+    { name: "Reseñas", link: "/resena" },
   ];
 
   const menuPrincipal = (
@@ -367,7 +367,7 @@ export default function Header() {
             {menuPrincipalMobile}
           </Menu>
 
-          <Tooltip title="Alquiler películas">
+          <Tooltip title="Repuestos ">
             <IconButton
               size="large"
               edge="start"
@@ -375,9 +375,8 @@ export default function Header() {
               to="/"
               aria-label="Inicio"
               sx={{ color: "white" }}
-            >
-              <LiveTvIcon />
-            </IconButton>
+            ></IconButton>
+            <TireRepair sx={{ color: "white", fontSize: 30 }} />
           </Tooltip>
 
           {menuPrincipal}

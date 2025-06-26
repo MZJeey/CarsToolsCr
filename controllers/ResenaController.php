@@ -15,7 +15,7 @@ class resena
 
 
 
-    public function getByProducto($id)
+    public function get($id)
     {
         try {
             $resenaM = new ResenaModel();
@@ -27,7 +27,7 @@ class resena
         }
     }
 
-        public function create()
+    public function create()
     {
         try {
             $request = new Request();
@@ -43,32 +43,32 @@ class resena
         }
     }
 
-public function update()
-{
-    try {
-        $request = new Request();
-        $response = new Response();
-        $input = (array)$request->getJSON();
+    public function update()
+    {
+        try {
+            $request = new Request();
+            $response = new Response();
+            $input = (array)$request->getJSON();
 
-        // Tomar el ID desde el cuerpo
-        $id = isset($input['id']) ? (int)$input['id'] : 0;
-        $estado = isset($input['estado']) ? (int)$input['estado'] : 1;
+            // Tomar el ID desde el cuerpo
+            $id = isset($input['id']) ? (int)$input['id'] : 0;
+            $estado = isset($input['estado']) ? (int)$input['estado'] : 1;
 
-        if ($id <= 0) {
-            return $response->toJSON([
-                'status' => 'error',
-                'message' => 'ID inválido'
-            ]);
+            if ($id <= 0) {
+                return $response->toJSON([
+                    'status' => 'error',
+                    'message' => 'ID inválido'
+                ]);
+            }
+
+            $resenaM = new ResenaModel();
+            $result = $resenaM->update($id, $estado);
+
+            $response->toJSON(['status' => $result ? 'ok' : 'error']);
+        } catch (Exception $e) {
+            handleException($e);
         }
-
-        $resenaM = new ResenaModel();
-        $result = $resenaM->update($id, $estado);
-
-        $response->toJSON(['status' => $result ? 'ok' : 'error']);
-    } catch (Exception $e) {
-        handleException($e);
     }
-}
 
 
     public function estadisticas($producto_id)
@@ -82,5 +82,4 @@ public function update()
             handleException($e);
         }
     }
-
 }

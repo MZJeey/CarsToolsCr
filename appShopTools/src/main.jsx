@@ -23,7 +23,14 @@ import { Login } from "./components/User/Login";
 import { Logout } from "./components/User/Logout";
 import { Signup } from "./components/User/Signup";
 import { Auth } from "./components/User/Auth";
+
+import { CrearProducto } from "./components/Productos/crearProducto";
+
+import DashboardLayoutBasic from "./components/Layout/dasboard";
 import { ListaProductos } from "./components/Productos/listaProductos";
+import { Lista } from "./components/Productos/lista";
+import ListaResenas from "./components/Productos/listaResena";
+import DetalleProducto from "./components/Productos/listaDetalles";
 
 const rutas = createBrowserRouter([
   {
@@ -46,9 +53,29 @@ const rutas = createBrowserRouter([
         path: "/productos",
         element: <ListaProductos />,
       },
+      {
+        path: "/crear",
+        element: <CrearProducto />,
+      },
+      {
+        path: "/dasboard",
+        element: <DashboardLayoutBasic />,
+      },
+      {
+        path: "/lista",
+        element: <Lista />,
+      },
+      {
+        path: "/detalles/:id",
+        element: <DetalleProducto />,
+      },
+      {
+        path: "/resena",
+        element: <ListaResenas />,
+      },
 
       {
-        //Grupo 1
+        //Grupo 1S
         path: "/",
         element: <Auth requiredRoles={["Administrador"]} />,
         children: [
