@@ -1,5 +1,6 @@
 <?php
 class CarritoModel {
+    // Esto es un model de ejemplo para manejar caritos de compras
     private $enlace;
 
     public function __construct() {

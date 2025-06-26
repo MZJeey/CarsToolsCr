@@ -16,7 +16,7 @@ class PedidoModel {
 
             if (!$pedidoId) return false;
 
-            // Insertar productos en pedido_detalle
+            // Insertar productos en pedido
 foreach ($productos as $producto) {
     // Obtener el precio actual del producto
     $precioQuery = "SELECT precio FROM producto WHERE id = {$producto->producto_id}";
@@ -36,17 +36,18 @@ foreach ($productos as $producto) {
             return false;
         }
     }
-
+// Obtiene todos los pedidos de un usuario
+    // por su ID de usuario
     public function obtenerPedidosPorUsuario($usuario_id) {
         $sql = "SELECT * FROM pedido WHERE usuario_id = $usuario_id";
         return $this->db->executeSQL($sql);
     }
-
+// Obtiene los detalles de un pedido específico
     public function obtenerDetalles($pedido_id) {
         $sql = "SELECT * FROM detallepedido WHERE pedido_id = $pedido_id";
         return $this->db->executeSQL($sql);
     }
-
+// Cambia el estado de un pedido si es válido
     public function cambiarEstado($pedido_id, $nuevoEstado) {
         $estadoActual = $this->db->executeSQL("SELECT estado FROM pedido WHERE id = $pedido_id");
         if (empty($estadoActual)) return false;

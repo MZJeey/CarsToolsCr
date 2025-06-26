@@ -1,6 +1,8 @@
 <?php
 class pedido {
     public function crear() {
+// Esto es un controller de ejemplo para manejar pedidos
+
         try {
             $request = new Request();
             $response = new Response();

@@ -1,6 +1,7 @@
 <?php
 class carrito {
     public function index() {
+        // Esto es un controller de ejemplo para manejar el carrito de compras
         try {
             $response = new Response();
             $request = new Request();
