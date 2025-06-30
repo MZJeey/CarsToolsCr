@@ -21,7 +21,8 @@ import { TireRepair } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { UserContext } from "../../context/UserContext";
-
+import LanguageIcon from "@mui/icons-material/Language";
+import { useTranslation } from "react-i18next";
 export default function Header() {
   const { user, decodeToken, autorize } = useContext(UserContext);
   const [userData, setUserData] = useState(decodeToken());
@@ -52,6 +53,11 @@ export default function Header() {
   const handleOpcionesMenuOpen = (e) => setMobileMoreAnchorEl(e.currentTarget);
   const handleOpcionesMenuClose = () => setMobileMoreAnchorEl(null);
 
+  const { i18n } = useTranslation();
+  const handleToggleLanguage = () => {
+    const newLang = i18n.language === "es" ? "en" : "es";
+    i18n.changeLanguage(newLang);
+  };
   // Handlers para menú de Mantenimiento Vehículos
   const handleMantenimientoOpen = (e) =>
     setAnchorElMantenimiento(e.currentTarget);
@@ -72,9 +78,10 @@ export default function Header() {
 
   const navItems = [
     { name: "Repuestos", link: "/lista", roles: null },
+    // { name: "Promociones", link: "/catalog-movies/", roles: null },
     { name: "Marcas", link: "/catalog-movies/", roles: null },
     { name: "Servicios", link: "/movie/filter", roles: null },
-    // Para mantenimiento vehículos, removemos el link y agregamos submenu
+
     { name: "Mantenimientos", link: null, roles: [] },
   ];
 
@@ -82,6 +89,7 @@ export default function Header() {
     { name: "Productos", link: "/productos" },
     { name: "Dashboard", link: "/dasboard" },
     { name: "Reseñas", link: "/resena" },
+    { name: "Promociones", link: "/promociones" },
   ];
 
   const menuPrincipal = (
@@ -340,7 +348,8 @@ export default function Header() {
       <AppBar
         position="static"
         sx={{
-          background: "linear-gradient(90deg, #1976d2 0%, #1565c0 100%)",
+          background:
+            "linear-gradient(90deg,rgb(12, 12, 12) 0%,rgb(12, 12, 12) 100%)",
         }}
       >
         <Toolbar>
@@ -412,6 +421,15 @@ export default function Header() {
           <Box
             sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}
           >
+            <IconButton
+              size="large"
+              aria-label="cambiar idioma"
+              color="inherit"
+              onClick={handleToggleLanguage}
+            >
+              <LanguageIcon />
+            </IconButton>
+
             <IconButton
               size="large"
               aria-label="ver carrito"

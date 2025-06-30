@@ -8,7 +8,7 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Debug Chrome",
+            "name": "Debug ",
             "url": " http://localhost:5173/",
             "webRoot": "${workspaceFolder}"
         }

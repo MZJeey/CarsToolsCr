@@ -6,6 +6,7 @@ import {
   IconButton,
   Stack,
   Divider,
+  Link,
 } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -14,17 +15,16 @@ import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import WhatsApp from "@mui/icons-material/WhatsApp";
+
 export function Footer() {
   return (
     <Box
       component="footer"
       sx={{
-      
-        left: 0,
         width: "100%",
-        background: "linear-gradient(90deg, #1976d2 0%, #1565c0 100%)",
-        color: "white",
-        py: 2,
+        backgroundColor: "rgb(12, 12, 12)",
+        color: "#f5f5f5",
+        py: 4,
         px: 2,
         zIndex: 1300,
       }}
@@ -33,78 +33,176 @@ export function Footer() {
         {/* Tres columnas */}
         <Stack
           direction={{ xs: "column", md: "row" }}
-          spacing={4}
+          spacing={{ xs: 3, md: 4 }}
           justifyContent="space-between"
-          alignItems="flex-start" // <-- Aquí el cambio clave
+          alignItems="flex-start"
         >
-          {/* Columna 1 */}
-          <Box textAlign="center">
-            <Typography variant="subtitle1" fontWeight="bold" mb={1}>
+          {/* Columna 1 - Redes Sociales */}
+          <Box sx={{ textAlign: { xs: "center", md: "left" } }}>
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              mb={2}
+              color="primary.main"
+            >
               Síguenos
             </Typography>
             <Box
               component="img"
               src="/logoCarsTools.jpg"
-              alt="Logo o imagen"
-              sx={{ width: 120, height: "auto", mb: 2 }}
+              alt="Logo CarsToolsCr"
+              sx={{
+                width: 140,
+                height: "auto",
+                mb: 2,
+                borderRadius: 1,
+                boxShadow: 3,
+              }}
             />
             <Stack
               direction="row"
-              spacing={3}
-              justifyContent="center"
-              alignItems="center"
+              spacing={2}
+              justifyContent={{ xs: "center", md: "flex-start" }}
             >
-              <IconButton aria-label="Facebook" color="inherit">
-                <FacebookIcon fontSize="small" />
+              <IconButton
+                aria-label="Facebook"
+                sx={{
+                  color: "#f5f5f5",
+                  "&:hover": {
+                    color: "#4267B2",
+                    bgcolor: "rgba(255,255,255,0.1)",
+                  },
+                }}
+              >
+                <FacebookIcon fontSize="medium" />
               </IconButton>
-              <IconButton aria-label="Twitter" color="inherit">
-                <TwitterIcon fontSize="small" />
+              <IconButton
+                aria-label="Twitter"
+                sx={{
+                  color: "#f5f5f5",
+                  "&:hover": {
+                    color: "#1DA1F2",
+                    bgcolor: "rgba(255,255,255,0.1)",
+                  },
+                }}
+              >
+                <TwitterIcon fontSize="medium" />
               </IconButton>
-              <IconButton aria-label="Instagram" color="inherit">
-                <InstagramIcon fontSize="small" />
+              <IconButton
+                aria-label="Instagram"
+                sx={{
+                  color: "#f5f5f5",
+                  "&:hover": {
+                    background:
+                      "radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)",
+                    bgcolor: "transparent",
+                  },
+                }}
+              >
+                <InstagramIcon fontSize="medium" />
               </IconButton>
             </Stack>
           </Box>
 
-          {/* Columna 2 */}
-          <Box textAlign="left">
-            <Typography variant="subtitle1" fontWeight="bold" mb={1}>
+          {/* Columna 2 - Información */}
+          <Box>
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              mb={2}
+              color="primary.main"
+            >
               CarsToolsCr
             </Typography>
-            <Stack spacing={1}>
-              <Typography variant="body2">Soluciones automotrices</Typography>
-              <Typography variant="body2">
+            <Stack spacing={1.5}>
+              <Link
+                href="#"
+                color="inherit"
+                underline="hover"
+                sx={{ "&:hover": { color: "primary.main" } }}
+              >
+                Soluciones automotrices
+              </Link>
+              <Link
+                href="#"
+                color="inherit"
+                underline="hover"
+                sx={{ "&:hover": { color: "primary.main" } }}
+              >
                 Gran variedad de repuestos
-              </Typography>
-              <Typography variant="body2">
-                Soluciones al instante de verdad
-              </Typography>
-              <Typography variant="body2">Trabaje con nosotros</Typography>
+              </Link>
+              <Link
+                href="#"
+                color="inherit"
+                underline="hover"
+                sx={{ "&:hover": { color: "primary.main" } }}
+              >
+                Soluciones al instante
+              </Link>
+              <Link
+                href="#"
+                color="inherit"
+                underline="hover"
+                sx={{ "&:hover": { color: "primary.main" } }}
+              >
+                Trabaje con nosotros
+              </Link>
             </Stack>
           </Box>
 
-          {/* Columna 3 */}
-          <Box textAlign="left">
-            <Typography variant="subtitle1" fontWeight="bold" mb={1}>
+          {/* Columna 3 - Contacto */}
+          <Box>
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              mb={2}
+              color="primary.main"
+            >
               Contáctanos
             </Typography>
-            <Stack spacing={1}>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <EmailIcon fontSize="small" />
-                <Typography variant="body2">info@carstoolscr.com</Typography>
+            <Stack spacing={1.5}>
+              <Stack direction="row" alignItems="center" spacing={1.5}>
+                <EmailIcon fontSize="small" color="primary" />
+                <Link
+                  href="mailto:info@carstoolscr.com"
+                  color="inherit"
+                  underline="hover"
+                  sx={{ "&:hover": { color: "primary.main" } }}
+                >
+                  info@carstoolscr.com
+                </Link>
               </Stack>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <PhoneIcon fontSize="small" />
-                <Typography variant="body2">tel:2538000</Typography>
+              <Stack direction="row" alignItems="center" spacing={1.5}>
+                <PhoneIcon fontSize="small" color="primary" />
+                <Link
+                  href="tel:+50625380000"
+                  color="inherit"
+                  underline="hover"
+                  sx={{ "&:hover": { color: "primary.main" } }}
+                >
+                  Tel: 2538-0000
+                </Link>
               </Stack>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <WhatsApp fontSize="small" />
-                <Typography variant="body2">(506)71795695</Typography>
+              <Stack direction="row" alignItems="center" spacing={1.5}>
+                <WhatsApp fontSize="small" color="primary" />
+                <Link
+                  href="https://wa.me/50671795695"
+                  target="_blank"
+                  color="inherit"
+                  underline="hover"
+                  sx={{ "&:hover": { color: "primary.main" } }}
+                >
+                  (506) 7179-5695
+                </Link>
               </Stack>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <LocationOnIcon fontSize="small" />
+              <Stack direction="row" alignItems="flex-start" spacing={1.5}>
+                <LocationOnIcon
+                  fontSize="small"
+                  color="primary"
+                  sx={{ mt: 0.5 }}
+                />
                 <Typography variant="body2">
-                  Costado del estadio morera soto, Alajuela
+                  Costado del estadio Morera Soto, Alajuela, Costa Rica
                 </Typography>
               </Stack>
             </Stack>
@@ -112,12 +210,25 @@ export function Footer() {
         </Stack>
 
         {/* Línea divisora */}
-        <Divider sx={{ my: 2, borderColor: "rgba(255, 255, 255, 0.2)" }} />
+        <Divider
+          sx={{
+            my: 3,
+            borderColor: "rgba(255, 255, 255, 0.12)",
+            borderWidth: 1,
+          }}
+        />
 
-        {/* Copyright centrado */}
-        <Typography variant="body2" align="center">
+        {/* Copyright */}
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{
+            opacity: 0.8,
+            fontSize: "0.8rem",
+          }}
+        >
           © {new Date().getFullYear()} CarsToolsCr. Todos los derechos
-          reservados.
+          reservados | Desarrollado por Jeeyson, Berny, Felipe
         </Typography>
       </Container>
     </Box>

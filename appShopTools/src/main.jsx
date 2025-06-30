@@ -31,6 +31,10 @@ import { ListaProductos } from "./components/Productos/listaProductos";
 import { Lista } from "./components/Productos/lista";
 import ListaResenas from "./components/Productos/listaResena";
 import DetalleProducto from "./components/Productos/listaDetalles";
+import DetalleResenas from "./components/Productos/detallesResena";
+import { I18nextProvider } from "react-i18next";
+import i18n from "./i18n"; // Ajusta la ruta según tu proyecto
+import Promociones from "./components/Productos/promociones";
 
 const rutas = createBrowserRouter([
   {
@@ -73,7 +77,14 @@ const rutas = createBrowserRouter([
         path: "/resena",
         element: <ListaResenas />,
       },
-
+      {
+        path: "/detallesResena/:producto_id",
+        element: <DetalleResenas />,
+      },
+      {
+        path: "/promociones",
+        element: <Promociones />,
+      },
       {
         //Grupo 1S
         path: "/",
@@ -149,8 +160,10 @@ const rutas = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <UserProvider>
-      <RouterProvider router={rutas} />
-    </UserProvider>
+    <I18nextProvider i18n={i18n}>
+      <UserProvider>
+        <RouterProvider router={rutas} />
+      </UserProvider>
+    </I18nextProvider>
   </StrictMode>
 );

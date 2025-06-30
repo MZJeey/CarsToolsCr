@@ -229,7 +229,7 @@ export function ListaProductos() {
 
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography variant="body2" color="text.secondary" paragraph>
-                  {producto.descripcion?.substring(0, 100)}
+                  {producto.nombre.substring(0, 100)}
                   {producto.descripcion?.length > 100 ? "..." : ""}
                 </Typography>
 
@@ -237,6 +237,16 @@ export function ListaProductos() {
                   <Typography variant="h6" color="primary" fontWeight="bold">
                     {formatPrecio(producto.precio)}
                   </Typography>
+
+                  {producto.promocion && producto.promocion.Descuento && (
+                    <Chip
+                      label={`Promoción ${Math.round(producto.promocion.Descuento)}% Descuento`}
+                      color="secondary"
+                      size="small"
+                      sx={{ ml: 2, fontWeight: "bold" }}
+                    />
+                  )}
+
                   <Chip
                     label={`Stock: ${producto.stock || 0}`}
                     size="small"

@@ -26,7 +26,7 @@ class EtiquetaModel
     {
         try {
 
-            $sql = "SELECT * FROM etiqueta WHERE id = :id";
+            $sql = "SELECT * FROM etiqueta WHERE id = $id";
             $resultado = $this->enlace->executeSQL($sql);
             return $resultado[0] ?? null;
         } catch (Exception $e) {

@@ -1,6 +1,8 @@
 <?php
-class carrito {
-    public function index() {
+class carrito
+{
+    public function index()
+    {
         // Esto es un controller de ejemplo para manejar el carrito de compras
         try {
             $response = new Response();
@@ -11,7 +13,7 @@ class carrito {
             $session_token = $data->session_token ?? '';
 
             $model = new CarritoModel();
-            $result = $model->obtenerCarrito($usuario_id, $session_token);
+            $result = $model->obtenerCarrito();
 
             $response->toJSON($result);
         } catch (Exception $e) {
@@ -19,7 +21,8 @@ class carrito {
         }
     }
 
-    public function agregar() {
+    public function agregar()
+    {
         try {
             $response = new Response();
             $request = new Request();
@@ -39,7 +42,8 @@ class carrito {
         }
     }
 
-    public function actualizar() {
+    public function actualizar()
+    {
         try {
             $response = new Response();
             $request = new Request();
@@ -54,7 +58,8 @@ class carrito {
         }
     }
 
-    public function eliminar() {
+    public function eliminar()
+    {
         try {
             $response = new Response();
             $request = new Request();
@@ -69,7 +74,8 @@ class carrito {
         }
     }
 
-    public function vaciar() {
+    public function vaciar()
+    {
         try {
             $response = new Response();
             $request = new Request();

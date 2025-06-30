@@ -3,25 +3,65 @@ class PromocionModel
 {
     private $enlace;
 
-      public function __construct()
-      {
+    public function __construct()
+    {
         $this->enlace = new MySqlConnect();
-      }
+    }
 
-      public function all()
-      {
-         try {
-            $sql = "SELECT * FROM promocion";
+    public function all()
+    {
+        try {
+            $sql = "SELECT 
+    pr.IdPromocion, pr.Nombre, pr.Descuento, pr.FechaInicio, pr.FechaFin,
+    pre.IdProducto,
+    pc.IdCategoria
+FROM Promociones pr
+LEFT JOIN PromocionRepuestos pre ON pr.IdPromocion = pre.IdPromocion
+LEFT JOIN PromocionCategoria pc ON pr.IdPromocion = pc.IdPromocion;
+";
             return $this->enlace->executeSQL($sql);
         } catch (Exception $e) {
             handleException($e);
         }
-      }
+    }
 
-   public function get($id)
+    public function get($id)
     {
         try {
-            $sql = "SELECT * FROM promocion WHERE id = $id";
+            $sql = "SELECT 
+    p.IdPromocion, 
+    pr.Nombre, 
+    pr.Descuento, 
+    pr.FechaInicio, 
+    pr.FechaFin, 
+    'producto' AS Tipo
+FROM 
+    PromocionRepuestos p
+JOIN 
+    Promociones pr ON p.IdPromocion = pr.IdPromocion
+WHERE 
+    p.IdProducto = $id
+
+UNION
+
+SELECT 
+    pc.IdPromocion, 
+    pr.Nombre, 
+    pr.Descuento, 
+    pr.FechaInicio, 
+    pr.FechaFin, 
+    'categoria' AS Tipo
+FROM 
+    PromocionCategoria pc
+JOIN 
+    Promociones pr ON pc.IdPromocion = pr.IdPromocion
+JOIN 
+    Producto prod ON prod.categoria_id = pc.  IdCategoria
+WHERE 
+    prod.Id = $id
+ORDER BY 
+    Tipo DESC, Descuento DESC;
+     ";
             $result = $this->enlace->executeSQL($sql);
             return !empty($result) ? $result[0] : null;
         } catch (Exception $e) {
@@ -72,18 +112,14 @@ class PromocionModel
     }
 
 
-public function getActivas()
-{
-    try {
-        $sql = "SELECT * FROM promocion 
+    public function getActivas()
+    {
+        try {
+            $sql = "SELECT * FROM promocion 
                 WHERE NOW() BETWEEN fecha_inicio AND fecha_fin";
-        return $this->enlace->executeSQL($sql);
-    } catch (Exception $e) {
-        handleException($e);
+            return $this->enlace->executeSQL($sql);
+        } catch (Exception $e) {
+            handleException($e);
+        }
     }
-}
-
-
-
-
 }

@@ -19,6 +19,12 @@ class ProductoModel
     {
         try {
             $imagenM = new ImageModel();
+            $promocion = new PromocionModel();
+            $promos = $promocion->all();
+            $resena = new ResenaModel();
+            $resenas = $resena->all();
+            $etiqueta = new EtiquetaModel();
+            $etiquetas = $etiqueta->all();
             // Consulta SQL
             $vSQL = "SELECT p.*, c.nombre as categoria_nombre
                  FROM Producto p
@@ -29,6 +35,10 @@ class ProductoModel
             if (!empty($vResultado) && is_array($vResultado)) {
                 for ($i = 0; $i < count($vResultado); $i++) {
                     $vResultado[$i] = $this->get($vResultado[$i]->id);
+
+                    $vResultado[$i]->promociones = $promos;
+                    $vResultado[$i]->resen = $resenas;
+                    $vResultado[$i]->etiqu = $etiquetas;
                 }
             }
             return $vResultado;
@@ -147,6 +157,9 @@ class ProductoModel
     {
         try {
             $imagenP = new ImageModel();
+            $promocion = new PromocionModel();
+            $resena = new ResenaModel();
+            $etiqueta = new EtiquetaModel();
             $sql = "SELECT p.*, c.nombre as categoria_nombre
                 FROM Producto p
                 JOIN Categoria c ON p.categoria_id = c.id
@@ -158,6 +171,9 @@ class ProductoModel
                 $producto = $producto[0];
                 // Obtener imágenes asociadas al producto
                 $producto->imagen = $imagenP->getImagen($producto->id);
+                $producto->promocion = $promocion->get($producto->id);
+                $producto->resena = $resena->getByProducto($producto->id);
+                $producto->etiquetas = $etiqueta->get($producto->id);
             }
 
             return $producto;
@@ -210,45 +226,6 @@ class ProductoModel
         try {
             $sql = "UPDATE Producto SET estado = true WHERE id = $id";
             return $this->enlace->executeSQL_DML($sql);
-        } catch (Exception $e) {
-            handleException($e);
-        }
-    }
-
-    public function Detalles($id)
-    {
-        try {
-            $sql = "SELECT 
-    p.id AS producto_id,
-    p.nombre AS producto_nombre,
-    p.descripcion,
-    p.precio,
-    c.nombre AS categoria,
-    GROUP_CONCAT(DISTINCT e.nombre SEPARATOR ', ') AS etiquetas,
-    GROUP_CONCAT(DISTINCT ip.imagen SEPARATOR ', ') AS imagenes,
-
-    u.nombre_usuario,
-    r.fecha,
-    r.comentario,
-    r.valoracion
-FROM Producto p
-LEFT JOIN Categoria c ON p.categoria_id = c.id
-LEFT JOIN ProductoEtiqueta pe ON pe.producto_id = p.id
-LEFT JOIN Etiqueta e ON e.id = pe.etiqueta_id
-LEFT JOIN ImagenProducto ip ON ip.producto_id = p.id
-LEFT JOIN Resena r ON r.producto_id = p.id
-LEFT JOIN Usuario u ON u.id = r.usuario_id
-WHERE p.id = $id
-GROUP BY 
-    p.id, r.id
-ORDER BY 
-    r.fecha DESC
-";
-
-            // Ejecutar con parámetro
-            $productos = $this->enlace->executeSQL($sql, [$id]);
-
-            return $productos;
         } catch (Exception $e) {
             handleException($e);
         }

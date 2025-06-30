@@ -22,12 +22,10 @@ require_once "middleware/AuthMiddleware.php";
 require_once "models/RolModel.php";
 require_once "models/UserModel.php";
 require_once "models/DirectorModel.php";
-require_once "models/ActorModel.php";
-require_once "models/GenreModel.php";
-require_once "models/MovieModel.php";
-require_once "models/ShopRentalModel.php";
-require_once "models/RentalModel.php";
-require_once "models/RentalMovieModel.php";
+
+
+
+
 require_once "models/ImageModel.php";
 
 //Modelo de api de carstools
@@ -39,16 +37,15 @@ require_once "models/ProductoEtiquetaModel.php";
 require_once "models/PromocionModel.php";
 require_once "models/CarritoModel.php";
 require_once "models/PedidoModel.php";
-
+require_once "models/CategoriaModel.php";
 /***--- Agregar todos los controladores*/
 require_once "controllers/UserController.php";
 require_once "controllers/DirectorController.php";
-require_once "controllers/ActorController.php";
-require_once "controllers/GenreController.php";
-require_once "controllers/MovieController.php";
-require_once "controllers/ShopRentalController.php";
+
+
+
 require_once "controllers/InventoryController.php";
-require_once "controllers/RentalController.php";
+
 require_once "controllers/ImageController.php";
 
 //Controller de Productos y del api de carstools
@@ -71,7 +68,8 @@ require_once "controllers/PromocionController.php";
 require_once "controllers/CarritoController.php";
 //Controller de Pedido y del api de carstools
 require_once "controllers/PedidoController.php";
-
+//Controller de categoria
+require_once "controllers/CategoriaController.php";
 
 //Enrutador
 require_once "routes/RoutesController.php";

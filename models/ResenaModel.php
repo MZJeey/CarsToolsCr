@@ -37,10 +37,26 @@ ORDER BY r.fecha DESC;
 
     public function getByProducto($producto_id)
     {
-        $sql = "SELECT r.*, u.nombre_usuario as usuario_nombre
+        $sql = "SELECT 
+    r.id, r.comentario, r.valoracion, r.fecha, r.moderado,
+    u.id AS usuario_id, u.nombre_usuario AS usuario_nombre,
+    p.id AS producto_id, p.nombre AS producto_nombre,
+    ip.imagen
 FROM resena r
 JOIN usuario u ON r.usuario_id = u.id
-WHERE r.producto_id = $producto_id;";
+JOIN producto p ON r.producto_id = p.id
+LEFT JOIN (
+    SELECT producto_id, imagen
+    FROM ImagenProducto
+    WHERE id IN (
+        SELECT MIN(id)
+        FROM ImagenProducto
+        GROUP BY producto_id
+    )
+) ip ON ip.producto_id = p.id
+WHERE r.producto_id = $producto_id
+ORDER BY r.fecha DESC;
+";
         return $this->enlace->executeSQL($sql);
     }
 

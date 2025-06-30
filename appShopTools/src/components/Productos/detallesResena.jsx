@@ -12,22 +12,29 @@ import {
 } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import ResenaService from "../../services/ResenaService";
-import { Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 // URL base para subir imágenes si se necesitara en el futuro
 const urlBase = import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
 
-const ListaResenas = () => {
+const DetalleResenas = () => {
+  const { producto_id: id } = useParams();
+
+  const navigate = useNavigate();
   const [resenas, setResenas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [ratingPromedio, setRatingPromedio] = useState(0);
   const [totalResenas, setTotalResenas] = useState(0);
-
+  // ...existing code...
   useEffect(() => {
     const fetchResenas = async () => {
       try {
-        const response = await ResenaService.getResenas();
+        // Ahora obtiene reseñas por producto usando el id de useParams
+        const response = await ResenaService.getResenasPorProducto(id);
+        console.log("Respuesta completa:", response);
+        console.log("Datos de reseñas:", response.data);
         const resenasData = response.data || [];
+
         setResenas(resenasData);
 
         // Calcular rating promedio
@@ -37,6 +44,9 @@ const ListaResenas = () => {
           }, 0);
           setRatingPromedio(sumaRatings / resenasData.length);
           setTotalResenas(resenasData.length);
+        } else {
+          setRatingPromedio(0);
+          setTotalResenas(0);
         }
       } catch (error) {
         console.error("Error al cargar reseñas:", error);
@@ -46,36 +56,21 @@ const ListaResenas = () => {
       }
     };
 
-    fetchResenas();
-  }, []);
-
-  if (cargando) {
-    return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Typography color="error" align="center" mt={4}>
-        {error}
-      </Typography>
-    );
-  }
-
-  if (resenas.length === 0) {
-    return (
-      <Typography variant="body1" align="center" mt={4}>
-        No hay reseñas disponibles.
-      </Typography>
-    );
-  }
+    if (id) {
+      fetchResenas();
+    } else {
+      setCargando(false);
+      setError("No se encontró el producto.");
+    }
+  }, [id]);
+  // ...existing code...
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       {/* Encabezado con rating promedio */}
+      <Button variant="outlined" sx={{ mb: 3 }} onClick={() => navigate(-1)}>
+        ⬅ Volver
+      </Button>
       <Box textAlign="center" mb={4}>
         <Typography variant="h4" component="h1" gutterBottom>
           Reseñas de clientes a nuestros productos
@@ -132,6 +127,20 @@ const ListaResenas = () => {
                   alignItems="center"
                   mb={2}
                 >
+                  <Box display="flex" alignItems="center">
+                    <Avatar
+                      sx={{
+                        bgcolor: deepPurple[500],
+                        mr: 2,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {resena.usuario_nombre?.[0]?.toUpperCase() || "U"}
+                    </Avatar>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {resena.usuario_nombre || "Usuario"}
+                    </Typography>
+                  </Box>
                   {/* Fecha */}
                   <Typography variant="body2" color="text.secondary">
                     {fechaFormateada}
@@ -161,8 +170,8 @@ const ListaResenas = () => {
                   {resena.imagen && (
                     <Box
                       sx={{
-                        width: 150,
-                        height: 100,
+                        width: 200,
+                        height: 150,
                         overflow: "hidden",
                         borderRadius: 2,
                         boxShadow: 1,
@@ -184,15 +193,23 @@ const ListaResenas = () => {
                 </Box>
 
                 {/* Info adicional */}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  component={Link}
-                  to={`/detallesResena/${resena.producto_id}`} // Aquí usas producto_id
-                  sx={{ borderRadius: 1 }}
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  mt={2}
                 >
-                  Ver Detalles
-                </Button>
+                  <Chip
+                    label={`Producto: ${resena.producto_nombre || "Unknown"}`}
+                    size="small"
+                    variant="outlined"
+                    sx={{ textTransform: "uppercase" }}
+                  />
+
+                  {resena.moderado === "1" && (
+                    <Chip label="Moderated" size="small" color="warning" />
+                  )}
+                </Box>
               </Box>
             );
           })}
@@ -201,4 +218,4 @@ const ListaResenas = () => {
   );
 };
 
-export default ListaResenas;
+export default DetalleResenas;

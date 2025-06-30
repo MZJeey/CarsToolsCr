@@ -51,7 +51,7 @@ class ImageModel
         }
     }
 
-    //Obtener una imagen de una pelicula
+    //Obtener una imagen de un producto
     public function getImagen($idProducto)
     {
         try {
