@@ -38,6 +38,7 @@ require_once "models/PromocionModel.php";
 require_once "models/CarritoModel.php";
 require_once "models/PedidoModel.php";
 require_once "models/CategoriaModel.php";
+require_once "models/ProductoPersonalizadoModel.php";
 /***--- Agregar todos los controladores*/
 require_once "controllers/UserController.php";
 require_once "controllers/DirectorController.php";
@@ -70,6 +71,8 @@ require_once "controllers/CarritoController.php";
 require_once "controllers/PedidoController.php";
 //Controller de categoria
 require_once "controllers/CategoriaController.php";
+//Controller de producto personalizado
+require_once "controllers/ProductoPersonalizadoController.php";
 
 //Enrutador
 require_once "routes/RoutesController.php";
