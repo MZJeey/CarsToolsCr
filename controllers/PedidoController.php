@@ -61,4 +61,16 @@ class pedido {
             handleException($e);
         }
     }
+public function listarTodos() {
+    try {
+        $response = new Response();
+        $model = new PedidoModel();
+        $pedidos = $model->obtenerTodosLosPedidosConDetalles();
+        $response->toJSON($pedidos);
+    } catch (Exception $e) {
+        handleException($e);
+    }
+}
+
+
 }

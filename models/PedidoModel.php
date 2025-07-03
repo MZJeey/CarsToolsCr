@@ -64,4 +64,22 @@ foreach ($productos as $producto) {
 
         return false;
     }
+public function obtenerTodosLosPedidosConDetalles() {
+    $sql = "SELECT 
+                p.id AS pedido_id, 
+                p.fecha_pedido, 
+                p.direccion_envio, 
+                p.estado, 
+                dp.producto_id, 
+                pr.nombre AS nombre_producto,
+                dp.cantidad, 
+                dp.precio_unitario
+            FROM pedido p
+            JOIN detallepedido dp ON p.id = dp.pedido_id
+            JOIN producto pr ON dp.producto_id = pr.id
+            ORDER BY p.fecha_pedido DESC";
+    return $this->db->executeSQL($sql);
+}
+
+
 }
