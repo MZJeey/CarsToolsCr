@@ -33,10 +33,14 @@ import ListaResenas from "./components/Productos/listaResena";
 import DetalleProducto from "./components/Productos/listaDetalles";
 import DetalleResenas from "./components/Productos/detallesResena";
 import PedidoComponent from "./components/pedidos/pedido";
+import TodosProductosPersonalizados from "./components/pedidos/TodosProductosPersonalizados";
+
+
 
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n"; // Ajusta la ruta según tu proyecto
 import Promociones from "./components/Productos/promociones";
+import { patch } from "@mui/material";
 
 
 const rutas = createBrowserRouter([
@@ -92,6 +96,14 @@ const rutas = createBrowserRouter([
   path: "/pedidos",
   element: <PedidoComponent />,
 },
+
+{
+  path: "/productos-personalizados",
+  element: <TodosProductosPersonalizados />,
+},
+
+
+
 
    
       {

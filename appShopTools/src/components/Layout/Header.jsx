@@ -90,7 +90,8 @@ export default function Header() {
     { name: "Dashboard", link: "/dasboard" },
     { name: "Reseñas", link: "/resena" },
     { name: "Promociones", link: "/promociones" },
-{ name: "Pedidos", link: "/pedidos" }
+{ name: "Pedidos", link: "/pedidos" },
+ { name: "Productos Personalizados", link: "/productos-personalizados" }
 
   ];
 
