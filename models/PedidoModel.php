@@ -1,13 +1,44 @@
 <?php
 
-class PedidoModel {
+class PedidoModel
+{
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = new MySqlConnect();
     }
 
-    public function crearPedido($usuario_id, $direccion_envio, $productos) {
+    public function all()
+    {
+        try {
+            $sql = "SELECT 
+            Pedido.id,
+            Usuario.nombre_usuario,
+            Pedido.fecha_pedido,
+            Pedido.direccion_envio,
+            Pedido.estado
+        FROM Pedido
+        JOIN Usuario ON Pedido.usuario_id = Usuario.id";
+
+            $pedidos = $this->db->executeSQL($sql);
+
+            if (is_array($pedidos)) {
+                foreach ($pedidos as $pedido) {
+                    $pedido->detalles = $this->obtenerDetalles($pedido->id) ?? [];
+                }
+                return $pedidos;
+            }
+
+            return [];
+        } catch (Exception $e) {
+            error_log("Error en PedidoModel::all(): " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function crearPedido($usuario_id, $direccion_envio, $productos)
+    {
         try {
             // Insertar el pedido
             $sqlPedido = "INSERT INTO pedido (usuario_id, fecha_pedido, direccion_envio, estado) 
@@ -17,17 +48,17 @@ class PedidoModel {
             if (!$pedidoId) return false;
 
             // Insertar productos en pedido
-foreach ($productos as $producto) {
-    // Obtener el precio actual del producto
-    $precioQuery = "SELECT precio FROM producto WHERE id = {$producto->producto_id}";
-    $precioResult = $this->db->executeSQL($precioQuery);
-    $precio_unitario = $precioResult[0]->precio ?? 0;
+            foreach ($productos as $producto) {
+                // Obtener el precio actual del producto
+                $precioQuery = "SELECT precio FROM producto WHERE id = {$producto->producto_id}";
+                $precioResult = $this->db->executeSQL($precioQuery);
+                $precio_unitario = $precioResult[0]->precio ?? 0;
 
-    $sqlDetalle = "INSERT INTO detallepedido (pedido_id, producto_id, cantidad, precio_unitario) 
+                $sqlDetalle = "INSERT INTO detallepedido (pedido_id, producto_id, cantidad, precio_unitario) 
                    VALUES ({$pedidoId}, {$producto->producto_id}, {$producto->cantidad}, {$precio_unitario})";
 
-    $this->db->executeSQL_DML($sqlDetalle);
-}
+                $this->db->executeSQL_DML($sqlDetalle);
+            }
 
 
             return true;
@@ -36,19 +67,30 @@ foreach ($productos as $producto) {
             return false;
         }
     }
-// Obtiene todos los pedidos de un usuario
+    // Obtiene todos los pedidos de un usuario
     // por su ID de usuario
-    public function obtenerPedidosPorUsuario($usuario_id) {
+    public function obtenerPedidosPorUsuario($usuario_id)
+    {
         $sql = "SELECT * FROM pedido WHERE usuario_id = $usuario_id";
         return $this->db->executeSQL($sql);
     }
-// Obtiene los detalles de un pedido específico
-    public function obtenerDetalles($pedido_id) {
-        $sql = "SELECT * FROM detallepedido WHERE pedido_id = $pedido_id";
+    // Obtiene los detalles de un pedido específico
+    public function obtenerDetalles($pedido_id)
+    {
+        $sql = "SELECT 
+    dp.pedido_id,
+    p.nombre AS nombre_producto,
+    dp.cantidad,
+    dp.precio_unitario
+FROM DetallePedido dp
+JOIN Producto p ON dp.producto_id = p.id
+WHERE dp.pedido_id = $pedido_id";
+
         return $this->db->executeSQL($sql);
     }
-// Cambia el estado de un pedido si es válido
-    public function cambiarEstado($pedido_id, $nuevoEstado) {
+    // Cambia el estado de un pedido si es válido
+    public function cambiarEstado($pedido_id, $nuevoEstado)
+    {
         $estadoActual = $this->db->executeSQL("SELECT estado FROM pedido WHERE id = $pedido_id");
         if (empty($estadoActual)) return false;
 
@@ -64,8 +106,9 @@ foreach ($productos as $producto) {
 
         return false;
     }
-public function obtenerTodosLosPedidosConDetalles() {
-    $sql = "SELECT 
+    public function obtenerTodosLosPedidosConDetalles()
+    {
+        $sql = "SELECT 
                 p.id AS pedido_id, 
                 p.fecha_pedido, 
                 p.direccion_envio, 
@@ -78,8 +121,6 @@ public function obtenerTodosLosPedidosConDetalles() {
             JOIN detallepedido dp ON p.id = dp.pedido_id
             JOIN producto pr ON dp.producto_id = pr.id
             ORDER BY p.fecha_pedido DESC";
-    return $this->db->executeSQL($sql);
-}
-
-
+        return $this->db->executeSQL($sql);
+    }
 }
