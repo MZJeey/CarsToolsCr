@@ -11,18 +11,22 @@ import {
   Badge,
   Tooltip,
   TextField,
+  InputAdornment,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
+import SearchIcon from "@mui/icons-material/Search";
 import { TireRepair } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { UserContext } from "../../context/UserContext";
 import LanguageIcon from "@mui/icons-material/Language";
 import { useTranslation } from "react-i18next";
+import { debounce } from "lodash";
+
 export default function Header() {
   const { user, decodeToken, autorize } = useContext(UserContext);
   const [userData, setUserData] = useState(decodeToken());
@@ -37,9 +41,8 @@ export default function Header() {
   const [anchorElUser, setAnchorEl] = useState(null);
   const [mobileOpcionesAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [anchorElPrincipal, setAnchorElPrincipal] = useState(null);
-
-  // Nuevo estado para el menú desplegable de Mantenimiento Vehículos
   const [anchorElMantenimiento, setAnchorElMantenimiento] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const isMobileOpcionesMenuOpen = Boolean(mobileOpcionesAnchorEl);
 
@@ -58,16 +61,21 @@ export default function Header() {
     const newLang = i18n.language === "es" ? "en" : "es";
     i18n.changeLanguage(newLang);
   };
-  // Handlers para menú de Mantenimiento Vehículos
+
   const handleMantenimientoOpen = (e) =>
     setAnchorElMantenimiento(e.currentTarget);
   const handleMantenimientoClose = () => setAnchorElMantenimiento(null);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+  const debouncedSearch = debounce((query) => {
+    if (query.trim()) {
+      navigate(`/search?query=${encodeURIComponent(query)}`);
     }
+  }, 500);
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    debouncedSearch(query);
   };
 
   const userItems = [
@@ -78,10 +86,8 @@ export default function Header() {
 
   const navItems = [
     { name: "Repuestos", link: "/lista", roles: null },
-    // { name: "Promociones", link: "/catalog-movies/", roles: null },
     { name: "Marcas", link: "/catalog-movies/", roles: null },
     { name: "Servicios", link: "/movie/filter", roles: null },
-
     { name: "Mantenimientos", link: null, roles: [] },
   ];
 
@@ -90,16 +96,14 @@ export default function Header() {
     { name: "Dashboard", link: "/dasboard" },
     { name: "Reseñas", link: "/resena" },
     { name: "Promociones", link: "/promociones" },
-{ name: "Pedidos", link: "/pedidos" },
- { name: "Productos Personalizados", link: "/productos-personalizados" }
-
+    { name: "Pedidos", link: "/pedidos" },
+    { name: "Productos Personalizados", link: "/productos-personalizados" },
   ];
 
   const menuPrincipal = (
     <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
       {navItems.map((item, idx) => {
         if (item.name === "Mantenimientos") {
-          // Menú desplegable para mantenimiento vehículos
           return (
             <Box key={idx}>
               <Button
@@ -179,7 +183,6 @@ export default function Header() {
     </Box>
   );
 
-  // Menú móvil: mantengo simple sin submenu, si quieres podemos agregar submenu también
   const menuPrincipalMobile = (
     <Box>
       {navItems.map((item, idx) => {
@@ -397,7 +400,7 @@ export default function Header() {
             sx={{
               mx: 2,
               display: { xs: "none", sm: "flex" },
-              alignItems: "center",
+              alignItems: "flex-end",
             }}
           >
             <TextField
@@ -405,18 +408,26 @@ export default function Header() {
               variant="outlined"
               placeholder="Buscar repuesto..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              sx={{ bgcolor: "white", borderRadius: 1 }}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: "action.active" }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                bgcolor: "white",
+                borderRadius: 1,
+                "& .MuiOutlinedInput-root": {
+                  paddingLeft: 1,
+                  width: "500px",
+                },
+                "& .MuiInputBase-input": {
+                  padding: "8.5px 14px",
+                },
+              }}
             />
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleSearch}
-              sx={{ ml: 1 }}
-            >
-              Buscar
-            </Button>
           </Box>
 
           <Box sx={{ flexGrow: 1 }} />
