@@ -41,7 +41,6 @@ const PedidoComponent = () => {
   const [selectedPedido, setSelectedPedido] = useState(null);
   const [openFactura, setOpenFactura] = useState(false);
 
-  // Obtener pedidos
   const fetchTodosLosPedidos = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -60,26 +59,91 @@ const PedidoComponent = () => {
     fetchTodosLosPedidos();
   }, [fetchTodosLosPedidos]);
 
-  // Manejar selección de pedido para ver factura
   const handleVerFactura = (pedido) => {
     setSelectedPedido(pedido);
     setOpenFactura(true);
   };
 
-  // Componente de Factura
   const FacturaDialog = ({ pedido, onClose }) => {
-    if (!pedido || !pedido.detalles) return null;
+    if (!pedido) return null;
 
-    // Calcular subtotales y total
-    const productosConSubtotal = pedido.detalles.map((detalle) => ({
-      ...detalle,
-      subtotal: Number(detalle.cantidad) * Number(detalle.precio_unitario),
-    }));
+    const parseOpcionesPersonalizacion = (opciones) => {
+      try {
+        if (!opciones) return [];
 
-    const total = productosConSubtotal.reduce(
-      (sum, item) => sum + item.subtotal,
-      0
-    );
+        if (Array.isArray(opciones)) return opciones;
+
+        if (typeof opciones === "string") {
+          const parsed = JSON.parse(opciones);
+          return Array.isArray(parsed) ? parsed : [parsed];
+        }
+
+        if (typeof opciones === "object") {
+          if (opciones.color || opciones.estilo) {
+            return Object.entries(opciones).map(([key, value]) => ({
+              criterio: key,
+              opcion: value.opcion,
+              costo: value.costo,
+            }));
+          }
+          return [opciones];
+        }
+
+        return [];
+      } catch (e) {
+        console.error("Error al parsear opciones:", e);
+        return [];
+      }
+    };
+
+    const calcularTotales = () => {
+      let subtotal = 0;
+      let impuestos = 0;
+
+      // Productos normales
+      if (pedido.detalles && pedido.detalles.nombre_producto) {
+        const cantidad = Number(pedido.detalles.cantidad || 0);
+        const precio = Number(pedido.detalles.precio_unitario || 0);
+        const porcentaje = Number(pedido.detalles.porcentaje || 0);
+
+        subtotal += cantidad * precio;
+        impuestos += (cantidad * precio * porcentaje) / 100;
+      }
+
+      // Productos personalizados
+      if (pedido.detalles && pedido.detalles.productos) {
+        pedido.detalles.productos.forEach((producto) => {
+          const cantidad = Number(producto.cantidad || 0);
+          const precio = Number(
+            producto.precio_unitario || producto.costo_base || 0
+          );
+          const porcentaje = Number(producto.porcentaje || 0);
+
+          subtotal += cantidad * precio;
+          impuestos += (cantidad * precio * porcentaje) / 100;
+        });
+      }
+
+      return {
+        subtotal,
+        impuestos,
+        total: subtotal + impuestos,
+      };
+    };
+
+    const { subtotal, impuestos, total } = calcularTotales();
+
+    const renderOpcionesPersonalizacion = (opciones) => {
+      const parsed = parseOpcionesPersonalizacion(opciones);
+      if (!parsed || parsed.length === 0) return "Sin personalización";
+
+      return parsed.map((opcion, i) => (
+        <div key={i}>
+          <strong>{opcion.criterio || "Opción"}:</strong> {opcion.opcion}
+          {opcion.costo && ` (+₡${Number(opcion.costo).toFixed(2)})`}
+        </div>
+      ));
+    };
 
     return (
       <Dialog open={openFactura} onClose={onClose} maxWidth="md" fullWidth>
@@ -90,7 +154,7 @@ const PedidoComponent = () => {
             alignItems="center"
           >
             <Typography variant="h6">
-              Factura del Pedido N°{""} {pedido.id}
+              Factura del Pedido N° {pedido.id}
             </Typography>
             <IconButton onClick={onClose}>
               <CloseIcon />
@@ -99,7 +163,6 @@ const PedidoComponent = () => {
         </DialogTitle>
         <DialogContent>
           <Paper elevation={0} sx={{ p: 3, fontFamily: "Arial, sans-serif" }}>
-            {/* Encabezado de la Factura */}
             <Box mb={4} textAlign="center">
               <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
                 FACTURA COMERCIAL
@@ -120,7 +183,6 @@ const PedidoComponent = () => {
             </Box>
 
             <Grid container spacing={4} mb={4}>
-              {/* Información del Cliente */}
               <Grid item xs={6}>
                 <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
                   DATOS DEL CLIENTE
@@ -134,27 +196,32 @@ const PedidoComponent = () => {
                 </Typography>
               </Grid>
 
-              {/* Estado del Pedido */}
               <Grid item xs={6}>
                 <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                  ESTADO DEL PEDIDO
+                  INFORMACIÓN DEL PAGO
                 </Typography>
                 <Divider sx={{ mb: 2 }} />
-                <Chip
-                  label={pedido.estado.replace("_", " ").toUpperCase()}
-                  color={
-                    pedido.estado === "entregado"
-                      ? "success"
-                      : pedido.estado === "pagado"
-                        ? "info"
-                        : "warning"
-                  }
-                  sx={{ fontSize: "1rem", padding: "8px 12px" }}
-                />
+                <Typography variant="body1">
+                  <strong>Método de pago:</strong>{" "}
+                  {pedido.metodo_pago || "No especificado"}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Estado:</strong>{" "}
+                  <Chip
+                    label={pedido.estado.replace("_", " ").toUpperCase()}
+                    color={
+                      pedido.estado === "entregado"
+                        ? "success"
+                        : pedido.estado === "pagado"
+                          ? "info"
+                          : "warning"
+                    }
+                    size="small"
+                  />
+                </Typography>
               </Grid>
             </Grid>
 
-            {/* Detalle de Productos */}
             <Box mb={4}>
               <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
                 DETALLE DE PRODUCTOS
@@ -164,6 +231,9 @@ const PedidoComponent = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ fontWeight: "bold" }}>Producto</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      Personalización
+                    </TableCell>
                     <TableCell align="right" sx={{ fontWeight: "bold" }}>
                       Cantidad
                     </TableCell>
@@ -171,31 +241,88 @@ const PedidoComponent = () => {
                       P. Unitario
                     </TableCell>
                     <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                      Impuesto
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: "bold" }}>
                       Subtotal
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {productosConSubtotal.map((producto, index) => (
-                    <TableRow key={index}>
-                      <TableCell>Producto {producto.nombre_producto}</TableCell>
-                      <TableCell align="right">{producto.cantidad}</TableCell>
+                  {pedido.detalles && pedido.detalles.nombre_producto && (
+                    <TableRow>
+                      <TableCell>{pedido.detalles.nombre_producto}</TableCell>
+                      <TableCell>Producto estándar</TableCell>
                       <TableCell align="right">
-                        ₡{Number(producto.precio_unitario).toFixed(2)}
+                        {pedido.detalles.cantidad}
                       </TableCell>
                       <TableCell align="right">
-                        ₡{producto.subtotal.toFixed(2)}
+                        ₡
+                        {Number(pedido.detalles.precio_unitario || 0).toFixed(
+                          2
+                        )}
+                      </TableCell>
+                      <TableCell align="right">
+                        {pedido.detalles.porcentaje}%
+                      </TableCell>
+                      <TableCell align="right">
+                        ₡
+                        {(
+                          Number(pedido.detalles.cantidad) *
+                          Number(pedido.detalles.precio_unitario || 0)
+                        ).toFixed(2)}
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
+
+                  {pedido.detalles?.productos?.map((producto, index) => {
+                    const precio = Number(
+                      producto.precio_unitario || producto.costo_base || 0
+                    );
+                    const cantidad = Number(producto.cantidad || 0);
+                    const porcentaje = Number(producto.porcentaje || 0);
+                    const subtotal = precio * cantidad;
+                    const impuesto = (subtotal * porcentaje) / 100;
+
+                    return (
+                      <TableRow key={`personalizado-${index}`}>
+                        <TableCell>
+                          {producto.nombre_personalizado ||
+                            producto.nombre_producto_base ||
+                            "Producto personalizado"}
+                        </TableCell>
+                        <TableCell>
+                          {renderOpcionesPersonalizacion(
+                            producto.opciones_personalizacion
+                          )}
+                        </TableCell>
+                        <TableCell align="right">{cantidad}</TableCell>
+                        <TableCell align="right">
+                          ₡{precio.toFixed(2)}
+                        </TableCell>
+                        <TableCell align="right">{porcentaje}%</TableCell>
+                        <TableCell align="right">
+                          ₡{subtotal.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </Box>
 
-            {/* Totales */}
             <Box textAlign="right" mt={4}>
-              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+              <Typography variant="body1">
+                <strong>Subtotal:</strong> ₡{subtotal.toFixed(2)}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Impuestos:</strong> ₡{impuestos.toFixed(2)}
+              </Typography>
+              <Typography variant="h5" sx={{ fontWeight: "bold", mt: 1 }}>
                 TOTAL: ₡{total.toFixed(2)}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+                Método de pago: {pedido.metodo_pago || "No especificado"}
               </Typography>
             </Box>
           </Paper>
@@ -217,14 +344,15 @@ const PedidoComponent = () => {
     );
   };
 
-  if (loading)
+  if (loading) {
     return (
       <Box display="flex" justifyContent="center" mt={4}>
         <CircularProgress />
       </Box>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4 }}>
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -235,6 +363,7 @@ const PedidoComponent = () => {
         </Button>
       </Container>
     );
+  }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -279,23 +408,29 @@ const PedidoComponent = () => {
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>Número pedido</TableCell>
+                <TableCell>N° Pedido</TableCell>
                 <TableCell>Fecha</TableCell>
                 <TableCell>Cliente</TableCell>
 
+                <TableCell>Estado</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {pedidos.map((pedido) => {
-                // Calcular el total del pedido
                 const total = pedido.detalles
-                  ? pedido.detalles.reduce(
-                      (sum, item) =>
-                        sum +
-                        Number(item.cantidad) * Number(item.precio_unitario),
-                      0
-                    )
+                  ? pedido.detalles.nombre_producto
+                    ? Number(pedido.detalles.cantidad || 0) *
+                      Number(pedido.detalles.precio_unitario || 0) *
+                      (1 + Number(pedido.detalles.porcentaje || 0) / 100)
+                    : pedido.detalles.productos?.reduce(
+                        (sum, item) =>
+                          sum +
+                          Number(item.precio_unitario || item.costo_base || 0) *
+                            Number(item.cantidad || 0) *
+                            (1 + Number(item.porcentaje || 0) / 100),
+                        0
+                      ) || 0
                   : 0;
 
                 return (
@@ -316,8 +451,21 @@ const PedidoComponent = () => {
                         }
                       )}
                     </TableCell>
-                    <TableCell> {pedido.nombre_usuario}</TableCell>
+                    <TableCell>{pedido.nombre_usuario}</TableCell>
 
+                    <TableCell>
+                      <Chip
+                        label={pedido.estado.replace("_", " ").toUpperCase()}
+                        color={
+                          pedido.estado === "entregado"
+                            ? "success"
+                            : pedido.estado === "pagado"
+                              ? "info"
+                              : "warning"
+                        }
+                        size="small"
+                      />
+                    </TableCell>
                     <TableCell>
                       <Tooltip title="Editar pedido">
                         <IconButton
@@ -326,8 +474,9 @@ const PedidoComponent = () => {
                             // Lógica para editar
                           }}
                           color="primary"
+                          size="small"
                         >
-                          <Edit />
+                          <Edit fontSize="small" />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Eliminar pedido">
@@ -337,8 +486,9 @@ const PedidoComponent = () => {
                             // Lógica para eliminar
                           }}
                           color="error"
+                          size="small"
                         >
-                          <Delete />
+                          <Delete fontSize="small" />
                         </IconButton>
                       </Tooltip>
                     </TableCell>
