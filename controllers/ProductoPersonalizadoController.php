@@ -17,7 +17,7 @@ class producto_personalizado
             handleException($e);
         }
     }
-
+// Se crean los métodos para manejar los productos personalizados
     public function create()
     {
         try {
