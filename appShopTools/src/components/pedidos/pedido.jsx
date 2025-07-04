@@ -64,6 +64,16 @@ const PedidoComponent = () => {
     setOpenFactura(true);
   };
 
+  // Ordenar pedidos por estado: en_proceso, pagado, entregado
+  const estadoOrden = {
+    en_proceso: 0,
+    pagado: 1,
+    entregado: 2,
+  };
+  const pedidosOrdenados = [...pedidos].sort(
+    (a, b) => (estadoOrden[a.estado] ?? 99) - (estadoOrden[b.estado] ?? 99)
+  );
+
   const FacturaDialog = ({ pedido, onClose }) => {
     if (!pedido) return null;
 
@@ -403,7 +413,7 @@ const PedidoComponent = () => {
         </Button>
       </Box>
 
-      {pedidos.length > 0 ? (
+      {pedidosOrdenados.length > 0 ? (
         <Paper elevation={3} sx={{ overflow: "auto" }}>
           <Table stickyHeader>
             <TableHead>
@@ -411,13 +421,12 @@ const PedidoComponent = () => {
                 <TableCell>N° Pedido</TableCell>
                 <TableCell>Fecha</TableCell>
                 <TableCell>Cliente</TableCell>
-
                 <TableCell>Estado</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {pedidos.map((pedido) => {
+              {pedidosOrdenados.map((pedido) => {
                 const total = pedido.detalles
                   ? pedido.detalles.nombre_producto
                     ? Number(pedido.detalles.cantidad || 0) *
@@ -452,7 +461,6 @@ const PedidoComponent = () => {
                       )}
                     </TableCell>
                     <TableCell>{pedido.nombre_usuario}</TableCell>
-
                     <TableCell>
                       <Chip
                         label={pedido.estado.replace("_", " ").toUpperCase()}
