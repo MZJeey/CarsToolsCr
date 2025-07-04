@@ -17,9 +17,11 @@ class PedidoModel
             Usuario.nombre_usuario,
             Pedido.fecha_pedido,
             Pedido.direccion_envio,
-            Pedido.estado
+            Pedido.estado,
+            MetodoPago.Nombre AS metodo_pago
         FROM Pedido
-        JOIN Usuario ON Pedido.usuario_id = Usuario.id";
+        JOIN Usuario ON Pedido.usuario_id = Usuario.id
+        JOIN MetodoPago ON Pedido.idMetodoPago = MetodoPago.idMetodoPago";
 
             $pedidos = $this->db->executeSQL($sql);
 
@@ -77,16 +79,28 @@ class PedidoModel
     // Obtiene los detalles de un pedido específico
     public function obtenerDetalles($pedido_id)
     {
+        $ProductoPersonalizado = new ProductoPersonalizadoModel();
+
         $sql = "SELECT 
     dp.pedido_id,
     p.nombre AS nombre_producto,
+    p.IdImpuesto AS id_impuesto,
+    i.Porcentaje AS porcentaje,
     dp.cantidad,
     dp.precio_unitario
 FROM DetallePedido dp
 JOIN Producto p ON dp.producto_id = p.id
+JOIN Impuesto i ON p.IdImpuesto = i.IdImpuesto
 WHERE dp.pedido_id = $pedido_id";
 
-        return $this->db->executeSQL($sql);
+        $detalle = $this->db->executeSQL($sql);
+
+
+        if (!empty($detalle)) {
+            $detalle = $detalle[0];
+            $detalle->productos = $ProductoPersonalizado->obtenerPorPedido($pedido_id);
+        }
+        return $detalle;
     }
     // Cambia el estado de un pedido si es válido
     public function cambiarEstado($pedido_id, $nuevoEstado)
