@@ -1,7 +1,9 @@
 <?php
-class pedido {
-    public function crear() {
-// Esto es un controller de ejemplo para manejar pedidos
+class pedido
+{
+    public function crear()
+    {
+        // Esto es un controller de ejemplo para manejar pedidos
 
         try {
             $request = new Request();
@@ -17,7 +19,8 @@ class pedido {
         }
     }
 
-    public function listar() {
+    public function listar()
+    {
         try {
             $request = new Request();
             $response = new Response();
@@ -32,7 +35,8 @@ class pedido {
         }
     }
 
-    public function detalles() {
+    public function detalles()
+    {
         try {
             $request = new Request();
             $response = new Response();
@@ -47,7 +51,8 @@ class pedido {
         }
     }
 
-    public function cambiarEstado() {
+    public function cambiarEstado()
+    {
         try {
             $request = new Request();
             $response = new Response();
@@ -61,16 +66,15 @@ class pedido {
             handleException($e);
         }
     }
-public function listarTodos() {
-    try {
-        $response = new Response();
-        $model = new PedidoModel();
-        $pedidos = $model->obtenerTodosLosPedidosConDetalles();
-        $response->toJSON($pedidos);
-    } catch (Exception $e) {
-        handleException($e);
+    public function listarTodos()
+    {
+        try {
+            $response = new Response();
+            $model = new PedidoModel();
+            $pedidos = $model->all();
+            $response->toJSON($pedidos);
+        } catch (Exception $e) {
+            handleException($e);
+        }
     }
-}
-
-
 }

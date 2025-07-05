@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Container,
   Typography,
@@ -10,184 +10,493 @@ import {
   TableRow,
   Box,
   Button,
-  TextField,
-  MenuItem,
   Paper,
   Tooltip,
-  Chip
-} from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
-import PedidoService from '../../services/PedidoService';
-import CrearPedidoModal from './crearPedido'; 
+  Chip,
+  CircularProgress,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Divider,
+  Grid,
+} from "@mui/material";
+import {
+  Edit,
+  Delete,
+  Add as AddIcon,
+  Close as CloseIcon,
+  Print as PrintIcon,
+} from "@mui/icons-material";
+import PedidoService from "../../services/PedidoService";
+import CrearPedidoModal from "./crearPedido";
 
 const PedidoComponent = () => {
   const [pedidos, setPedidos] = useState([]);
-  const [rolUsuario, setRolUsuario] = useState('cliente'); 
-  const [openModal, setOpenModal] = useState(false); 
+  const [rolUsuario, setRolUsuario] = useState("admin");
+  const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedPedido, setSelectedPedido] = useState(null);
+  const [openFactura, setOpenFactura] = useState(false);
 
-  useEffect(() => {
-    fetchTodosLosPedidos();
-  }, []);
-
-  const fetchTodosLosPedidos = async () => {
+  const fetchTodosLosPedidos = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await PedidoService.listarTodosLosPedidos();
       setPedidos(response.data);
     } catch (error) {
-      console.error('Error al obtener pedidos:', error);
+      console.error("Error al obtener pedidos:", error);
+      setError("Error al cargar los pedidos. Intente nuevamente.");
+    } finally {
+      setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    fetchTodosLosPedidos();
+  }, [fetchTodosLosPedidos]);
+
+  const handleVerFactura = (pedido) => {
+    setSelectedPedido(pedido);
+    setOpenFactura(true);
   };
 
-  const handleActualizarPedido = async (pedidoActualizado) => {
-    try {
-      await PedidoService.actualizarPedido(pedidoActualizado.pedido_id, pedidoActualizado);
-      fetchTodosLosPedidos();
-    } catch (error) {
-      console.error('Error al actualizar el pedido:', error);
-    }
+  // Ordenar pedidos por estado: en_proceso, pagado, entregado
+  const estadoOrden = {
+    en_proceso: 0,
+    pagado: 1,
+    entregado: 2,
+  };
+  const pedidosOrdenados = [...pedidos].sort(
+    (a, b) => (estadoOrden[a.estado] ?? 99) - (estadoOrden[b.estado] ?? 99)
+  );
+
+  const FacturaDialog = ({ pedido, onClose }) => {
+    if (!pedido) return null;
+
+    const parseOpcionesPersonalizacion = (opciones) => {
+      try {
+        if (!opciones) return [];
+
+        if (Array.isArray(opciones)) return opciones;
+
+        if (typeof opciones === "string") {
+          const parsed = JSON.parse(opciones);
+          return Array.isArray(parsed) ? parsed : [parsed];
+        }
+
+        if (typeof opciones === "object") {
+          if (opciones.color || opciones.estilo) {
+            return Object.entries(opciones).map(([key, value]) => ({
+              criterio: key,
+              opcion: value.opcion,
+              costo: value.costo,
+            }));
+          }
+          return [opciones];
+        }
+
+        return [];
+      } catch (e) {
+        console.error("Error al parsear opciones:", e);
+        return [];
+      }
+    };
+
+    const calcularTotales = () => {
+      let subtotal = 0;
+      let impuestos = 0;
+
+      // Productos normales
+      if (pedido.detalles && pedido.detalles.nombre_producto) {
+        const cantidad = Number(pedido.detalles.cantidad || 0);
+        const precio = Number(pedido.detalles.precio_unitario || 0);
+        const porcentaje = Number(pedido.detalles.porcentaje || 0);
+
+        subtotal += cantidad * precio;
+        impuestos += (cantidad * precio * porcentaje) / 100;
+      }
+
+      // Productos personalizados
+      if (pedido.detalles && pedido.detalles.productos) {
+        pedido.detalles.productos.forEach((producto) => {
+          const cantidad = Number(producto.cantidad || 0);
+          const precio = Number(
+            producto.precio_unitario || producto.costo_base || 0
+          );
+          const porcentaje = Number(producto.porcentaje || 0);
+
+          subtotal += cantidad * precio;
+          impuestos += (cantidad * precio * porcentaje) / 100;
+        });
+      }
+
+      return {
+        subtotal,
+        impuestos,
+        total: subtotal + impuestos,
+      };
+    };
+
+    const { subtotal, impuestos, total } = calcularTotales();
+
+    const renderOpcionesPersonalizacion = (opciones) => {
+      const parsed = parseOpcionesPersonalizacion(opciones);
+      if (!parsed || parsed.length === 0) return "Sin personalización";
+
+      return parsed.map((opcion, i) => (
+        <div key={i}>
+          <strong>{opcion.criterio || "Opción"}:</strong> {opcion.opcion}
+          {opcion.costo && ` (+₡${Number(opcion.costo).toFixed(2)})`}
+        </div>
+      ));
+    };
+
+    return (
+      <Dialog open={openFactura} onClose={onClose} maxWidth="md" fullWidth>
+        <DialogTitle>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h6">
+              Factura del Pedido N° {pedido.id}
+            </Typography>
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Paper elevation={0} sx={{ p: 3, fontFamily: "Arial, sans-serif" }}>
+            <Box mb={4} textAlign="center">
+              <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
+                FACTURA COMERCIAL
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                Número: #{pedido.id}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                Fecha:{" "}
+                {new Date(pedido.fecha_pedido).toLocaleDateString("es-ES", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </Typography>
+            </Box>
+
+            <Grid container spacing={4} mb={4}>
+              <Grid item xs={6}>
+                <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+                  DATOS DEL CLIENTE
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+                <Typography variant="body1">
+                  <strong>Cliente:</strong> {pedido.nombre_usuario}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Dirección:</strong> {pedido.direccion_envio}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+                  INFORMACIÓN DEL PAGO
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+                <Typography variant="body1">
+                  <strong>Método de pago:</strong>{" "}
+                  {pedido.metodo_pago || "No especificado"}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Estado:</strong>{" "}
+                  <Chip
+                    label={pedido.estado.replace("_", " ").toUpperCase()}
+                    color={
+                      pedido.estado === "entregado"
+                        ? "success"
+                        : pedido.estado === "pagado"
+                          ? "info"
+                          : "warning"
+                    }
+                    size="small"
+                  />
+                </Typography>
+              </Grid>
+            </Grid>
+
+            <Box mb={4}>
+              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
+                DETALLE DE PRODUCTOS
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold" }}>Producto</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      Personalización
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                      Cantidad
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                      P. Unitario
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                      Impuesto
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                      Subtotal
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {pedido.detalles && pedido.detalles.nombre_producto && (
+                    <TableRow>
+                      <TableCell>{pedido.detalles.nombre_producto}</TableCell>
+                      <TableCell>Producto estándar</TableCell>
+                      <TableCell align="right">
+                        {pedido.detalles.cantidad}
+                      </TableCell>
+                      <TableCell align="right">
+                        ₡
+                        {Number(pedido.detalles.precio_unitario || 0).toFixed(
+                          2
+                        )}
+                      </TableCell>
+                      <TableCell align="right">
+                        {pedido.detalles.porcentaje}%
+                      </TableCell>
+                      <TableCell align="right">
+                        ₡
+                        {(
+                          Number(pedido.detalles.cantidad) *
+                          Number(pedido.detalles.precio_unitario || 0)
+                        ).toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  )}
+
+                  {pedido.detalles?.productos?.map((producto, index) => {
+                    const precio = Number(
+                      producto.precio_unitario || producto.costo_base || 0
+                    );
+                    const cantidad = Number(producto.cantidad || 0);
+                    const porcentaje = Number(producto.porcentaje || 0);
+                    const subtotal = precio * cantidad;
+                    const impuesto = (subtotal * porcentaje) / 100;
+
+                    return (
+                      <TableRow key={`personalizado-${index}`}>
+                        <TableCell>
+                          {producto.nombre_personalizado ||
+                            producto.nombre_producto_base ||
+                            "Producto personalizado"}
+                        </TableCell>
+                        <TableCell>
+                          {renderOpcionesPersonalizacion(
+                            producto.opciones_personalizacion
+                          )}
+                        </TableCell>
+                        <TableCell align="right">{cantidad}</TableCell>
+                        <TableCell align="right">
+                          ₡{precio.toFixed(2)}
+                        </TableCell>
+                        <TableCell align="right">{porcentaje}%</TableCell>
+                        <TableCell align="right">
+                          ₡{subtotal.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </Box>
+
+            <Box textAlign="right" mt={4}>
+              <Typography variant="body1">
+                <strong>Subtotal:</strong> ₡{subtotal.toFixed(2)}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Impuestos:</strong> ₡{impuestos.toFixed(2)}
+              </Typography>
+              <Typography variant="h5" sx={{ fontWeight: "bold", mt: 1 }}>
+                TOTAL: ₡{total.toFixed(2)}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+                Método de pago: {pedido.metodo_pago || "No especificado"}
+              </Typography>
+            </Box>
+          </Paper>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button
+            variant="outlined"
+            startIcon={<PrintIcon />}
+            onClick={() => window.print()}
+            sx={{ mr: 2 }}
+          >
+            Imprimir Factura
+          </Button>
+          <Button variant="contained" onClick={onClose}>
+            Cerrar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
   };
 
-  const handleEliminarPedido = async (pedidoId) => {
-    try {
-      await PedidoService.eliminarPedido(pedidoId);
-      fetchTodosLosPedidos();
-    } catch (error) {
-      console.error('Error al eliminar el pedido:', error);
-    }
-  };
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" mt={4}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
-  const groupedPedidos = pedidos.reduce((acc, pedido) => {
-    if (!acc[pedido.pedido_id]) acc[pedido.pedido_id] = [];
-    acc[pedido.pedido_id].push(pedido);
-    return acc;
-  }, {});
+  if (error) {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+        <Button variant="contained" onClick={fetchTodosLosPedidos}>
+          Reintentar
+        </Button>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {}
       <CrearPedidoModal
         open={openModal}
         handleClose={() => setOpenModal(false)}
         refreshPedidos={fetchTodosLosPedidos}
       />
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1e293b' }}>
+      <FacturaDialog
+        pedido={selectedPedido}
+        onClose={() => setOpenFactura(false)}
+      />
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: "bold", color: "primary.main" }}
+        >
           Gestión de Pedidos
         </Typography>
         <Button
           variant="contained"
           color="primary"
           onClick={() => setOpenModal(true)}
-          sx={{ fontWeight: 'bold', backgroundColor: '#438892' }}
+          startIcon={<AddIcon />}
+          sx={{ fontWeight: "bold" }}
         >
-          + Nuevo Pedido
+          Nuevo Pedido
         </Button>
       </Box>
 
-      {Object.keys(groupedPedidos).length > 0 ? (
-        <Paper>
-          <Table>
+      {pedidosOrdenados.length > 0 ? (
+        <Paper elevation={3} sx={{ overflow: "auto" }}>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>Pedido</TableCell>
-                <TableCell>Dirección</TableCell>
-                <TableCell>Estado</TableCell>
+                <TableCell>N° Pedido</TableCell>
                 <TableCell>Fecha</TableCell>
-                <TableCell>Productos</TableCell>
-                <TableCell>Total</TableCell>
+                <TableCell>Cliente</TableCell>
+                <TableCell>Estado</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {Object.entries(groupedPedidos).map(([pedidoId, detalles]) => {
-                const pedido = detalles[0];
-                const total = detalles.reduce(
-                  (acc, item) => acc + item.cantidad * item.precio_unitario,
-                  0
-                );
+              {pedidosOrdenados.map((pedido) => {
+                const total = pedido.detalles
+                  ? pedido.detalles.nombre_producto
+                    ? Number(pedido.detalles.cantidad || 0) *
+                      Number(pedido.detalles.precio_unitario || 0) *
+                      (1 + Number(pedido.detalles.porcentaje || 0) / 100)
+                    : pedido.detalles.productos?.reduce(
+                        (sum, item) =>
+                          sum +
+                          Number(item.precio_unitario || item.costo_base || 0) *
+                            Number(item.cantidad || 0) *
+                            (1 + Number(item.porcentaje || 0) / 100),
+                        0
+                      ) || 0
+                  : 0;
 
                 return (
-                  <TableRow key={pedidoId}>
-                    <TableCell># {pedidoId}</TableCell>
+                  <TableRow
+                    key={pedido.id}
+                    hover
+                    onClick={() => handleVerFactura(pedido)}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    <TableCell>{pedido.id}</TableCell>
                     <TableCell>
-                      <TextField
-                        fullWidth
-                        variant="standard"
-                        value={pedido.direccion_envio}
-                        onChange={(e) => {
-                          pedido.direccion_envio = e.target.value;
-                          setPedidos([...pedidos]);
-                        }}
+                      {new Date(pedido.fecha_pedido).toLocaleDateString(
+                        "es-ES",
+                        {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        }
+                      )}
+                    </TableCell>
+                    <TableCell>{pedido.nombre_usuario}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={pedido.estado.replace("_", " ").toUpperCase()}
+                        color={
+                          pedido.estado === "entregado"
+                            ? "success"
+                            : pedido.estado === "pagado"
+                              ? "info"
+                              : "warning"
+                        }
+                        size="small"
                       />
                     </TableCell>
                     <TableCell>
-                      {rolUsuario === 'admin' ? (
-                        <TextField
-                          select
-                          variant="standard"
-                          value={pedido.estado}
-                          onChange={(e) => {
-                            pedido.estado = e.target.value;
-                            setPedidos([...pedidos]);
-                          }}
-                        >
-                          <MenuItem value="en_proceso">En proceso</MenuItem>
-                          <MenuItem value="pagado">Pagado</MenuItem>
-                          <MenuItem value="entregado">Entregado</MenuItem>
-                        </TextField>
-                      ) : (
-                        <Chip
-                          label={pedido.estado}
-                          color={
-                            pedido.estado === 'entregado'
-                              ? 'success'
-                              : pedido.estado === 'pagado'
-                              ? 'info'
-                              : 'warning'
-                          }
-                        />
-                      )}
-                    </TableCell>
-                    <TableCell>{new Date(pedido.fecha_pedido).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      {detalles.map((d, i) => (
-                        <Box key={i} sx={{ mb: 1 }}>
-                          <Typography variant="body2">
-                            {d.nombre_producto} - ₡{parseFloat(d.precio_unitario).toFixed(2)} x
-                            <TextField
-                              value={d.cantidad}
-                              onChange={(e) => {
-                                d.cantidad = parseInt(e.target.value);
-                                setPedidos([...pedidos]);
-                              }}
-                              type="number"
-                              size="small"
-                              sx={{ width: 60, ml: 1 }}
-                              inputProps={{ min: 1 }}
-                            />
-                          </Typography>
-                        </Box>
-                      ))}
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', color: '#0284c7' }}>
-                      ₡{total.toFixed(2)}
-                    </TableCell>
-                    <TableCell>
-                      <Tooltip title="Guardar Cambios">
+                      <Tooltip title="Editar pedido">
                         <IconButton
-                          onClick={() => handleActualizarPedido(pedido)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Lógica para editar
+                          }}
                           color="primary"
+                          size="small"
                         >
-                          <Edit />
+                          <Edit fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Eliminar Pedido">
+                      <Tooltip title="Eliminar pedido">
                         <IconButton
-                          onClick={() => handleEliminarPedido(pedido.pedido_id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Lógica para eliminar
+                          }}
                           color="error"
+                          size="small"
                         >
-                          <Delete />
+                          <Delete fontSize="small" />
                         </IconButton>
                       </Tooltip>
                     </TableCell>
@@ -198,7 +507,18 @@ const PedidoComponent = () => {
           </Table>
         </Paper>
       ) : (
-        <Typography>No hay pedidos registrados.</Typography>
+        <Paper sx={{ p: 3, textAlign: "center" }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            No hay pedidos registrados
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setOpenModal(true)}
+          >
+            Crear primer pedido
+          </Button>
+        </Paper>
       )}
     </Container>
   );
