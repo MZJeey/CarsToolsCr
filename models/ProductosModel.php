@@ -58,33 +58,32 @@ class ProductoModel
         }
     }
 
-    public function create($data)
-    {
-        try {
-            // Extraer datos del producto
-            $nombre = $data['nombre'];
-            $descripcion = $data['descripcion'];
-            $precio = floatval($data['precio']);
-            $categoria_id = intval($data['categoria_id']);
-            $stock = isset($data['stock']) ? intval($data['stock']) : 0;
-            $ano_compatible = $data['ano_compatible'];
-            $marca_compatible = $data['marca_compatible'];
-            $modelo_compatible = $data['modelo_compatible'];
-            $motor_compatible = $data['motor_compatible'];
-            $certificaciones = $data['certificaciones'];
-            $estado = $data['estado'];
-            $imagenes = isset($data['imagenes']) ? $data['imagenes'] : [];
+public function create($data, $imagenes)
+{
+    try {
+        // Extraer datos del producto
+        $nombre = $data['nombre'];
+        $descripcion = $data['descripcion'];
+        $precio = floatval($data['precio']);
+        $categoria_id = intval($data['categoria_id']);
+        $stock = isset($data['stock']) ? intval($data['stock']) : 0;
+        $ano_compatible = $data['ano_compatible'];
+        $marca_compatible = $data['marca_compatible'];
+        $modelo_compatible = $data['modelo_compatible'];
+        $motor_compatible = $data['motor_compatible'];
+        $certificaciones = $data['certificaciones'];
+        $estado = $data['estado'];
 
-            // Verificar si ya existe producto con ese nombre
-            $sqlCheck = "SELECT COUNT(*) AS total FROM Producto WHERE nombre = '$nombre'";
-            $result = $this->enlace->executeSQL($sqlCheck);
+        // Verificar si ya existe producto con ese nombre
+        $sqlCheck = "SELECT COUNT(*) AS total FROM Producto WHERE nombre = '$nombre'";
+        $result = $this->enlace->executeSQL($sqlCheck);
 
-            if (!$result || $result[0]->total > 0) {
-                return false; // Producto ya existe
-            }
+        if (!$result || $result[0]->total > 0) {
+            return false; // Producto ya existe
+        }
 
-            // Insertar producto
-            $sql = "
+        // Insertar producto
+        $sql = "
             INSERT INTO Producto (
                 nombre, descripcion, precio, categoria_id, stock,
                 promedio_valoraciones, ano_compatible, marca_compatible,
@@ -96,61 +95,29 @@ class ProductoModel
             )
         ";
 
-            $producto_id = $this->enlace->executeSQL_DML_last($sql);
+        $producto_id = $this->enlace->executeSQL_DML_last($sql);
 
-            if (!$producto_id || $producto_id <= 0) {
-                error_log("No se pudo insertar el producto");
-                return false;
-            }
-
-            // Insertar imágenes si existen en data['imagenes']
-            foreach ($imagenes as $imagen) {
-                $sqlImg = "INSERT INTO ImagenProducto (producto_id, imagen) VALUES ($producto_id, '$imagen')";
-                $resImg = $this->enlace->executeSQL_DML($sqlImg);
-                if (!$resImg) {
-                    error_log("Error insertando imagen para producto $producto_id");
-                }
-            }
-
-            return true;
-        } catch (Exception $e) {
-            error_log("Error en modelo Producto::create - " . $e->getMessage());
+        if (!$producto_id || $producto_id <= 0) {
+            error_log("No se pudo insertar el producto");
             return false;
         }
+
+    
+    foreach ($imagenes as $nombreArchivo) {
+    $sqlImg = "INSERT INTO ImagenProducto (producto_id, imagen) VALUES ($producto_id, '$nombreArchivo')";
+    $resImg = $this->enlace->executeSQL_DML($sqlImg);
+    if (!$resImg) {
+        error_log("Error insertando imagen '$nombreArchivo' para producto $producto_id");
     }
+}
+        
 
-
-
-
-
-
-    public function createProducto($data)
-    {
-        try {
-            $sql = "INSERT INTO Producto 
-            (nombre, descripcion, precio, categoria_id, stock, promedio_valoraciones, ano_compatible, marca_compatible, modelo_compatible, motor_compatible, certificaciones,estado)
-            VALUES (
-                '{$data['nombre']}',
-                '{$data['descripcion']}',
-                {$data['precio']},
-                {$data['categoria_id']},
-                " . ($data['stock'] ?? 0) . ",
-                0.00,
-                '{$data['ano_compatible']}',
-                '{$data['marca_compatible']}',
-                '{$data['modelo_compatible']}',
-                '{$data['motor_compatible']}',
-                '{$data['certificaciones']}',
-                  '{$data['estado']}'
-
-            )";
-
-            return $this->enlace->executeSQL_DML_last($sql);
-        } catch (Exception $e) {
-            error_log("Error al crear producto (sin imágenes): " . $e->getMessage());
-            return false;
-        }
+        return true;
+    } catch (Exception $e) {
+        error_log("Error en modelo Producto::create - " . $e->getMessage());
+        return false;
     }
+}
 
 
     public function get($id)
