@@ -1,5 +1,5 @@
 <?php
-//class Genre
+
 class image
 {
     //POST Crear

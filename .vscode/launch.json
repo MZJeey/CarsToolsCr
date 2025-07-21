@@ -8,8 +8,8 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Debug ",
-            "url": " http://localhost:5173/",
+            "name": "debug",
+            "url": "http://localhost:5173",
             "webRoot": "${workspaceFolder}"
         }
     ]

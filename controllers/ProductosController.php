@@ -44,47 +44,27 @@ class producto
             handleException($e);
         }
     }
-public function create()
-{
-    try {
-        $response = new Response();
+    public function create()
+    {
+        try {
+            $request = new Request();
+            $inputJSON = $request->getJSON();
 
-        $input = isset($_POST['data']) ? json_decode($_POST['data'], true) : null;
-        $archivos = $_FILES['imagenes'] ?? null;
+            // DEBUG: Imprimir el input recibido
+            file_put_contents("debug_input.log", print_r($inputJSON, true));
 
-        if (!$input || !$archivos || empty($archivos['name'])) {
-            return $response->toJSON([
-                'status' => 400,
-                'result' => 'Faltan datos: asegúrate de enviar "data" y al menos una imagen.'
-            ]);
-        }
-
-        $carpeta = "public/uploads/"; // No se crea porque ya existe
-
-        $imagenesGuardadas = [];
-
-        foreach ($archivos['tmp_name'] as $index => $tmpPath) {
-            $nombreOriginal = basename($archivos['name'][$index]);
-            $rutaDestino = $carpeta . $nombreOriginal;
-
-            // Mueve la imagen con su nombre original
-            if (move_uploaded_file($tmpPath, $rutaDestino)) {
-                $imagenesGuardadas[] = $nombreOriginal; // Solo guardamos el nombre, no la ruta
+            if (!$inputJSON) {
+                throw new Exception("No se recibió JSON válido");
             }
+
+            $producto = new ProductoModel();
+            $result = $producto->create($inputJSON);
+
+            (new Response())->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
         }
-
-        $producto = new ProductoModel();
-        $exito = $producto->create($input, $imagenesGuardadas);
-
-        return $response->toJSON([
-            'status' => $exito ? 200 : 500,
-            'result' => $exito ? 'Producto creado exitosamente' : 'Error al crear el producto'
-        ]);
-    } catch (Exception $e) {
-        handleException($e);
     }
-}
-
 
     public function update($id)
     {

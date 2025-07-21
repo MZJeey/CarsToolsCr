@@ -14,7 +14,7 @@ class ImageModel
     {
         try {
             $file = $object['file'];
-            $idProduct = $object['id'];
+            $producto_id = $object['producto_id'];
             //Obtener la información del archivo
             $fileName = $file['name'];
             $tempPath = $file['tmp_name'];
@@ -25,7 +25,7 @@ class ImageModel
                 //Crear un nombre único para el archivo
                 $fileExt = explode('.', $fileName);
                 $fileActExt = strtolower(end($fileExt));
-                $fileName = "producto" . uniqid() . "." . $fileActExt;
+                $fileName = "producto-" . uniqid() . "." . $fileActExt;
                 //Validar el tipo de archivo
                 if (in_array($fileActExt, $this->valid_extensions)) {
                     //Validar que no exista
@@ -35,7 +35,7 @@ class ImageModel
                             //Moverlo a la carpeta del servidor del API
                             if (move_uploaded_file($tempPath, $this->upload_path . $fileName)) {
                                 //Guardarlo en la BD
-                                $sql = "INSERT INTO ImagenProducto (id,image) VALUES ($idProduct, '$fileName')";
+                                $sql = "INSERT INTO imagenproducto (producto_id,imagen) VALUES ($producto_id, '$fileName')";
                                 $vResultado = $this->enlace->executeSQL_DML($sql);
                                 if ($vResultado > 0) {
                                     return 'Imagen creada';
@@ -50,16 +50,20 @@ class ImageModel
             handleException($e);
         }
     }
-
-    //Obtener una imagen de un producto
-    public function getImagen($idProducto)
+    //Obtener una imagen de una pelicula
+    public function getImagen($id)
     {
         try {
-            // Consulta SQL
-            $vSql = "SELECT * FROM ImagenProducto WHERE producto_id = $idProducto";
-            // Ejecutar la consulta
+
+            //Consulta sql
+            $vSql = "SELECT * FROM imagenproducto where producto_id=$id";
+
+            //Ejecutar la consulta
             $vResultado = $this->enlace->ExecuteSQL($vSql);
-            // Retornar todas las imágenes (puede ser un array vacío si no hay)
+            if (!empty($vResultado)) {
+                // Retornar el objeto
+                return $vResultado[0];
+            }
             return $vResultado;
         } catch (Exception $e) {
             handleException($e);

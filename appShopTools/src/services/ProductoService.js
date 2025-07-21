@@ -9,14 +9,9 @@ class ProductoService {
     return axios.get(BASE_URL + "/" + id);
     // Asegúrate de que esta ruta coincida con el método `getDetalles($id)` en el controlador PHP
   }
-createProducto(productoFormData) {
-  return axios.post(BASE_URL + "/create", productoFormData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-}
-
+  createProducto(productoFormData) {
+    return axios.post(BASE_URL, JSON.stringify(productoFormData));
+  }
 
   updateProducto(id, producto) {
     return axios.put(BASE_URL + "/" + id, producto);

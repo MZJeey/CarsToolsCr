@@ -9,6 +9,9 @@ class EtiquetaService {
     return axios.get(BASE_URL + "/" + id);
     // Asegúrate de que esta ruta coincida con el método `getDetalles($id)` en el controlador PHP
   }
+  CreateEtiqueta(data) {
+    return axios.post(BASE_URL, data);
+  }
 }
 
 export default new EtiquetaService();

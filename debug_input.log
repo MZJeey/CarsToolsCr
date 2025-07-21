@@ -1,0 +1,14 @@
+stdClass Object
+(
+    [estado] => 1
+    [certificaciones] => ISO
+    [motor_compatible] => 2.8L
+    [modelo_compatible] => 2000
+    [marca_compatible] => Nissan
+    [ano_compatible] => 2000
+    [stock] => 5
+    [categoria_id] => 7
+    [precio] => 10
+    [descripcion] => mmdmmd
+    [nombre] => pruebas
+)
