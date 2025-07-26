@@ -339,52 +339,75 @@ export function EditarProducto() {
       navigate("/productos");
     }
   };
+const onSubmit = async (formData) => {
+  try {
+    setLoading(true);
 
-  const onSubmit = async (formData) => {
-    try {
-      setLoading(true);
+    // ✅ Crear FormData para enviar todo (datos + imágenes)
+    const data = new FormData();
 
-      // Preparamos los datos exactamente como el backend los espera
-      const productoData = {
-        nombre: formData.nombre,
-        descripcion: formData.descripcion,
-        precio: parseFloat(formData.precio),
-        categoria_id: parseInt(formData.categoria_id),
-        stock: parseInt(formData.stock),
-        estado: formData.estado ? 1 : 0, // Asegurar valor numérico
-        IdImpuesto: formData.IdImpuesto ? parseInt(formData.IdImpuesto) : null,
-        ano_compatible: formData.ano_compatible
-          ? parseInt(formData.ano_compatible)
-          : null,
-        marca_compatible: formData.marca_compatible || null,
-        modelo_compatible: formData.modelo_compatible || null,
-        motor_compatible: formData.motor_compatible || null,
-        certificaciones: formData.certificaciones || null,
-      };
+    // Agregar campos del producto
+    data.append("nombre", formData.nombre);
+    data.append("descripcion", formData.descripcion);
+    data.append("precio", formData.precio);
+    data.append("categoria_id", formData.categoria_id);
+    data.append("stock", formData.stock);
+    data.append("estado", formData.estado ? 1 : 0);
+    data.append("IdImpuesto", formData.IdImpuesto || "");
+    data.append("ano_compatible", formData.ano_compatible || "");
+    data.append("marca_compatible", formData.marca_compatible || "");
+    data.append("modelo_compatible", formData.modelo_compatible || "");
+    data.append("motor_compatible", formData.motor_compatible || "");
+    data.append("certificaciones", formData.certificaciones || "");
 
-      console.log("Datos a enviar:", productoData); // Para depuración
-
-      const response = await ProductoService.updateProducto(id, productoData);
-
-      // Manejo de imágenes nuevas
-
-      toast.success("Producto actualizado exitosamente");
-      navigate("/productos");
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error ||
-        error.message ||
-        "Error al actualizar el producto";
-      console.error("Detalles del error:", {
-        error: errorMessage,
-        responseData: error.response?.data,
-        status: error.response?.status,
+    // ✅ Etiquetas (array)
+    if (formData.etiquetas && Array.isArray(formData.etiquetas)) {
+      formData.etiquetas.forEach((etiqueta) => {
+        data.append("etiquetas[]", etiqueta);
       });
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
     }
-  };
+
+    // ✅ Imágenes a eliminar (JSON string)
+    if (
+      formData.imagenes_a_eliminar &&
+      Array.isArray(formData.imagenes_a_eliminar)
+    ) {
+      data.append(
+        "imagenes_a_eliminar",
+        JSON.stringify(formData.imagenes_a_eliminar)
+      );
+    }
+
+    // ✅ Imágenes nuevas (FileList o array de archivos)
+    if (formData.imagenes && formData.imagenes.length > 0) {
+      for (let i = 0; i < formData.imagenes.length; i++) {
+        data.append("imagenes[]", formData.imagenes[i]);
+      }
+    }
+
+    console.log("Datos a enviar:", data);
+
+    // ✅ Enviar al backend
+    await ProductoService.updateProducto(id, data);
+
+    toast.success("Producto actualizado exitosamente");
+    navigate("/productos");
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.error ||
+      error.message ||
+      "Error al actualizar el producto";
+    console.error("Detalles del error:", {
+      error: errorMessage,
+      responseData: error.response?.data,
+      status: error.response?.status,
+    });
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
+
   const formatFecha = (fechaStr) => {
     const fecha = new Date(fechaStr);
     return fecha.toLocaleDateString("es-CR", {

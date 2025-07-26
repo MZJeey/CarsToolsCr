@@ -82,22 +82,59 @@ class producto
         }
     }
 
-    public function update($id)
-    {
-        try {
-            $request = new Request();
-            $inputData = $request->getJSON(true);
+public function update()
+{
+    try {
+        // ✅ Obtener ID desde la URL
+        $urlParts = explode("/", $_SERVER["REQUEST_URI"]);
+        $id = end($urlParts);
 
-            if (!$inputData) {
-                throw new Exception("No se recibieron datos válidos");
-            }
-
-            $productoModel = new ProductoModel();
-            $result = $productoModel->update($id, $inputData);
-
-            (new Response())->toJSON($result);
-        } catch (Exception $e) {
-            handleException($e);
+        // Validar que sea numérico
+        if (!is_numeric($id)) {
+            throw new Exception("ID de producto inválido");
         }
+
+        // ✅ Obtener datos desde $_POST si se usa FormData
+        $inputData = $_POST;
+
+        if (empty($inputData)) {
+            throw new Exception("No se recibieron datos válidos");
+        }
+
+        // ✅ Agregar imágenes a eliminar si vienen como JSON
+        if (isset($_POST['imagenes_a_eliminar'])) {
+            $inputData['imagenes_a_eliminar'] = json_decode($_POST['imagenes_a_eliminar'], true);
+        }
+
+        // ✅ Agregar etiquetas si vienen como array en formato FormData[] (ya vienen como array)
+        if (isset($_POST['etiquetas'])) {
+            $inputData['etiquetas'] = $_POST['etiquetas'];
+        }
+
+        // ✅ Procesar imágenes nuevas
+        $imagenesNuevas = [];
+        if (!empty($_FILES['imagenes']['name'])) {
+            foreach ($_FILES['imagenes']['name'] as $index => $fileName) {
+                $tmpName = $_FILES['imagenes']['tmp_name'][$index];
+                $newName = basename($fileName);
+
+                $destination = "uploads/" . $newName;
+                move_uploaded_file($tmpName, $destination);
+
+                $imagenesNuevas[] = $newName;
+            }
+        }
+        $inputData['imagenes'] = $imagenesNuevas;
+
+        // ✅ Llamar al modelo
+        $productoModel = new ProductoModel();
+        $result = $productoModel->update($id, $inputData);
+
+        (new Response())->toJSON($result);
+    } catch (Exception $e) {
+        handleException($e);
     }
+}
+
+
 }

@@ -22,13 +22,13 @@ class ProductoService {
   //     },
   //   });
   // }
-  updateProducto(id, productoData) {
-    return axios.put(`${BASE_URL}/${id}`, productoData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
+updateProducto(id, productoData) {
+  return axios.post(`${BASE_URL}/update/${id}`, productoData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
 
   deleteProducto(id) {
     return axios.delete(BASE_URL + "/" + id);
