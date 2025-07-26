@@ -40,7 +40,6 @@ import {
   ArrowBack as ArrowBackIcon,
   AddPhotoAlternate as AddPhotoIcon,
   Cancel as CancelIcon,
-  Info as InfoIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -55,15 +54,11 @@ import CategoriaService from "../../services/CategoriaService";
 import ProductoEtiquetaService from "../../services/ProductoEtiquetaService";
 import ResenaService from "../../services/ResenaService";
 import ImpuestoService from "../../services/ImpuestoService";
-import ImageService from "../../services/ImageService";
 
 export function EditarProducto() {
   const navigate = useNavigate();
   const routeParams = useParams();
-  //Id de la pelicula a actualizar
   const id = routeParams.id || null;
-  //Valores a precargar en el formulario, vienen del API
-  const [values, setValores] = useState(null);
 
   // Estados
   const [loading, setLoading] = useState(true);
@@ -76,9 +71,7 @@ export function EditarProducto() {
   const [promedioValoraciones, setPromedioValoraciones] = useState(0);
   const [loadingValoraciones, setLoadingValoraciones] = useState(false);
   const [impuestos, setImpuestos] = useState([]);
-  const [hover, setHover] = useState(-1);
-
-  // Estado para el diálogo de confirmación
+  const [imagesToDelete, setImagesToDelete] = useState([]);
   const [deleteDialog, setDeleteDialog] = useState({
     open: false,
     index: null,
@@ -136,47 +129,6 @@ export function EditarProducto() {
     resolver: yupResolver(productoSchema),
   });
 
-  // Textos de ayuda para los campos
-  const fieldDescriptions = {
-    nombre: "Nombre descriptivo del producto",
-    descripcion: "Descripción detallada del producto",
-    precio: "Precio de venta al público en colones",
-    stock: "Cantidad disponible en inventario",
-    ano_compatible: "Año del vehículo compatible (opcional)",
-    marca_compatible: "Marca del vehículo compatible (opcional)",
-    modelo_compatible: "Modelo del vehículo compatible (opcional)",
-    motor_compatible: "Motor compatible (opcional)",
-    certificaciones: "Certificaciones o estándares que cumple el producto",
-  };
-
-  // Cargar valoraciones
-  useEffect(() => {
-    const fetchValoraciones = async () => {
-      setLoadingValoraciones(true);
-      try {
-        const response = await ResenaService.getResenasByProducto(id);
-        const valoracionesData = response.data || [];
-        setValoraciones(valoracionesData);
-
-        // Calcular promedio
-        if (valoracionesData.length > 0) {
-          const suma = valoracionesData.reduce(
-            (acc, curr) => acc + parseInt(curr.valoracion || 0),
-            0
-          );
-          setPromedioValoraciones(suma / valoracionesData.length);
-        }
-      } catch (error) {
-        console.error("Error al cargar valoraciones:", error);
-        toast.error("Error al cargar las valoraciones");
-      } finally {
-        setLoadingValoraciones(false);
-      }
-    };
-
-    fetchValoraciones();
-  }, [id]);
-
   // Cargar datos iniciales del producto
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -200,58 +152,49 @@ export function EditarProducto() {
         setImpuestos(impuestosRes.data || []);
 
         // Cargar datos del producto
-        if (id != undefined && !isNaN(id)) {
-          ProductoService.getProductobyId(id)
-            .then((response) => {
-              const producto = response.data;
-              setValores(producto);
+        if (id) {
+          const productoRes = await ProductoService.getProductobyId(id);
+          const producto = productoRes.data;
 
-              // Formatear datos para el formulario
-              reset({
-                nombre: producto.nombre || "",
-                descripcion: producto.descripcion || "",
-                precio: producto.precio ? Number(producto.precio) : "",
-                categoria_id: producto.categoria_id
-                  ? Number(producto.categoria_id)
-                  : "",
-                IdImpuesto: producto.IdImpuesto
-                  ? Number(producto.IdImpuesto)
-                  : "",
-                stock: producto.stock ? Number(producto.stock) : "",
-                ano_compatible: producto.ano_compatible
-                  ? Number(producto.ano_compatible)
-                  : null,
-                marca_compatible: producto.marca_compatible || "",
-                modelo_compatible: producto.modelo_compatible || "",
-                motor_compatible: producto.motor_compatible || "",
-                certificaciones: producto.certificaciones || "",
-                estado: producto.estado === "1",
-              });
+          // Formatear datos para el formulario
+          reset({
+            nombre: producto.nombre || "",
+            descripcion: producto.descripcion || "",
+            precio: producto.precio ? Number(producto.precio) : "",
+            categoria_id: producto.categoria_id
+              ? Number(producto.categoria_id)
+              : "",
+            IdImpuesto: producto.IdImpuesto ? Number(producto.IdImpuesto) : "",
+            stock: producto.stock ? Number(producto.stock) : "",
+            ano_compatible: producto.ano_compatible
+              ? Number(producto.ano_compatible)
+              : null,
+            marca_compatible: producto.marca_compatible || "",
+            modelo_compatible: producto.modelo_compatible || "",
+            motor_compatible: producto.motor_compatible || "",
+            certificaciones: producto.certificaciones || "",
+            estado: producto.estado === 1 || producto.estado === "1",
+          });
 
-              // Manejar etiquetas
-              setSelectedEtiquetas(
-                producto.etiquetas?.map((e) => Number(e.id)) || []
-              );
+          // Manejar etiquetas
+          setSelectedEtiquetas(
+            producto.etiquetas?.map((e) => Number(e.id)) || []
+          );
 
-              // Manejar imágenes existentes
-              const BASE_URL =
-                import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
+          // Manejar imágenes existentes
+          const BASE_URL =
+            import.meta.env.VITE_BASE_URL?.replace(/\/$/, "") + "/uploads";
 
-              const existingImages =
-                producto.imagen?.map((img) => ({
-                  id: img.id,
-                  url: `${BASE_URL}/${img.imagen}`,
-                  name: img.imagen,
-                  isExisting: true,
-                })) || [];
+          const existingImages =
+            producto.imagen?.map((img) => ({
+              id: img.id,
+              url: `${BASE_URL}/${img.imagen}`,
+              name: img.imagen,
+              isExisting: true,
+            })) || [];
 
-              setImagenes(existingImages);
-              setPreviewURLs(existingImages.map((img) => img.url));
-            })
-            .catch((error) => {
-              console.error("Error al cargar el producto:", error);
-              toast.error("Error al cargar el producto");
-            });
+          setImagenes(existingImages);
+          setPreviewURLs(existingImages.map((img) => img.url));
         }
       } catch (err) {
         toast.error("Error al cargar datos del producto");
@@ -279,17 +222,13 @@ export function EditarProducto() {
   };
 
   const handleRemoveImageClick = (index) => {
-    setDeleteDialog({
-      open: true,
-      index,
-    });
-  };
+    const imageToRemove = imagenes[index];
+    if (imageToRemove?.isExisting) {
+      setImagesToDelete([...imagesToDelete, imageToRemove.name]);
+    }
 
-  const handleConfirmDelete = () => {
-    const newImages = imagenes.filter((_, idx) => idx !== deleteDialog.index);
-    const newPreviews = previewURLs.filter(
-      (_, idx) => idx !== deleteDialog.index
-    );
+    const newImages = imagenes.filter((_, idx) => idx !== index);
+    const newPreviews = previewURLs.filter((_, idx) => idx !== index);
 
     setImagenes(newImages);
     setPreviewURLs(newPreviews);
@@ -340,72 +279,69 @@ export function EditarProducto() {
     }
   };
 
-  const onSubmit = async (formData) => {
-    try {
-      setLoading(true);
+  const onSubmit = async (DataForm) => {
+    console.log("Formulario:", DataForm);
 
-      // Preparamos los datos exactamente como el backend los espera
+    try {
+      // Si tienes un esquema de validación, úsalo aquí (ejemplo con yup)
+      // await productoSchema.validate(DataForm);
+
+      // Crear objeto FormData para enviar archivos + datos
+      const formDataToSend = new FormData();
+
+      // Armar datos del producto (sin imágenes)
       const productoData = {
-        nombre: formData.nombre,
-        descripcion: formData.descripcion,
-        precio: parseFloat(formData.precio),
-        categoria_id: parseInt(formData.categoria_id),
-        stock: parseInt(formData.stock),
-        estado: formData.estado ? 1 : 0, // Asegurar valor numérico
-        IdImpuesto: formData.IdImpuesto ? parseInt(formData.IdImpuesto) : null,
-        ano_compatible: formData.ano_compatible
-          ? parseInt(formData.ano_compatible)
-          : null,
-        marca_compatible: formData.marca_compatible || null,
-        modelo_compatible: formData.modelo_compatible || null,
-        motor_compatible: formData.motor_compatible || null,
-        certificaciones: formData.certificaciones || null,
+        nombre: DataForm.nombre,
+        descripcion: DataForm.descripcion,
+        precio: parseFloat(DataForm.precio),
+        categoria_id: parseInt(DataForm.categoria_id),
+        stock: parseInt(DataForm.stock),
+        estado: DataForm.estado ? 1 : 0,
+        IdImpuesto: DataForm.IdImpuesto ? parseInt(DataForm.IdImpuesto) : null,
+        ano_compatible: DataForm.ano_compatible || null,
+        marca_compatible: DataForm.marca_compatible || null,
+        modelo_compatible: DataForm.modelo_compatible || null,
+        motor_compatible: DataForm.motor_compatible || null,
+        certificaciones: DataForm.certificaciones || null,
+        etiquetas: selectedEtiquetas, // Suponiendo que viene de un estado
+        imagenes_eliminar: imagesToDelete, // También de estado
       };
 
-      console.log("Datos a enviar:", productoData); // Para depuración
+      // Agregar datos JSON como string
+      formDataToSend.append("data", JSON.stringify(productoData));
 
-      const response = await ProductoService.updateProducto(id, productoData);
+      // Agregar archivos nuevos (solo si vienen)
+      if (imagenes && imagenes.length) {
+        imagenes.forEach((img) => {
+          if (img instanceof File) {
+            formDataToSend.append("imagenes", img);
+          }
+        });
+      }
 
-      // Manejo de imágenes nuevas
+      // Añadir el ID al FormData si tu backend lo necesita así
+      formDataToSend.append("id", id);
 
-      toast.success("Producto actualizado exitosamente");
+      // Enviar al backend usando el servicio axios
+      const response = await ProductoService.updateProducto(id, formDataToSend);
+
+      if (response.data.error) {
+        throw new Error(response.data.error);
+      }
+
+      toast.success(
+        `Producto actualizado exitosamente: ${response.data.nombre}`,
+        {
+          duration: 4000,
+          position: "top-center",
+        }
+      );
+
       navigate("/productos");
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.error ||
-        error.message ||
-        "Error al actualizar el producto";
-      console.error("Detalles del error:", {
-        error: errorMessage,
-        responseData: error.response?.data,
-        status: error.response?.status,
-      });
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
+      console.error("Error al actualizar producto:", error);
+      toast.error(error.message || "Error al actualizar el producto");
     }
-  };
-  const formatFecha = (fechaStr) => {
-    const fecha = new Date(fechaStr);
-    return fecha.toLocaleDateString("es-CR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  // Labels para las valoraciones
-  const labels = {
-    0.5: "Pésimo",
-    1: "Malo",
-    1.5: "Deficiente",
-    2: "Regular",
-    2.5: "Aceptable",
-    3: "Bueno",
-    3.5: "Muy Bueno",
-    4: "Excelente",
-    4.5: "Fantástico",
-    5: "Perfecto",
   };
 
   if (loading) {
@@ -418,7 +354,6 @@ export function EditarProducto() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1400, margin: "0 auto" }}>
-      {/* Diálogo de confirmación para eliminar imagen */}
       <Dialog
         open={deleteDialog.open}
         onClose={() => setDeleteDialog({ open: false, index: null })}
@@ -434,13 +369,16 @@ export function EditarProducto() {
           <Button onClick={() => setDeleteDialog({ open: false, index: null })}>
             Cancelar
           </Button>
-          <Button onClick={handleConfirmDelete} color="error" autoFocus>
+          <Button
+            onClick={() => handleRemoveImageClick(deleteDialog.index)}
+            color="error"
+            autoFocus
+          >
             Eliminar
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Encabezado */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
         <Tooltip title="Volver a la lista de productos">
           <IconButton
@@ -460,7 +398,6 @@ export function EditarProducto() {
         </Typography>
       </Box>
 
-      {/* Formulario Principal */}
       <Card
         sx={{
           borderRadius: 2,
@@ -484,7 +421,6 @@ export function EditarProducto() {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={3}>
-              {/* Sección 1: Información Básica */}
               <Grid item xs={12} md={6}>
                 <Paper
                   elevation={0}
@@ -511,19 +447,11 @@ export function EditarProducto() {
                             variant="outlined"
                             error={!!errors.nombre}
                             helperText={
-                              errors.nombre?.message || fieldDescriptions.nombre
+                              errors.nombre?.message ||
+                              "Nombre descriptivo del producto"
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
-                            InputProps={{
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  <Tooltip title={fieldDescriptions.nombre}>
-                                    <InfoIcon color="action" fontSize="small" />
-                                  </Tooltip>
-                                </InputAdornment>
-                              ),
-                            }}
                           />
                         )}
                       />
@@ -533,7 +461,6 @@ export function EditarProducto() {
                       <Controller
                         name="categoria_id"
                         control={control}
-                        defaultValue="" // Añade esto
                         render={({ field }) => (
                           <FormControl
                             fullWidth
@@ -562,6 +489,7 @@ export function EditarProducto() {
                         )}
                       />
                     </Grid>
+
                     <Grid item xs={12}>
                       <Controller
                         name="IdImpuesto"
@@ -572,10 +500,10 @@ export function EditarProducto() {
                             size="medium"
                             error={!!errors.IdImpuesto}
                           >
-                            <InputLabel>Impuesto aplicable</InputLabel>
+                            <InputLabel>Impuesto aplicable *</InputLabel>
                             <Select
                               {...field}
-                              label="Impuesto aplicable"
+                              label="Impuesto aplicable *"
                               value={field.value || ""}
                               MenuProps={{
                                 PaperProps: {
@@ -604,9 +532,6 @@ export function EditarProducto() {
                                 {errors.IdImpuesto.message}
                               </FormHelperText>
                             )}
-                            <FormHelperText>
-                              Selecciona el impuesto que aplica a este producto
-                            </FormHelperText>
                           </FormControl>
                         )}
                       />
@@ -625,7 +550,7 @@ export function EditarProducto() {
                             rows={4}
                             variant="outlined"
                             error={!!errors.descripcion}
-                            helperText={`${field.value?.length || 0}/500 - ${fieldDescriptions.descripcion}`}
+                            helperText={`${field.value?.length || 0}/500 - Descripción detallada del producto`}
                             inputProps={{ maxLength: 500 }}
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -635,115 +560,8 @@ export function EditarProducto() {
                     </Grid>
                   </Grid>
                 </Paper>
-
-                {/* Sección de Valoraciones */}
-                <Paper
-                  elevation={0}
-                  sx={{ p: 3, mb: 3, backgroundColor: "background.paper" }}
-                >
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    sx={{ mb: 3, fontWeight: 600, color: "text.primary" }}
-                  >
-                    Valoraciones de Clientes
-                  </Typography>
-
-                  {loadingValoraciones ? (
-                    <Box display="flex" justifyContent="center">
-                      <CircularProgress />
-                    </Box>
-                  ) : (
-                    <>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", mb: 2 }}
-                      >
-                        <Box>
-                          <Rating
-                            value={promedioValoraciones}
-                            precision={0.5}
-                            readOnly
-                            sx={{ mr: 1 }}
-                          />
-                          <Typography variant="body2" color="text.secondary">
-                            {
-                              labels[
-                                hover !== -1 ? hover : promedioValoraciones
-                              ]
-                            }
-                          </Typography>
-                        </Box>
-                        <Typography variant="body1" sx={{ ml: 2 }}>
-                          {promedioValoraciones.toFixed(1)} de 5 (
-                          {valoraciones.length} valoraciones)
-                        </Typography>
-                      </Box>
-
-                      {valoraciones.length > 0 ? (
-                        <List sx={{ maxHeight: 300, overflow: "auto" }}>
-                          {valoraciones.map((resena, index) => (
-                            <React.Fragment key={resena.id || index}>
-                              <ListItem alignItems="flex-start">
-                                <ListItemAvatar>
-                                  <Avatar
-                                    alt={resena.usuario_nombre}
-                                    src={resena.usuario_imagen}
-                                  >
-                                    {resena.usuario_nombre?.charAt(0) || "U"}
-                                  </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                  primary={
-                                    <>
-                                      <Typography fontWeight="bold">
-                                        {resena.usuario_nombre ||
-                                          "Usuario anónimo"}
-                                      </Typography>
-                                      <Rating
-                                        value={parseInt(resena.valoracion) || 0}
-                                        precision={0.5}
-                                        readOnly
-                                        size="small"
-                                      />
-                                    </>
-                                  }
-                                  secondary={
-                                    <>
-                                      <Typography
-                                        component="span"
-                                        variant="body2"
-                                        color="text.primary"
-                                        display="block"
-                                      >
-                                        {resena.comentario}
-                                      </Typography>
-                                      <Typography
-                                        variant="caption"
-                                        color="text.secondary"
-                                      >
-                                        {formatFecha(resena.fecha)}
-                                      </Typography>
-                                    </>
-                                  }
-                                />
-                              </ListItem>
-                              {index < valoraciones.length - 1 && (
-                                <Divider variant="inset" component="li" />
-                              )}
-                            </React.Fragment>
-                          ))}
-                        </List>
-                      ) : (
-                        <Typography variant="body2" color="textSecondary">
-                          Este producto no tiene valoraciones aún.
-                        </Typography>
-                      )}
-                    </>
-                  )}
-                </Paper>
               </Grid>
 
-              {/* Sección 2: Precio y Stock */}
               <Grid item xs={12} md={6}>
                 <Paper
                   elevation={0}
@@ -776,17 +594,11 @@ export function EditarProducto() {
                                   ₡
                                 </InputAdornment>
                               ),
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  <Tooltip title={fieldDescriptions.precio}>
-                                    <InfoIcon color="action" fontSize="small" />
-                                  </Tooltip>
-                                </InputAdornment>
-                              ),
                             }}
                             error={!!errors.precio}
                             helperText={
-                              errors.precio?.message || fieldDescriptions.precio
+                              errors.precio?.message ||
+                              "Precio de venta al público en colones"
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -807,18 +619,10 @@ export function EditarProducto() {
                             type="number"
                             variant="outlined"
                             inputProps={{ min: "0" }}
-                            InputProps={{
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  <Tooltip title={fieldDescriptions.stock}>
-                                    <InfoIcon color="action" fontSize="small" />
-                                  </Tooltip>
-                                </InputAdornment>
-                              ),
-                            }}
                             error={!!errors.stock}
                             helperText={
-                              errors.stock?.message || fieldDescriptions.stock
+                              errors.stock?.message ||
+                              "Cantidad disponible en inventario"
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -867,7 +671,6 @@ export function EditarProducto() {
                   </Grid>
                 </Paper>
 
-                {/* Sección 3: Compatibilidad */}
                 <Paper
                   elevation={0}
                   sx={{ p: 3, mb: 3, backgroundColor: "background.paper" }}
@@ -895,7 +698,7 @@ export function EditarProducto() {
                             error={!!errors.ano_compatible}
                             helperText={
                               errors.ano_compatible?.message ||
-                              fieldDescriptions.ano_compatible
+                              "Año del vehículo compatible (opcional)"
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -916,7 +719,7 @@ export function EditarProducto() {
                             error={!!errors.marca_compatible}
                             helperText={
                               errors.marca_compatible?.message ||
-                              fieldDescriptions.marca_compatible
+                              "Marca del vehículo compatible (opcional)"
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -937,7 +740,7 @@ export function EditarProducto() {
                             error={!!errors.modelo_compatible}
                             helperText={
                               errors.modelo_compatible?.message ||
-                              fieldDescriptions.modelo_compatible
+                              "Modelo del vehículo compatible (opcional)"
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -958,7 +761,7 @@ export function EditarProducto() {
                             error={!!errors.motor_compatible}
                             helperText={
                               errors.motor_compatible?.message ||
-                              fieldDescriptions.motor_compatible
+                              "Motor compatible (opcional)"
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -979,7 +782,7 @@ export function EditarProducto() {
                             multiline
                             rows={2}
                             error={!!errors.certificaciones}
-                            helperText={`${field.value?.length || 0}/200 - ${fieldDescriptions.certificaciones}`}
+                            helperText={`${field.value?.length || 0}/200 - Certificaciones o estándares que cumple el producto`}
                             inputProps={{ maxLength: 200 }}
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -991,7 +794,6 @@ export function EditarProducto() {
                 </Paper>
               </Grid>
 
-              {/* Sección 4: Etiquetas */}
               <Grid item xs={12} md={4}>
                 <Paper
                   elevation={0}
@@ -1010,11 +812,7 @@ export function EditarProducto() {
                     Etiquetas
                   </Typography>
 
-                  <FormControl
-                    fullWidth
-                    size="small"
-                    error={!!errors.etiquetas}
-                  >
+                  <FormControl fullWidth size="small">
                     <InputLabel>Etiquetas del producto</InputLabel>
                     <Select
                       multiple
@@ -1069,7 +867,6 @@ export function EditarProducto() {
                 </Paper>
               </Grid>
 
-              {/* Sección 5: Imágenes */}
               <Grid item xs={12} md={8}>
                 <Paper
                   elevation={0}
@@ -1139,7 +936,9 @@ export function EditarProducto() {
                               <Tooltip title="Eliminar imagen">
                                 <IconButton
                                   size="small"
-                                  onClick={() => handleRemoveImageClick(index)}
+                                  onClick={() =>
+                                    setDeleteDialog({ open: true, index })
+                                  }
                                   sx={{
                                     position: "absolute",
                                     top: 4,
@@ -1231,7 +1030,6 @@ export function EditarProducto() {
                 </Paper>
               </Grid>
 
-              {/* Botones de acción */}
               <Grid item xs={12}>
                 <Divider sx={{ my: 2 }} />
                 <Box

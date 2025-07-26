@@ -125,15 +125,22 @@ class ProductoModel
         }
     }
 
-    public function update($id, $data)
+   
+
+    public function delete($id)
+    {
+        try { public function update($id, $data)
     {
         try {
-            // Validación mínima
+            // 🔁 Forzar conversión a array por si viene como stdClass
+            $data = (array)$data;
+
+            // ✅ Validación mínima
             if (empty($data['nombre'])) {
-                throw new Exception('Nombre es requerido');
+                throw new Exception('El nombre es requerido');
             }
 
-            // Escapar strings
+            // 🔒 Escapar strings y convertir tipos
             $nombre = addslashes($data['nombre']);
             $descripcion = isset($data['descripcion']) ? addslashes($data['descripcion']) : '';
             $precio = isset($data['precio']) ? floatval($data['precio']) : 0;
@@ -147,7 +154,7 @@ class ProductoModel
             $motor_compatible = isset($data['motor_compatible']) ? addslashes($data['motor_compatible']) : '';
             $certificaciones = isset($data['certificaciones']) ? addslashes($data['certificaciones']) : '';
 
-            // Preparar consulta SQL
+            // ✅ Actualizar producto
             $sql = "
             UPDATE producto SET
                 nombre = '$nombre',
@@ -167,22 +174,46 @@ class ProductoModel
 
             $result = $this->enlace->executeSQL_DML($sql);
 
-            if ($result) {
-                return $this->get($id); // Devuelve el producto actualizado
-            } else {
-                throw new Exception('Error al ejecutar la actualización');
+            // ✅ Eliminar etiquetas anteriores
+            $sqlDeleteTags = "DELETE FROM productoetiqueta WHERE producto_id = $id";
+            $this->enlace->executeSQL_DML($sqlDeleteTags);
+
+            // ✅ Insertar nuevas etiquetas
+            if (!empty($data['etiquetas']) && is_array($data['etiquetas'])) {
+                foreach ($data['etiquetas'] as $etiqueta_id) {
+                    $sqlInsertTag = "INSERT INTO productoetiqueta (producto_id, etiqueta_id) VALUES ($id, $etiqueta_id)";
+                    $this->enlace->executeSQL_DML($sqlInsertTag);
+                }
             }
+
+
+            // ✅ Eliminar imágenes específicas si vienen en el JSON
+            if (!empty($data['imagenes_eliminar']) && is_array($data['imagenes_eliminar'])) {
+                foreach ($data['imagenes_eliminar'] as $imagen) {
+                    $imagen = addslashes($imagen);
+                    $sqlDeleteImage = "DELETE FROM imagenproducto WHERE producto_id = $id AND imagen = '$imagen'";
+                    $this->enlace->executeSQL_DML($sqlDeleteImage);
+                }
+            }
+
+
+            // ✅ Insertar nuevas imágenes
+            if (!empty($data['imagenes']) && is_array($data['imagenes'])) {
+                foreach ($data['imagenes'] as $imagen) {
+                    $imagen = addslashes($imagen);
+                    $sqlInsertImage = "INSERT INTO imagenproducto (producto_id, imagen) VALUES ($id, '$imagen')";
+                    $this->enlace->executeSQL_DML($sqlInsertImage);
+                }
+            }
+
+            // ✅ Retornar producto actualizado
+            return $this->get($id);
         } catch (Exception $e) {
-            error_log("Error en modelo Producto::update - " . $e->getMessage());
+            error_log("Error en ProductoModel::update - " . $e->getMessage());
             http_response_code(400);
             return ['error' => $e->getMessage()];
         }
     }
-
-
-    public function delete($id)
-    {
-        try {
             $sql = "UPDATE Producto SET estado = true WHERE id = $id";
             return $this->enlace->executeSQL_DML($sql);
         } catch (Exception $e) {

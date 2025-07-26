@@ -54,14 +54,12 @@ class ImageModel
     public function getImagen($idProducto)
     {
         try {
-            // Consulta SQL
             $vSql = "SELECT * FROM ImagenProducto WHERE producto_id = $idProducto";
-            // Ejecutar la consulta
             $vResultado = $this->enlace->ExecuteSQL($vSql);
-            // Retornar todas las imágenes (puede ser un array vacío si no hay)
-            return $vResultado;
+            return is_array($vResultado) ? $vResultado : [];
         } catch (Exception $e) {
-            handleException($e);
+            error_log("Error en ImageModel::getImagen - " . $e->getMessage());
+            return [];
         }
     }
     public function deleteImagen($id)

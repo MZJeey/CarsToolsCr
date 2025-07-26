@@ -22,10 +22,15 @@ class ProductoService {
   //     },
   //   });
   // }
-  updateProducto(id, productoData) {
-    return axios.put(`${BASE_URL}/${id}`, productoData, {
+  // services/ProductoService.js
+  updateProducto(id, formData) {
+    formData.append("id", id); // Añadir el id al FormData
+    return axios({
+      method: "post",
+      url: BASE_URL + "/update",
+      data: formData, // Aquí va el objeto FormData, no stringificado
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       },
     });
   }

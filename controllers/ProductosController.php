@@ -30,7 +30,7 @@ class producto
             handleException($e);
         }
     }
-    public function getById($id)
+    public function getDetalles($id)
     {
         try {
             $response = new Response();
@@ -66,22 +66,6 @@ class producto
         }
     }
 
-
-    public function delete($id)
-    {
-        try {
-            $response = new Response();
-            //Instancia del modelo
-            $producto = new ProductoModel();
-            //Acción del modelo a ejecutar
-            $result = $producto->delete($id);
-            //Dar respuesta
-            $response->toJSON($result);
-        } catch (Exception $e) {
-            handleException($e);
-        }
-    }
-
     public function update($id)
     {
         try {
@@ -96,6 +80,21 @@ class producto
             $result = $productoModel->update($id, $inputData);
 
             (new Response())->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $response = new Response();
+            //Instancia del modelo
+            $producto = new ProductoModel();
+            //Acción del modelo a ejecutar
+            $result = $producto->delete($id);
+            //Dar respuesta
+            $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
