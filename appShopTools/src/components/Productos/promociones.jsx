@@ -106,7 +106,7 @@ const Promociones = () => {
     IdPromocion: 0,
     Nombre: "",
     Descuento: 0,
-    Tipo: "general",
+    Tipo: "",
     IdProducto: "",
     IdCategoria: "",
     FechaInicio: "",
@@ -160,37 +160,45 @@ const Promociones = () => {
     }
   };
 
-  const handleOpenDialog = (promo = null) => {
-    if (promo) {
-      setDialogMode("edit");
-      setFormData({
-        ...promo,
-        Tipo: promo.IdProducto
-          ? "producto"
-          : promo.IdCategoria
-            ? "categoria"
-            : "general",
-        IdProducto: promo.IdProducto || "",
-        IdCategoria: promo.IdCategoria || "",
-        FechaInicio: promo.FechaInicio.split("T")[0],
-        FechaFin: promo.FechaFin.split("T")[0],
-      });
-    } else {
-      setDialogMode("add");
-      const today = new Date().toISOString().split("T")[0];
-      setFormData({
-        IdPromocion: 0,
-        Nombre: "",
-        Descuento: 0,
-        Tipo: "general",
-        IdProducto: "",
-        IdCategoria: "",
-        FechaInicio: today,
-        FechaFin: today,
-      });
+const handleOpenDialog = (promo = null) => {
+  if (promo) {
+    const status = getPromoStatus(promo.FechaInicio, promo.FechaFin).status;
+    if (status === "Aplicado") {
+      setError("No se puede editar una promoción que ya ha sido aplicada.");
+      return;
     }
-    setOpenDialog(true);
-  };
+
+    setDialogMode("edit");
+    setFormData({
+      ...promo,
+      Descripcion: promo.Descripcion || "",
+      Tipo: promo.IdProducto
+        ? "producto"
+        : promo.IdCategoria
+        ? "categoria"
+        : "general",
+      IdProducto: promo.IdProducto || "",
+      IdCategoria: promo.IdCategoria || "",
+      FechaInicio: promo.FechaInicio.split("T")[0],
+      FechaFin: promo.FechaFin.split("T")[0],
+    });
+  } else {
+    setDialogMode("add");
+    const today = new Date().toISOString().split("T")[0];
+    setFormData({
+      IdPromocion: 0,
+      Nombre: "",
+      Descuento: 0,
+      Tipo: "general",
+      IdProducto: "",
+      IdCategoria: "",
+      FechaInicio: today,
+      FechaFin: today,
+    });
+  }
+  setOpenDialog(true);
+};
+
 
   const handleOpenDetailDialog = (promo) => {
     setSelectedPromo(promo);
@@ -205,15 +213,16 @@ const Promociones = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleTipoChange = (e) => {
-    const tipo = e.target.value;
-    setFormData((prev) => ({
-      ...prev,
-      Tipo: tipo,
-      IdProducto: tipo === "producto" ? prev.IdProducto : "",
-      IdCategoria: tipo === "categoria" ? prev.IdCategoria : "",
-    }));
-  };
+const handleTipoChange = (e) => {
+  const tipo = e.target.value;
+
+  setFormData((prev) => ({
+    ...prev,
+    Tipo: tipo,
+    IdProducto: tipo === "producto" ? prev.IdProducto : "",
+    IdCategoria: tipo === "categoria" ? prev.IdCategoria : "",
+  }));
+};
 
   const handleSubmit = async () => {
     try {
@@ -225,11 +234,14 @@ const Promociones = () => {
 
       const datosParaEnviar = {
         ...formData,
+        Descripcion: formData.Descripcion || "",
+        Tipo: formData.Tipo, 
+
         IdProducto: formData.Tipo === "producto" ? formData.IdProducto : null,
         IdCategoria:
           formData.Tipo === "categoria" ? formData.IdCategoria : null,
       };
-      delete datosParaEnviar.Tipo;
+    
 
       setLoading(true);
       if (dialogMode === "add") {
@@ -558,6 +570,22 @@ const Promociones = () => {
                 size="small"
               />
             </Grid>
+
+<Grid item xs={12}>
+  <TextField
+    fullWidth
+    label="Descripción"
+    name="Descripcion"
+    value={formData.Descripcion}
+    onChange={handleInputChange}
+    multiline
+    rows={2}
+    variant="outlined"
+    size="small"
+  />
+</Grid>
+
+
             <Grid item xs={6}>
               <TextField
                 fullWidth
@@ -578,21 +606,21 @@ const Promociones = () => {
               />
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth required size="small">
-                <InputLabel>Tipo de promoción</InputLabel>
-                <Select
-                  value={formData.Tipo}
-                  onChange={handleTipoChange}
-                  label="Tipo de promoción"
-                  variant="outlined"
-                >
-                  <MenuItem value="producto">Para producto específico</MenuItem>
-                  <MenuItem value="categoria">Para categoría</MenuItem>
-                  <MenuItem value="general">
-                    General (todos los productos)
-                  </MenuItem>
-                </Select>
-              </FormControl>
+      <FormControl fullWidth required size="small">
+  <InputLabel>Tipo de promoción</InputLabel>
+  <Select
+    name="Tipo" // ✅ Este es el cambio más importante
+    value={formData.Tipo}
+    onChange={handleInputChange} // ✅ Usa tu manejador general que actualiza formData
+    label="Tipo de promoción"
+    variant="outlined"
+  >
+    <MenuItem value="producto">Para producto específico</MenuItem>
+    <MenuItem value="categoria">Para categoría</MenuItem>
+    <MenuItem value="general">General (todos los productos)</MenuItem>
+  </Select>
+</FormControl>
+
             </Grid>
             {formData.Tipo === "producto" && (
               <Grid item xs={12}>

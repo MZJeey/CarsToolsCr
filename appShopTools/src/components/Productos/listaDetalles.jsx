@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ProductoService from "../../services/ProductoService";
+import CrearResena from "./CrearResena"; 
 
 import {
   Box,
@@ -19,6 +20,7 @@ import {
   ListItemText,
   Grid,
   Paper,
+  Dialog,
 } from "@mui/material";
 import {
   Favorite,
@@ -42,6 +44,15 @@ const DetalleProducto = () => {
   const [imageLoading, setImageLoading] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
   const [images, setImages] = useState([]);
+  const [openResenaModal, setOpenResenaModal] = useState(false);
+
+  // ✅ Maneja una nueva reseña sin recargar la página
+  const handleNuevaResena = (nuevaResena) => {
+    setProducto((prev) => ({
+      ...prev,
+      resena: [nuevaResena, ...(prev.resena || [])],
+    }));
+  };
 
   useEffect(() => {
     const fetchProducto = async () => {
@@ -123,6 +134,14 @@ const DetalleProducto = () => {
     );
   };
 
+  const handleOpenResenaModal = () => {
+    setOpenResenaModal(true);
+  };
+
+  const handleCloseResenaModal = () => {
+    setOpenResenaModal(false);
+  };
+
   if (loading) {
     return (
       <Box
@@ -169,6 +188,8 @@ const DetalleProducto = () => {
       day: "numeric",
     });
   };
+
+  
 
   return (
     <Box sx={{ maxWidth: 1400, margin: "auto", p: 2 }}>
@@ -443,6 +464,16 @@ const DetalleProducto = () => {
               <Typography variant="h6" gutterBottom fontWeight={700}>
                 Últimas reseñas
               </Typography>
+              <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={handleOpenResenaModal}
+                >
+                  Agregar reseña
+                </Button>
+              </Box>
+
               {producto.resena && producto.resena.length > 0 ? (
                 <List sx={{ maxHeight: 300, overflow: "auto" }}>
                   {producto.resena.slice(0, 3).map((resena) => (
@@ -527,6 +558,20 @@ const DetalleProducto = () => {
           </Grid>
         </Grid>
       </Paper>
+
+      {/* Modal para crear reseña */}
+      <Dialog
+        open={openResenaModal}
+        onClose={handleCloseResenaModal}
+        maxWidth="sm"
+        fullWidth
+      >
+        <CrearResena 
+          productoId={producto.id} 
+          onClose={handleCloseResenaModal}
+          onResenaCreada={handleNuevaResena} 
+        />
+      </Dialog>
     </Box>
   );
 };

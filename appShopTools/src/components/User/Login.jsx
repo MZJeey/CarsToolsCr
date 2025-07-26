@@ -42,28 +42,46 @@ export function Login() {
 
   const [error, setError] = useState(null);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     try {
-      UserService.loginUser(data)
-        .then((response) => {
-          if (
-            response.data &&
-            response.data !== "undefined" &&
-            response.data !== "Usuario no valido"
-          ) {
-            saveUser(response.data);
-            toast.success("¡Bienvenido!", { duration: 4000 });
-            return navigate("/");
-          } else {
-            toast.error("Usuario No válido", { duration: 4000 });
-          }
-        })
-        .catch((err) => {
-          setError(err);
-          console.error("Error:", err);
-        });
-    } catch (e) {
-      console.error("Error:", e);
+      const response = await UserService.loginUser(data);
+      const token = response.data?.token || response.data;
+
+      if (token === "Usuario no valido") {
+        toast.error("Usuario no válido", { duration: 4000 });
+        return;
+      }
+
+      if (typeof token === "string" && token.includes(".")) {
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          
+          // Guardamos el token en el contexto
+          saveUser(token);
+          
+          // Guardamos los datos del usuario en localStorage
+          localStorage.setItem('userData', JSON.stringify({
+            id: payload.id,
+            nombre_usuario: payload.nombre_usuario,
+            correo: payload.correo
+          }));
+
+          const nombre = payload.nombre_usuario || payload.correo;
+          toast.success(`¡Bienvenido, ${nombre}!`, { duration: 4000 });
+          navigate("/");
+        } catch (decodeError) {
+          console.error("Error decodificando token:", decodeError);
+          saveUser(token);
+          toast.success("¡Bienvenido!", { duration: 4000 });
+          navigate("/");
+        }
+      } else {
+        toast.error("Respuesta inesperada del servidor", { duration: 4000 });
+      }
+    } catch (err) {
+      setError(err);
+      console.error("Error:", err);
+      toast.error("Error de red o del servidor", { duration: 4000 });
     }
   };
 

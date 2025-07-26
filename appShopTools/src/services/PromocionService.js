@@ -13,9 +13,10 @@ class PromocionService {
   }
 
   // Actualizar promoción
-  updatePromocion(id, data) {
-    return axios.put(`${BASE_URL}/${id}`, data);
-  }
+updatePromocion(id, data) {
+  return axios.put(`${BASE_URL}/update/${id}`, data);
+}
+
 
   // Eliminar promoción
   deletePromocion(id) {
