@@ -88,9 +88,7 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
       }
     } catch (error) {
       console.error("Error al enviar reseña:", error);
-      toast.error(
-        error.response?.data?.message || "Error al enviar la reseña"
-      );
+      toast.error(error.response?.data?.message || "Error al enviar la reseña");
     } finally {
       setLoading(false);
     }
