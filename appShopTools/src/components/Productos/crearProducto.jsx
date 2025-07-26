@@ -33,8 +33,6 @@ import ProductoService from "../../services/ProductoService";
 import CategoriaService from "../../services/CategoriaService";
 import EtiquetaService from "../../services/EtiquetaService";
 
-
-
 export function CrearProducto() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -45,7 +43,7 @@ export function CrearProducto() {
   const [selectedEtiquetas, setSelectedEtiquetas] = useState([]);
   const [imagenes, setImagenes] = useState([]);
   const [errors, setErrors] = useState({});
-  
+
   const [producto, setProducto] = useState({
     nombre: "",
     descripcion: "",
@@ -64,10 +62,10 @@ export function CrearProducto() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-  const [categoriasRes, etiquetasRes] = await Promise.all([
-  CategoriaService.getCategorias(),
-  EtiquetaService.getetiquetas()
-]);
+        const [categoriasRes, etiquetasRes] = await Promise.all([
+          CategoriaService.getCategorias(),
+          EtiquetaService.getetiquetas(),
+        ]);
 
         setCategorias(categoriasRes.data || []);
         setEtiquetasDisponibles(etiquetasRes.data || []);
@@ -173,40 +171,40 @@ export function CrearProducto() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!validateForm()) return;
+    if (!validateForm()) return;
 
-  try {
-    setLoading(true);
-    setError(null);
+    try {
+      setLoading(true);
+      setError(null);
 
-    const formData = new FormData();
- formData.append("data", JSON.stringify({
-  ...producto,
-  estado: producto.estado ? 1 : 0  
-}));
+      const formData = new FormData();
+      formData.append(
+        "data",
+        JSON.stringify({
+          ...producto,
+          estado: producto.estado ? 1 : 0,
+        })
+      );
 
+      imagenes.forEach((img) => {
+        formData.append("imagenes[]", img);
+      });
 
-    imagenes.forEach((img) => {
-      formData.append("imagenes[]", img);
-    });
+      await ProductoService.createProducto(formData);
 
-    await ProductoService.createProducto(formData);
+      setSuccess("Producto creado exitosamente");
 
-    setSuccess("Producto creado exitosamente");
-
-
-    navigate("/productos");
-  } catch (err) {
-    console.error("Error al crear producto:", err);
-    setError(err.response?.data?.message || "Error al crear el producto");
-  } finally {
-    setLoading(false);
-  }
-};
-
+      navigate("/productos");
+    } catch (err) {
+      console.error("Error al crear producto:", err);
+      setError(err.response?.data?.message || "Error al crear el producto");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCloseSnackbar = () => {
     setError(null);
@@ -292,15 +290,21 @@ const handleSubmit = async (e) => {
                     onChange={handleEtiquetasChange}
                     disabled={loading || etiquetasDisponibles.length === 0}
                     label="Etiquetas"
-                    renderValue={(selected) => 
-                      selected.map(id => 
-                        etiquetasDisponibles.find(e => e.id === id)?.nombre
-                      ).join(', ')
+                    renderValue={(selected) =>
+                      selected
+                        .map(
+                          (id) =>
+                            etiquetasDisponibles.find((e) => e.id === id)
+                              ?.nombre
+                        )
+                        .join(", ")
                     }
                   >
                     {etiquetasDisponibles.map((etiqueta) => (
                       <MenuItem key={etiqueta.id} value={etiqueta.id}>
-                        <Checkbox checked={selectedEtiquetas.indexOf(etiqueta.id) > -1} />
+                        <Checkbox
+                          checked={selectedEtiquetas.indexOf(etiqueta.id) > -1}
+                        />
                         <ListItemText primary={etiqueta.nombre} />
                       </MenuItem>
                     ))}
@@ -489,13 +493,19 @@ const handleSubmit = async (e) => {
                     </Button>
                   </label>
                   {errors.imagenes && (
-                    <Typography color="error" variant="caption" sx={{ display: 'block', mt: 1 }}>
+                    <Typography
+                      color="error"
+                      variant="caption"
+                      sx={{ display: "block", mt: 1 }}
+                    >
                       {errors.imagenes}
                     </Typography>
                   )}
                   {imagenes.length > 0 && (
                     <Box sx={{ mt: 2 }}>
-                      <Typography variant="body2">Archivos seleccionados:</Typography>
+                      <Typography variant="body2">
+                        Archivos seleccionados:
+                      </Typography>
                       <List dense>
                         {imagenes.map((img, index) => (
                           <ListItem key={index}>
