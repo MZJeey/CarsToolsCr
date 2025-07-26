@@ -125,11 +125,7 @@ class ProductoModel
         }
     }
 
-   
-
-    public function delete($id)
-    {
-        try { public function update($id, $data)
+    public function update($id, $data)
     {
         try {
             // 🔁 Forzar conversión a array por si viene como stdClass
@@ -214,6 +210,10 @@ class ProductoModel
             return ['error' => $e->getMessage()];
         }
     }
+
+    public function delete($id)
+    {
+        try {
             $sql = "UPDATE Producto SET estado = true WHERE id = $id";
             return $this->enlace->executeSQL_DML($sql);
         } catch (Exception $e) {
