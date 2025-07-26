@@ -19,6 +19,10 @@ import {
   IconButton,
   Switch,
   FormControlLabel,
+  List,
+  ListItem,
+  ListItemText,
+  Checkbox,
 } from "@mui/material";
 import {
   ArrowBack as ArrowBackIcon,
@@ -26,14 +30,20 @@ import {
 } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import ProductoService from "../../services/ProductoService";
-//import { SelectGenres } from "../Productos/Form/selectGenere";
+import CategoriaService from "../../services/CategoriaService";
+import EtiquetaService from "../../services/EtiquetaService";
+
 export function CrearProducto() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [categorias, setCategorias] = useState([]);
+  const [etiquetasDisponibles, setEtiquetasDisponibles] = useState([]);
+  const [selectedEtiquetas, setSelectedEtiquetas] = useState([]);
+  const [imagenes, setImagenes] = useState([]);
   const [errors, setErrors] = useState({});
+
   const [producto, setProducto] = useState({
     nombre: "",
     descripcion: "",
@@ -46,21 +56,25 @@ export function CrearProducto() {
     motor_compatible: "",
     certificaciones: "",
     estado: true,
-    imagen: null,
   });
 
-  // Obtener categorías al cargar el componente
+  // Obtener categorías y etiquetas al cargar el componente
   React.useEffect(() => {
-    const fetchCategorias = async () => {
+    const fetchData = async () => {
       try {
-        const response = await ProductoService.getCategorias();
-        setCategorias(response.data || []);
+        const [categoriasRes, etiquetasRes] = await Promise.all([
+          CategoriaService.getCategorias(),
+          EtiquetaService.getetiquetas(),
+        ]);
+
+        setCategorias(categoriasRes.data || []);
+        setEtiquetasDisponibles(etiquetasRes.data || []);
       } catch (err) {
-        console.error("Error al cargar categorías:", err);
-        setError("Error al cargar las categorías");
+        console.error("Error al cargar datos:", err);
+        setError("Error al cargar los datos necesarios");
       }
     };
-    fetchCategorias();
+    fetchData();
   }, []);
 
   const handleChange = (e) => {
@@ -83,6 +97,15 @@ export function CrearProducto() {
         setErrors(newErrors);
       }
     }
+  };
+
+  const handleEtiquetasChange = (event) => {
+    setSelectedEtiquetas(event.target.value);
+  };
+
+  const handleImagesChange = (event) => {
+    const files = Array.from(event.target.files);
+    setImagenes(files);
   };
 
   const validateForm = () => {
@@ -134,59 +157,47 @@ export function CrearProducto() {
 
     if (
       producto.ano_compatible &&
-      (isNaN(producto.año_compatible) ||
+      (isNaN(producto.ano_compatible) ||
         producto.ano_compatible < 1900 ||
         producto.ano_compatible > new Date().getFullYear() + 1)
     ) {
       newErrors.ano_compatible = `Año debe estar entre 1900 y ${new Date().getFullYear() + 1}`;
     }
 
+    if (imagenes.length === 0) {
+      newErrors.imagenes = "Debe seleccionar al menos una imagen";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       setLoading(true);
       setError(null);
 
       const formData = new FormData();
-      formData.append("nombre", producto.nombre);
-      formData.append("descripcion", producto.descripcion);
-      formData.append("precio", producto.precio);
-      formData.append("stock", producto.stock);
-      formData.append("categoria_id", producto.categoria_id);
-      formData.append("estado", producto.estado ? "1" : "0");
+      formData.append(
+        "data",
+        JSON.stringify({
+          ...producto,
+          estado: producto.estado ? 1 : 0,
+        })
+      );
 
-      if (producto.ano_compatible) {
-        formData.append("ano_compatible", producto.ano_compatible);
-      }
-      if (producto.marca_compatible) {
-        formData.append("marca_compatible", producto.marca_compatible);
-      }
-      if (producto.modelo_compatible) {
-        formData.append("modelo_compatible", producto.modelo_compatible);
-      }
-      if (producto.motor_compatible) {
-        formData.append("motor_compatible", producto.motor_compatible);
-      }
-      if (producto.certificaciones) {
-        formData.append("certificaciones", producto.certificaciones);
-      }
-      if (producto.imagen) {
-        formData.append("imagen", producto.imagen);
-      }
+      imagenes.forEach((img) => {
+        formData.append("imagenes[]", img);
+      });
 
       await ProductoService.createProducto(formData);
 
       setSuccess("Producto creado exitosamente");
-      setTimeout(() => navigate("/productos"), 1500);
+
+      navigate("/productos");
     } catch (err) {
       console.error("Error al crear producto:", err);
       setError(err.response?.data?.message || "Error al crear el producto");
@@ -198,26 +209,6 @@ export function CrearProducto() {
   const handleCloseSnackbar = () => {
     setError(null);
     setSuccess(null);
-  };
-
-  const handleImageChange = (event) => {
-    const file = event.currentTarget.files[0];
-    if (file) {
-      setProducto((prev) => ({
-        ...prev,
-        imagen: file,
-      }));
-    }
-  };
-
-  const isFormValid = () => {
-    return (
-      producto.nombre &&
-      producto.precio &&
-      producto.stock &&
-      producto.categoria_id &&
-      Object.keys(errors).length === 0
-    );
   };
 
   return (
@@ -288,6 +279,39 @@ export function CrearProducto() {
                 </FormControl>
               </Grid>
 
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="etiquetas-label">Etiquetas</InputLabel>
+                  <Select
+                    labelId="etiquetas-label"
+                    id="etiquetas"
+                    multiple
+                    value={selectedEtiquetas}
+                    onChange={handleEtiquetasChange}
+                    disabled={loading || etiquetasDisponibles.length === 0}
+                    label="Etiquetas"
+                    renderValue={(selected) =>
+                      selected
+                        .map(
+                          (id) =>
+                            etiquetasDisponibles.find((e) => e.id === id)
+                              ?.nombre
+                        )
+                        .join(", ")
+                    }
+                  >
+                    {etiquetasDisponibles.map((etiqueta) => (
+                      <MenuItem key={etiqueta.id} value={etiqueta.id}>
+                        <Checkbox
+                          checked={selectedEtiquetas.indexOf(etiqueta.id) > -1}
+                        />
+                        <ListItemText primary={etiqueta.nombre} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -337,6 +361,20 @@ export function CrearProducto() {
               </Grid>
 
               <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  id="valoracion_promedio"
+                  name="valoracion_promedio"
+                  label="Valoración Promedio"
+                  value="N/A"
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  disabled={loading}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={4}>
                 <FormControlLabel
                   control={
                     <Switch
@@ -361,18 +399,18 @@ export function CrearProducto() {
               <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
-                  id="año_compatible"
-                  name="año_compatible"
+                  id="ano_compatible"
+                  name="ano_compatible"
                   label="Año compatible"
                   type="number"
                   inputProps={{
                     min: "1900",
                     max: new Date().getFullYear() + 1,
                   }}
-                  value={producto.año_compatible}
+                  value={producto.ano_compatible}
                   onChange={handleChange}
-                  error={!!errors.año_compatible}
-                  helperText={errors.año_compatible}
+                  error={!!errors.ano_compatible}
+                  helperText={errors.ano_compatible}
                   disabled={loading}
                 />
               </Grid>
@@ -431,32 +469,51 @@ export function CrearProducto() {
                 />
               </Grid>
 
-              {/* Sección de imagen */}
+              {/* Sección de imágenes */}
               <Grid item xs={12}>
                 <Paper variant="outlined" sx={{ p: 2 }}>
                   <Typography variant="subtitle1" gutterBottom>
-                    Imagen del Producto
+                    Imágenes del Producto
                   </Typography>
                   <input
                     accept="image/*"
                     style={{ display: "none" }}
-                    id="imagen-upload"
+                    id="imagenes-upload"
                     type="file"
-                    onChange={handleImageChange}
+                    multiple
+                    onChange={handleImagesChange}
                   />
-                  <label htmlFor="imagen-upload">
+                  <label htmlFor="imagenes-upload">
                     <Button
                       variant="outlined"
                       component="span"
                       disabled={loading}
                     >
-                      Seleccionar Imagen
+                      Seleccionar Imágenes
                     </Button>
                   </label>
-                  {producto.imagen && (
-                    <Typography variant="body2" sx={{ mt: 1 }}>
-                      Archivo seleccionado: {producto.imagen.name}
+                  {errors.imagenes && (
+                    <Typography
+                      color="error"
+                      variant="caption"
+                      sx={{ display: "block", mt: 1 }}
+                    >
+                      {errors.imagenes}
                     </Typography>
+                  )}
+                  {imagenes.length > 0 && (
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="body2">
+                        Archivos seleccionados:
+                      </Typography>
+                      <List dense>
+                        {imagenes.map((img, index) => (
+                          <ListItem key={index}>
+                            <ListItemText primary={img.name} />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Box>
                   )}
                 </Paper>
               </Grid>
@@ -479,6 +536,7 @@ export function CrearProducto() {
                     variant="contained"
                     color="primary"
                     startIcon={<SaveIcon />}
+                    disabled={loading}
                   >
                     {loading ? (
                       <CircularProgress size={24} />
@@ -495,7 +553,7 @@ export function CrearProducto() {
 
       <Snackbar
         open={!!error || !!success}
-        autoHideDuration={6000}
+        autoHideDuration={3000}
         onClose={handleCloseSnackbar}
       >
         <Alert

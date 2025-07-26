@@ -60,39 +60,45 @@ class UserModel
 			die($e->getMessage());
 		}
 	}
+public function login($objeto)
+{
+	try {
+		$vSql = "SELECT * FROM carstoolscr.usuario WHERE email = '$objeto->correo'";
+		$vResultado = $this->enlace->ExecuteSQL($vSql);
 
-	public function login($objeto)
-	{
-		try {
-			$vSql = "SELECT * FROM carstoolscr.usuario WHERE correo = '$objeto->correo'";
-			$vResultado = $this->enlace->ExecuteSQL($vSql);
+		if (isset($vResultado[0]) && is_object($vResultado[0])) {
+			$user = $vResultado[0];
 
-			if (isset($vResultado[0]) && is_object($vResultado[0])) {
-				$user = $vResultado[0];
+			if (password_verify($objeto->clave, $user->contraseña_hash)) {
+				$usuario = $this->get($user->id);
 
-				if (password_verify($objeto->clave, $user->contraseña_hash)) {
-					$usuario = $this->get($user->id);
+				if (!empty($usuario)) {
+					$data = [
+						'id' => $usuario->id,
+						'email' => $usuario->email,
+						'nombre_usuario' => $usuario->nombre_usuario,
+						'rol' => $usuario->rol,
+						'iat' => time(),
+						'exp' => time() + 3600
+					];
 
-					if (!empty($usuario)) {
-						$data = [
-							'id' => $usuario->id,
-							'correo' => $usuario->correo,
-							'rol' => $usuario->rol,
-							'iat' => time(),
-							'exp' => time() + 3600
-						];
+					$jwt_token = JWT::encode($data, config::get('SECRET_KEY'), 'HS256');
 
-						$jwt_token = JWT::encode($data, config::get('SECRET_KEY'), 'HS256');
-						return $jwt_token;
-					}
+					return [
+						"token" => $jwt_token,
+						"nombre_usuario" => $usuario->nombre_usuario,
+						"email" => $usuario->email
+					];
 				}
 			}
-
-			return false;
-		} catch (Exception $e) {
-			handleException($e);
 		}
+
+		return false;
+	} catch (Exception $e) {
+		handleException($e);
 	}
+}
+
 
 	public function create($objeto)
 	{
@@ -101,9 +107,10 @@ class UserModel
 				$hash = password_hash($objeto->clave, PASSWORD_BCRYPT);
 				$objeto->clave = $hash;
 			}
+		//	$contraseña_hash = password_hash($objeto->clave, PASSWORD_BCRYPT);
 
 			$vSql = "INSERT INTO carstoolscr.usuario 
-						(nombre_usuario, correo, clave, rol_id)
+						(nombre_usuario, email, contraseña_hash, rol_id)
 					 VALUES 
 						('$objeto->nombre_usuario', '$objeto->correo', '$objeto->clave', $objeto->rol_id)";
 

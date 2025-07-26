@@ -60,34 +60,21 @@ ORDER BY r.fecha DESC;
         return $this->enlace->executeSQL($sql);
     }
 
-    // Crear una nueva reseña solo si existe una previa del usuario para ese producto 
+    // Este es el metodo para crear las reseñas, permite que un usuario cree mas de una 
 
-    public function create($data)
-    {
-        $usuario_id = (int)$data['usuario_id'];
-        $producto_id = (int)$data['producto_id'];
+public function create($data)
+{
+    $usuario_id = (int)$data['usuario_id'];
+    $producto_id = (int)$data['producto_id'];
+    $comentario = addslashes($data['comentario']);
+    $valoracion = (int)$data['valoracion'];
+    $moderado = 0;
 
-        // Verificar si ya existe una reseña del usuario para el producto
+    $sql = "INSERT INTO resena (usuario_id, producto_id, comentario, valoracion, fecha, moderado)
+            VALUES ($usuario_id, $producto_id, '$comentario', $valoracion, NOW(), $moderado)";
 
-        $verificar = "SELECT COUNT(*) as total FROM resena WHERE usuario_id = $usuario_id AND producto_id = $producto_id";
-        $existe = $this->enlace->executeSQL($verificar);
-
-        if ($existe[0]->total > 0) {
-            return ['status' => 'error', 'message' => 'Ya has registrado una reseña para este producto.'];
-        }
-        // Insertar la nueva reseña
-        $comentario = addslashes($data['comentario']);
-
-        $valoracion = (int)$data['valoracion'];
-
-        // Por defecto, la reseña no está moderada
-        $moderado = 0;
-
-        $sql = "INSERT INTO resena (usuario_id, producto_id, comentario, valoracion, fecha, moderado)
-                VALUES ($usuario_id, $producto_id, '$comentario', $valoracion, NOW(), $moderado)";
-
-        return $this->enlace->executeSQL_DML($sql);
-    }
+    return $this->enlace->executeSQL_DML($sql);
+}
 
     // moderar o eliminar una reseña( actualizar el campo moderado)
 

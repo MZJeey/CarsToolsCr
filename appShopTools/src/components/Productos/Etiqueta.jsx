@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Chip, Skeleton, Stack } from "@mui/material";
-import EtiquetaServices from "../../services/EtiquetaServices";
+import EtiquetaServices from "../../services/EtiquetaService";
 
 const Etiquetas = ({ idProducto }) => {
   const [etiquetas, setEtiquetas] = useState([]);

@@ -44,65 +44,46 @@ class producto
             handleException($e);
         }
     }
-    public function create()
-    {
-        try {
-            $response = new Response();
+public function create()
+{
+    try {
+        $response = new Response();
 
-            $raw = file_get_contents("php://input");
-            error_log("JSON recibido: $raw");
+        $input = isset($_POST['data']) ? json_decode($_POST['data'], true) : null;
+        $archivos = $_FILES['imagenes'] ?? null;
 
-            $input = json_decode($raw, true);
-
-            if (!$input || !isset($input['data'], $input['imagenes'])) {
-                return $response->toJSON([
-                    'status' => 400,
-                    'result' => 'JSON malformado o faltan campos requeridos: "data" e "imagenes".'
-                ]);
-            }
-
-            $producto = new ProductoModel();
-            $exito = $producto->create($input['data'], $input['imagenes']);
-
+        if (!$input || !$archivos || empty($archivos['name'])) {
             return $response->toJSON([
-                'status' => $exito ? 200 : 500,
-                'result' => $exito ? 'Producto creado exitosamente' : 'Error al crear el producto'
-            ]);
-        } catch (Exception $e) {
-            handleException($e);
-        }
-    }
-
-    public function createProducto()
-    {
-        try {
-            $response = new Response();
-            $inputJSON = json_decode(file_get_contents("php://input"), true);
-
-            if (!isset($inputJSON['data']) || !is_array($inputJSON['data'])) {
-                http_response_code(400);
-                return $response->toJSON([
-                    'status' => 400,
-                    'result' => 'Datos incompletos o inválidos: se requiere "data".'
-                ]);
-            }
-
-            $producto = new ProductoModel();
-            $result = $producto->createProducto($inputJSON['data']);
-
-            http_response_code($result ? 200 : 500);
-            return $response->toJSON([
-                'status' => $result ? 200 : 500,
-                'result' => $result ? 'Producto creado exitosamente' : 'Error al crear el producto'
-            ]);
-        } catch (Exception $e) {
-            http_response_code(500);
-            return $response->toJSON([
-                'status' => 500,
-                'result' => 'Error interno del servidor: ' . $e->getMessage()
+                'status' => 400,
+                'result' => 'Faltan datos: asegúrate de enviar "data" y al menos una imagen.'
             ]);
         }
+
+        $carpeta = "public/uploads/"; // No se crea porque ya existe
+
+        $imagenesGuardadas = [];
+
+        foreach ($archivos['tmp_name'] as $index => $tmpPath) {
+            $nombreOriginal = basename($archivos['name'][$index]);
+            $rutaDestino = $carpeta . $nombreOriginal;
+
+            // Mueve la imagen con su nombre original
+            if (move_uploaded_file($tmpPath, $rutaDestino)) {
+                $imagenesGuardadas[] = $nombreOriginal; // Solo guardamos el nombre, no la ruta
+            }
+        }
+
+        $producto = new ProductoModel();
+        $exito = $producto->create($input, $imagenesGuardadas);
+
+        return $response->toJSON([
+            'status' => $exito ? 200 : 500,
+            'result' => $exito ? 'Producto creado exitosamente' : 'Error al crear el producto'
+        ]);
+    } catch (Exception $e) {
+        handleException($e);
     }
+}
 
 
     public function update($id)
