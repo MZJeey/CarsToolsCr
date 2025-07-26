@@ -26,44 +26,42 @@ class promocion
         }
     }
 
-    public function create()
-    {
-        try {
-            $response = new Response();
-            $inputJSON = json_decode(file_get_contents("php://input"), true);
+  public function create()
+{
+    try {
+        $response = new Response();
+        $inputJSON = json_decode(file_get_contents("php://input"), true);
 
-            if (!isset($inputJSON['data'])) {
-                return $response->toJSON(["status" => 400, "result" => "Datos incompletos"]);
-            }
-
-            $model = new PromocionModel();
-            $result = $model->create($inputJSON['data']);
-
-            return $response->toJSON(["status" => $result ? 200 : 500, "result" => $result]);
-        } catch (Exception $e) {
-            handleException($e);
+        if (!$inputJSON) {
+            return $response->toJSON(["status" => 400, "result" => "Datos incompletos"]);
         }
+
+        $model = new PromocionModel();
+        $result = $model->create($inputJSON);
+
+        return $response->toJSON(["status" => $result ? 200 : 500, "result" => $result]);
+    } catch (Exception $e) {
+        handleException($e);
     }
+}
 
-    public function update($id)
-    {
-        try {
-            $response = new Response();
-            $request = new Request();
-            $input = $request->getJSON();
+public function update($id)
+{
+    try {
+        $response = new Response();
+        $request = new Request();
+        $input = $request->getJSON();
 
-            if (!isset($input->data)) {
-                return $response->toJSON(["status" => 400, "result" => "Datos incompletos"]);
-            }
+  
+        $model = new PromocionModel();
+        $result = $model->update($id, (array)$input);
 
-            $model = new PromocionModel();
-            $result = $model->update($id, (array)$input->data);
-
-            return $response->toJSON(["status" => $result ? 200 : 500, "result" => $result]);
-        } catch (Exception $e) {
-            handleException($e);
-        }
+        return $response->toJSON(["status" => $result ? 200 : 500, "result" => $result]);
+    } catch (Exception $e) {
+        handleException($e);
     }
+}
+
 
     public function delete($id)
     {

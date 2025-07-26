@@ -7,7 +7,11 @@ class ResenaService {
   }
   getResenasPorProducto(id) {
     return axios.get(BASE_URL + "/" + id);
-    // Asegúrate de que esta ruta coincida con el método `getDetalles($id)` en el controlador PHP
+  
+  }
+// para crear la reseña 
+    create(resena) {
+    return axios.post(BASE_URL, resena);
   }
 }
 

@@ -1,4 +1,4 @@
-// Formulario de registro mejorado para tienda de repuestos
+// Signup.jsx
 import { useState } from 'react';
 import {
   Container,
@@ -15,41 +15,29 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import UserService from '../../services/UserService';
 
-
-
-
-
-
-
-
 export function Signup() {
   const navigate = useNavigate();
 
   const signupSchema = yup.object({
-    name: yup.string().required('El nombre es requerido'),
-    email: yup.string().required('El email es requerido').email('Formato email inválido'),
-    password: yup.string().required('La contraseña es requerida'),
-    confirmPassword: yup
+    nombre_usuario: yup.string().required('El nombre es requerido'),
+    correo: yup.string().required('El correo es requerido').email('Correo inválido'),
+    clave: yup.string().required('La contraseña es requerida'),
+    confirmar_clave: yup
       .string()
-      .oneOf([yup.ref('password')], 'Las contraseñas no coinciden')
+      .oneOf([yup.ref('clave')], 'Las contraseñas no coinciden')
       .required('Confirma tu contraseña'),
-    birthdate: yup.date().required('La fecha de nacimiento es requerida'),
-    rol_id: yup.number().required(),
   });
 
   const {
     control,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      birthdate: '',
-      rol_id: 2,
+      nombre_usuario: '',
+      correo: '',
+      clave: '',
+      confirmar_clave: '',
     },
     resolver: yupResolver(signupSchema),
   });
@@ -57,80 +45,65 @@ export function Signup() {
   const [error, setError] = useState(null);
 
   const onSubmit = (data) => {
-    try {
-      setValue('rol_id', 2);
-      UserService.createUser(data)
-        .then((response) => {
-          toast.success('Usuario registrado', { duration: 4000, position: 'top-center' });
-          return navigate('/user/login/');
-        })
-        .catch((err) => {
-          setError(err);
-          console.error('Error:', err);
-        });
-    } catch (e) {
-      console.error('Error:', e);
-    }
+    const payload = {
+      nombre_usuario: data.nombre_usuario,
+      correo: data.correo,
+      clave: data.clave,
+      rol_id: 2, // cliente
+    };
+
+    UserService.createUser(payload)
+      .then(() => {
+        toast.success('Usuario registrado con éxito', { duration: 3000, position: 'top-center' });
+        navigate('/user/login/');
+      })
+      .catch((err) => {
+        setError(err);
+        toast.error('Error al registrar usuario');
+      });
   };
 
   return (
     <Container maxWidth="sm">
       <Paper elevation={4} sx={{ p: 4, mt: 8, borderRadius: 3 }}>
         <Typography variant="h4" align="center" gutterBottom color="primary">
-          Registrar Cliente
+          Registro de Cliente
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Controller
-                name="name"
+                name="nombre_usuario"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     label="Nombre"
                     fullWidth
-                    error={!!errors.name}
-                    helperText={errors.name?.message || ' '}
+                    error={!!errors.nombre_usuario}
+                    helperText={errors.nombre_usuario?.message || ' '}
                   />
                 )}
               />
             </Grid>
             <Grid item xs={12}>
               <Controller
-                name="email"
+                name="correo"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     label="Correo Electrónico"
                     fullWidth
-                    error={!!errors.email}
-                    helperText={errors.email?.message || ' '}
+                    error={!!errors.correo}
+                    helperText={errors.correo?.message || ' '}
                   />
                 )}
               />
             </Grid>
             <Grid item xs={12}>
               <Controller
-                name="birthdate"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Fecha de Nacimiento"
-                    type="date"
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                    error={!!errors.birthdate}
-                    helperText={errors.birthdate?.message || ' '}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                name="password"
+                name="clave"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -138,15 +111,15 @@ export function Signup() {
                     label="Contraseña"
                     type="password"
                     fullWidth
-                    error={!!errors.password}
-                    helperText={errors.password?.message || ' '}
+                    error={!!errors.clave}
+                    helperText={errors.clave?.message || ' '}
                   />
                 )}
               />
             </Grid>
             <Grid item xs={12}>
               <Controller
-                name="confirmPassword"
+                name="confirmar_clave"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -154,8 +127,8 @@ export function Signup() {
                     label="Confirmar Contraseña"
                     type="password"
                     fullWidth
-                    error={!!errors.confirmPassword}
-                    helperText={errors.confirmPassword?.message || ' '}
+                    error={!!errors.confirmar_clave}
+                    helperText={errors.confirmar_clave?.message || ' '}
                   />
                 )}
               />

@@ -12,7 +12,7 @@ class PromocionModel
     {
         try {
             $sql = "SELECT 
-    pr.IdPromocion, pr.Nombre, pr.Descuento, pr.FechaInicio, pr.FechaFin,
+    pr.IdPromocion, pr.Nombre, pr.Descripcion, pr.Descuento, pr.FechaInicio, pr.FechaFin,
     pre.IdProducto,
     pc.IdCategoria
 FROM Promociones pr
@@ -31,6 +31,7 @@ LEFT JOIN PromocionCategoria pc ON pr.IdPromocion = pc.IdPromocion;
             $sql = "SELECT 
     p.IdPromocion, 
     pr.Nombre, 
+    
     pr.Descuento, 
     pr.FechaInicio, 
     pr.FechaFin, 
@@ -69,37 +70,85 @@ ORDER BY
         }
     }
 
-    public function create($data)
-    {
-        try {
-            $sql = "INSERT INTO promocion (tipo, objetivo_id, descuento, fecha_inicio, fecha_fin) VALUES (
-                '{$data['tipo']}',
-                {$data['objetivo_id']},
-                {$data['descuento']},
-                '{$data['fecha_inicio']}',
-                '{$data['fecha_fin']}'
-            )";
-            return $this->enlace->executeSQL_DML_last($sql);
-        } catch (Exception $e) {
-            handleException($e);
-        }
-    }
+public function create($data)
+{
+    try {
+        // Paso 1: Insertar en promociones
+        $nombre = addslashes($data['Nombre']);
+        $descripcion = isset($data['Descripcion']) ? addslashes($data['Descripcion']) : '';
+        $descuento = (float)$data['Descuento'];
+        $fechaInicio = $data['FechaInicio'];
+        $fechaFin = $data['FechaFin'];
 
-    public function update($id, $data)
-    {
-        try {
-            $sql = "UPDATE promocion SET
-                tipo = '{$data['tipo']}',
-                objetivo_id = {$data['objetivo_id']},
-                descuento = {$data['descuento']},
-                fecha_inicio = '{$data['fecha_inicio']}',
-                fecha_fin = '{$data['fecha_fin']}'
-                WHERE id = $id";
-            return $this->enlace->executeSQL_DML($sql);
-        } catch (Exception $e) {
-            handleException($e);
+        $sqlPromo = "INSERT INTO promociones (Nombre, Descripcion, Descuento, FechaInicio, FechaFin)
+                     VALUES ('$nombre', '$descripcion', $descuento, '$fechaInicio', '$fechaFin')";
+        $idPromocion = $this->enlace->executeSQL_DML_last($sqlPromo);
+
+        // Paso 2: Insertar en tabla de relación según el tipo
+        if (isset($data['Tipo'])) {
+            if ($data['Tipo'] === 'producto' && !empty($data['IdProducto'])) {
+                $idProducto = (int)$data['IdProducto'];
+                $sqlRelacion = "INSERT INTO promocionrepuestos (IdPromocion, IdProducto)
+                                VALUES ($idPromocion, $idProducto)";
+                $this->enlace->executeSQL_DML($sqlRelacion);
+            } elseif ($data['Tipo'] === 'categoria' && !empty($data['IdCategoria'])) {
+                $idCategoria = (int)$data['IdCategoria'];
+                $sqlRelacion = "INSERT INTO promocioncategoria (IdPromocion, IdCategoria)
+                                VALUES ($idPromocion, $idCategoria)";
+                $this->enlace->executeSQL_DML($sqlRelacion);
+            }
         }
+
+        return $idPromocion;
+    } catch (Exception $e) {
+        handleException($e);
     }
+}
+
+
+public function update($id, $data)
+{
+    try {
+        $nombre = addslashes($data['Nombre']);
+        $descripcion = isset($data['Descripcion']) ? addslashes($data['Descripcion']) : '';
+        $descuento = (float)$data['Descuento'];
+        $fechaInicio = $data['FechaInicio'];
+        $fechaFin = $data['FechaFin'];
+
+        $sql = "UPDATE promociones SET
+                    Nombre = '$nombre',
+                    Descripcion = '$descripcion',
+                    Descuento = $descuento,
+                    FechaInicio = '$fechaInicio',
+                    FechaFin = '$fechaFin'
+                WHERE IdPromocion = $id";
+
+        $this->enlace->executeSQL_DML($sql);
+
+        //  Actualiza la tabla de relación (producto o categoría)
+        $this->enlace->executeSQL_DML("DELETE FROM promocionrepuestos WHERE IdPromocion = $id");
+        $this->enlace->executeSQL_DML("DELETE FROM promocioncategoria WHERE IdPromocion = $id");
+
+        if (isset($data['Tipo'])) {
+            if ($data['Tipo'] === 'producto' && !empty($data['IdProducto'])) {
+                $idProducto = (int)$data['IdProducto'];
+                $sqlRelacion = "INSERT INTO promocionrepuestos (IdPromocion, IdProducto)
+                                VALUES ($id, $idProducto)";
+                $this->enlace->executeSQL_DML($sqlRelacion);
+            } elseif ($data['Tipo'] === 'categoria' && !empty($data['IdCategoria'])) {
+                $idCategoria = (int)$data['IdCategoria'];
+                $sqlRelacion = "INSERT INTO promocioncategoria (IdPromocion, IdCategoria)
+                                VALUES ($id, $idCategoria)";
+                $this->enlace->executeSQL_DML($sqlRelacion);
+            }
+        }
+
+        return true;
+    } catch (Exception $e) {
+        handleException($e);
+    }
+}
+
 
     public function delete($id)
     {
