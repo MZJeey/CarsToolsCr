@@ -2,19 +2,21 @@ stdClass Object
 (
     [IdImpuesto] => 1
     [estado] => 1
-    [certificaciones] => ISO
-    [motor_compatible] => 2.8
+    [certificaciones] => Isso
+    [motor_compatible] => 2.8L
     [modelo_compatible] => 2000
     [marca_compatible] => Toyota
     [ano_compatible] => 2000
-    [stock] => 5
-    [categoria_id] => 1
+    [stock] => 1
+    [categoria_id] => 5
     [precio] => 2000
-    [descripcion] => Fajas
-    [nombre] => Disco freno
+    [descripcion] => hola
+    [nombre] => Berny
     [etiquetas] => Array
         (
-            [0] => 11
+            [0] => 3
+            [1] => 12
+            [2] => 10
         )
 
 )
