@@ -30,14 +30,14 @@ class producto
             handleException($e);
         }
     }
-    public function getDetalles($id)
+    public function getById($id)
     {
         try {
             $response = new Response();
             //Instancia del modelo
             $producto = new ProductoModel();
             //Acción del modelo a ejecutar
-            $result = $producto->Detalles($id);
+            $result = $producto->get($id);
             //Dar respuesta
             $response->toJSON($result);
         } catch (Exception $e) {
@@ -66,34 +66,6 @@ class producto
         }
     }
 
-    public function update($id)
-    {
-        try {
-            $response = new Response();
-            $request = new Request();
-            // Obtener JSON como objeto
-            $inputJSON = $request->getJSON();
-
-            if (!isset($inputJSON->data)) {
-                return $response->toJSON([
-                    'status' => 400,
-                    'result' => 'Datos incompletos: se requiere "data".'
-                ]);
-            }
-
-            $producto = new ProductoModel();
-            // Convertir el objeto data a array antes de enviarlo al modelo
-            $result = $producto->update($id, (array)$inputJSON->data);
-
-            $response->toJSON([
-                'status' => $result ? 200 : 500,
-                'result' => $result ? 'Producto actualizado exitosamente' : 'Error al actualizar el producto'
-            ]);
-        } catch (Exception $e) {
-            handleException($e);
-        }
-    }
-
 
     public function delete($id)
     {
@@ -105,6 +77,25 @@ class producto
             $result = $producto->delete($id);
             //Dar respuesta
             $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function update($id)
+    {
+        try {
+            $request = new Request();
+            $inputData = $request->getJSON(true);
+
+            if (!$inputData) {
+                throw new Exception("No se recibieron datos válidos");
+            }
+
+            $productoModel = new ProductoModel();
+            $result = $productoModel->update($id, $inputData);
+
+            (new Response())->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }

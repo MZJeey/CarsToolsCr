@@ -35,13 +35,11 @@ import DetalleResenas from "./components/Productos/detallesResena";
 import PedidoComponent from "./components/pedidos/pedido";
 import TodosProductosPersonalizados from "./components/pedidos/TodosProductosPersonalizados";
 
-
-
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n"; // Ajusta la ruta según tu proyecto
 import Promociones from "./components/Productos/promociones";
 import { patch } from "@mui/material";
-
+import { EditarProducto } from "./components/Productos/updateProducto";
 
 const rutas = createBrowserRouter([
   {
@@ -93,19 +91,18 @@ const rutas = createBrowserRouter([
         element: <Promociones />,
       },
       {
-  path: "/pedidos",
-  element: <PedidoComponent />,
-},
+        path: "/pedidos",
+        element: <PedidoComponent />,
+      },
 
-{
-  path: "/productos-personalizados",
-  element: <TodosProductosPersonalizados />,
-},
-
-
-
-
-   
+      {
+        path: "/productos-personalizados",
+        element: <TodosProductosPersonalizados />,
+      },
+      {
+        path: "/editar/:id",
+        element: <EditarProducto />,
+      },
       {
         //Grupo 1S
         path: "/",
@@ -133,10 +130,7 @@ const rutas = createBrowserRouter([
         path: "/catalog-movies/",
         element: <CatalogMovies />,
       },
-      {
-        path: "/movie/:id",
-        element: <DetailMovie />,
-      },
+
       {
         path: "movie/image/",
         element: <MovieUploadImage />,

@@ -9,7 +9,7 @@ class ImageModel
     {
         $this->enlace = new MySqlConnect();
     }
-    //Subir imagen de una pelicula registrada
+    //Subir imagen de una producto registrada
     public function uploadFile($object)
     {
         try {
@@ -35,7 +35,7 @@ class ImageModel
                             //Moverlo a la carpeta del servidor del API
                             if (move_uploaded_file($tempPath, $this->upload_path . $fileName)) {
                                 //Guardarlo en la BD
-                                $sql = "INSERT INTO imagenproducto (producto_id,imagen) VALUES ($producto_id, '$fileName')";
+                                $sql = "INSERT INTO ImagenProducto (producto_id,imagen) VALUES ($producto_id, '$fileName')";
                                 $vResultado = $this->enlace->executeSQL_DML($sql);
                                 if ($vResultado > 0) {
                                     return 'Imagen creada';
@@ -50,23 +50,50 @@ class ImageModel
             handleException($e);
         }
     }
-    //Obtener una imagen de una pelicula
-    public function getImagen($id)
+    //Obtener una imagen de un producto
+    public function getImagen($idProducto)
     {
         try {
-
-            //Consulta sql
-            $vSql = "SELECT * FROM imagenproducto where producto_id=$id";
-
-            //Ejecutar la consulta
+            // Consulta SQL
+            $vSql = "SELECT * FROM ImagenProducto WHERE producto_id = $idProducto";
+            // Ejecutar la consulta
             $vResultado = $this->enlace->ExecuteSQL($vSql);
-            if (!empty($vResultado)) {
-                // Retornar el objeto
-                return $vResultado[0];
-            }
+            // Retornar todas las imágenes (puede ser un array vacío si no hay)
             return $vResultado;
         } catch (Exception $e) {
             handleException($e);
+        }
+    }
+    public function deleteImagen($id)
+    {
+        try {
+            // Obtener el nombre del archivo
+            $vSqlCheck = "SELECT imagen FROM ImagenProducto WHERE id = $id";
+            $vResultCheck = $this->enlace->ExecuteSQL($vSqlCheck);
+
+            if (empty($vResultCheck)) {
+                return ['success' => false, 'message' => 'La imagen no existe'];
+            }
+
+            $fileName = $vResultCheck[0]['imagen'];
+            $filePath = $this->upload_path . $fileName;
+
+            // Eliminar de la base de datos
+            $vSql = "DELETE FROM ImagenProducto WHERE id = $id";
+            $vResultado = $this->enlace->ExecuteSQL_DML($vSql);
+
+            if ($vResultado > 0) {
+                // Eliminar físicamente
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+                return ['success' => true, 'message' => 'Imagen eliminada'];
+            }
+
+            return ['success' => false, 'message' => 'No se pudo eliminar la imagen'];
+        } catch (Exception $e) {
+            handleException($e);
+            return ['success' => false, 'message' => 'Error al eliminar la imagen'];
         }
     }
 }

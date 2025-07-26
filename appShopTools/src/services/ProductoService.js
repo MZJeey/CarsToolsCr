@@ -5,18 +5,31 @@ class ProductoService {
   getProductos() {
     return axios.get(BASE_URL);
   }
-  getDetalleProducto(id) {
+  getProductobyId(id) {
     return axios.get(BASE_URL + "/" + id);
-    // Asegúrate de que esta ruta coincida con el método `getDetalles($id)` en el controlador PHP
+    // Asegúrate de que esta ruta coincida con el método `getById($id)` en el controlador PHP
   }
   createProducto(productoFormData) {
     return axios.post(BASE_URL, JSON.stringify(productoFormData));
   }
-
-  updateProducto(id, producto) {
-    return axios.put(BASE_URL + "/" + id, producto);
-    // Asegúrate de que esta ruta coincida con el método `update($id)` en el controlador PHP
+  // updateProducto(id, productoData) {
+  //   return axios({
+  //     method: "post", // ← usar POST en lugar de PUT si no manejás PUT en el backend
+  //     url: `http://localhost:81/carstoolscr/controllers/productoController.php?action=update&id=${id}`,
+  //     data: productoData,
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  // }
+  updateProducto(id, productoData) {
+    return axios.put(`${BASE_URL}/${id}`, productoData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
+
   deleteProducto(id) {
     return axios.delete(BASE_URL + "/" + id);
     // Asegúrate de que esta ruta coincida con el método `delete($id)` en el controlador PHP

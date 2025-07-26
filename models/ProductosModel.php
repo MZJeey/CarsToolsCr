@@ -23,7 +23,7 @@ class ProductoModel
             $promos = $promocion->all();
             $resena = new ResenaModel();
             $resenas = $resena->all();
-            $etiqueta = new EtiquetaModel();
+            $etiqueta = new ProductoEtiquetaModel();
             $etiquetas = $etiqueta->all();
             // Consulta SQL
             $vSQL = "SELECT p.*, c.nombre as categoria_nombre
@@ -66,37 +66,18 @@ class ProductoModel
         INSERT INTO Producto (
             nombre, descripcion, precio, categoria_id, stock,
             ano_compatible, marca_compatible,
-            modelo_compatible, motor_compatible, certificaciones, estado
+            modelo_compatible, motor_compatible, certificaciones, estado,IdImpuesto
         ) VALUES (
             '$data->nombre', '$data->descripcion', $data->precio, $data->categoria_id, $data->stock, 
             '$data->ano_compatible', '$data->marca_compatible', '$data->modelo_compatible',
-            '$data->motor_compatible', '$data->certificaciones', '$data->estado'
+            '$data->motor_compatible', '$data->certificaciones', '$data->estado', $data->IdImpuesto
         )
         ";
-
-
 
             //obtener el último ID insertado
             // Ejecutar la consulta
             $producto_id = $this->enlace->executeSQL_DML_last($sql);
 
-
-
-
-
-            if (!$producto_id || $producto_id <= 0) {
-                error_log("No se pudo insertar el producto");
-                return false;
-            }
-
-
-            //insertar imágenes
-            // $imagenModel = new ImageModel();
-            // if (isset($data->imagenes) && is_array($data->imagenes)) {
-            //     foreach ($data->imagenes as $imagen) {
-            //         $imagenModel->uploadFile(['files' => $imagen, 'producto_id' => $producto_id]);
-            //     }
-            // }
 
             // Insertar etiquetas
             foreach ($data->etiquetas as $etiqueta_id) {
@@ -120,8 +101,8 @@ class ProductoModel
         try {
             $imagenP = new ImageModel();
             $promocion = new PromocionModel();
-            $resena = new ResenaModel();
-            $etiqueta = new EtiquetaModel();
+            $resenaModel = new ResenaModel();
+            $etiqueta = new ProductoEtiquetaModel();
             $sql = "SELECT p.*, c.nombre as categoria_nombre
                 FROM Producto p
                 JOIN Categoria c ON p.categoria_id = c.id
@@ -134,8 +115,8 @@ class ProductoModel
                 // Obtener imágenes asociadas al producto
                 $producto->imagen = $imagenP->getImagen($producto->id);
                 $producto->promocion = $promocion->get($producto->id);
-                $producto->resena = $resena->getByProducto($producto->id);
-                $producto->etiquetas = $etiqueta->get($producto->id);
+                $producto->resena = $resenaModel->getByProducto($producto->id);
+                $producto->etiquetas = $etiqueta->getEtiquetasByProducto($producto->id);
             }
 
             return $producto;
@@ -147,41 +128,57 @@ class ProductoModel
     public function update($id, $data)
     {
         try {
-            $id = (int)$id; // ← Aquí fuerzas que sea un número
+            // Validación mínima
+            if (empty($data['nombre'])) {
+                throw new Exception('Nombre es requerido');
+            }
 
-            $nombre = $data['nombre'] ?? '';
-            $descripcion = $data['descripcion'] ?? '';
-            $precio = $data['precio'] ?? 0;
-            $categoria_id = $data['categoria_id'] ?? 0;
-            $stock = $data['stock'] ?? 0;
-            $promedio_valoraciones = $data['promedio_valoraciones'] ?? 0;
-            $ano_compatible = $data['ano_compatible'] ?? '';
-            $marca_compatible = $data['marca_compatible'] ?? '';
-            $modelo_compatible = $data['modelo_compatible'] ?? '';
-            $motor_compatible = $data['motor_compatible'] ?? '';
-            $certificaciones = $data['certificaciones'] ?? '';
-            $estado = isset($data['estado']) ? (int)$data['estado'] : 1;
+            // Escapar strings
+            $nombre = addslashes($data['nombre']);
+            $descripcion = isset($data['descripcion']) ? addslashes($data['descripcion']) : '';
+            $precio = isset($data['precio']) ? floatval($data['precio']) : 0;
+            $categoria_id = isset($data['categoria_id']) ? intval($data['categoria_id']) : 0;
+            $stock = isset($data['stock']) ? intval($data['stock']) : 0;
+            $estado = isset($data['estado']) ? (intval($data['estado']) ? 1 : 0) : 0;
+            $idImpuesto = isset($data['IdImpuesto']) ? intval($data['IdImpuesto']) : "NULL";
+            $ano_compatible = isset($data['ano_compatible']) ? addslashes($data['ano_compatible']) : '';
+            $marca_compatible = isset($data['marca_compatible']) ? addslashes($data['marca_compatible']) : '';
+            $modelo_compatible = isset($data['modelo_compatible']) ? addslashes($data['modelo_compatible']) : '';
+            $motor_compatible = isset($data['motor_compatible']) ? addslashes($data['motor_compatible']) : '';
+            $certificaciones = isset($data['certificaciones']) ? addslashes($data['certificaciones']) : '';
 
-            $sql = "UPDATE Producto 
-            SET nombre = '{$nombre}',
-                descripcion = '{$descripcion}',
-                precio = {$precio},
-                categoria_id = {$categoria_id},
-                stock = {$stock},
-                promedio_valoraciones = {$promedio_valoraciones},
-                ano_compatible = '{$ano_compatible}',
-                marca_compatible = '{$marca_compatible}',
-                modelo_compatible = '{$modelo_compatible}',
-                motor_compatible = '{$motor_compatible}',
-                certificaciones = '{$certificaciones}',
-                estado = {$estado}
-            WHERE id = {$id}";
+            // Preparar consulta SQL
+            $sql = "
+            UPDATE producto SET
+                nombre = '$nombre',
+                descripcion = '$descripcion',
+                precio = $precio,
+                categoria_id = $categoria_id,
+                stock = $stock,
+                estado = $estado,
+                ano_compatible = '$ano_compatible',
+                marca_compatible = '$marca_compatible',
+                modelo_compatible = '$modelo_compatible',
+                motor_compatible = '$motor_compatible',
+                certificaciones = '$certificaciones',
+                IdImpuesto = $idImpuesto
+            WHERE id = $id
+        ";
 
-            return $this->enlace->executeSQL_DML($sql);
+            $result = $this->enlace->executeSQL_DML($sql);
+
+            if ($result) {
+                return $this->get($id); // Devuelve el producto actualizado
+            } else {
+                throw new Exception('Error al ejecutar la actualización');
+            }
         } catch (Exception $e) {
-            handleException($e);
+            error_log("Error en modelo Producto::update - " . $e->getMessage());
+            http_response_code(400);
+            return ['error' => $e->getMessage()];
         }
     }
+
 
     public function delete($id)
     {
