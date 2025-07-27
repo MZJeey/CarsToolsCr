@@ -1,5 +1,6 @@
 import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BASE_URL + "producto";
+
 class ProductoService {
   // Obtener lista de habitaciones
   getProductos() {
@@ -12,26 +13,15 @@ class ProductoService {
   createProducto(productoFormData) {
     return axios.post(BASE_URL, JSON.stringify(productoFormData));
   }
-  // updateProducto(id, productoData) {
-  //   return axios({
-  //     method: "post", // ← usar POST en lugar de PUT si no manejás PUT en el backend
-  //     url: `http://localhost:81/carstoolscr/controllers/productoController.php?action=update&id=${id}`,
-  //     data: productoData,
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  // }
+
   // services/ProductoService.js
-  updateProducto(id, formData) {
-    formData.append("id", id); // Añadir el id al FormData
+  updateProducto(Producto) {
+    console.log("Producto", Producto);
+    console.log("Base", BASE_URL);
     return axios({
-      method: "post",
+      method: "put",
       url: BASE_URL + "/update",
-      data: formData, // Aquí va el objeto FormData, no stringificado
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      data: JSON.stringify(Producto),
     });
   }
 

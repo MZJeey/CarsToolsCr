@@ -152,9 +152,14 @@ class RoutesController
                                             echo json_encode($json, http_response_code($json["status"]));
                                         }
                                     } else {
-                                        $response->update();
+                                        $json = array(
+                                            'status' => 400,
+                                            'result' => 'ID no especificado para la actualización'
+                                        );
+                                        echo json_encode($json, http_response_code($json["status"]));
                                     }
                                     break;
+
 
                                 case 'DELETE':
                                     if ($param1) {

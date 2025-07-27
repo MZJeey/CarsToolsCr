@@ -66,25 +66,24 @@ class producto
         }
     }
 
-    public function update($id)
+    //PUT actualizar
+    public function update()
     {
         try {
             $request = new Request();
-            $inputData = $request->getJSON(true);
-
-            if (!$inputData) {
-                throw new Exception("No se recibieron datos válidos");
-            }
-
-            $productoModel = new ProductoModel();
-            $result = $productoModel->update($id, $inputData);
-
-            (new Response())->toJSON($result);
+            $response = new Response();
+            //Obtener json enviado
+            $inputJSON = $request->getJSON();
+            //Instancia del modelo
+            $producto = new ProductoModel();
+            //Acción del modelo a ejecutar
+            $result = $producto->update($inputJSON);
+            //Dar respuesta
+            $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
-
     public function delete($id)
     {
         try {

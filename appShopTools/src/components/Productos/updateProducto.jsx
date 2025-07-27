@@ -35,6 +35,7 @@ import {
   DialogTitle,
   Tooltip,
   InputAdornment,
+  Grid2,
 } from "@mui/material";
 import {
   ArrowBack as ArrowBackIcon,
@@ -42,7 +43,7 @@ import {
   Cancel as CancelIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { data, Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -54,6 +55,7 @@ import CategoriaService from "../../services/CategoriaService";
 import ProductoEtiquetaService from "../../services/ProductoEtiquetaService";
 import ResenaService from "../../services/ResenaService";
 import ImpuestoService from "../../services/ImpuestoService";
+import ImageService from "../../services/ImageService";
 
 export function EditarProducto() {
   const navigate = useNavigate();
@@ -65,12 +67,15 @@ export function EditarProducto() {
   const [categorias, setCategorias] = useState([]);
   const [etiquetasDisponibles, setEtiquetasDisponibles] = useState([]);
   const [selectedEtiquetas, setSelectedEtiquetas] = useState([]);
+  //Imagenes
   const [imagenes, setImagenes] = useState([]);
   const [previewURLs, setPreviewURLs] = useState([]);
   const [valoraciones, setValoraciones] = useState([]);
   const [promedioValoraciones, setPromedioValoraciones] = useState(0);
   const [loadingValoraciones, setLoadingValoraciones] = useState(false);
   const [impuestos, setImpuestos] = useState([]);
+
+  //Imagenes a eliminar
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [deleteDialog, setDeleteDialog] = useState({
     open: false,
@@ -126,6 +131,22 @@ export function EditarProducto() {
     reset,
     watch,
   } = useForm({
+    defaultValues: {
+      nombre: "",
+      descripcion: "",
+      precio: "",
+      categoria_id: "",
+      IdImpuesto: "",
+      stock: "",
+      ano_compatible: "",
+      marca_compatible: "",
+      modelo_compatible: "",
+      motor_compatible: "",
+      certificaciones: "",
+      estado: "",
+      imagesToDelete: [],
+      etiquetasDisponibles: [],
+    },
     resolver: yupResolver(productoSchema),
   });
 
@@ -153,8 +174,25 @@ export function EditarProducto() {
 
         // Cargar datos del producto
         if (id) {
-          const productoRes = await ProductoService.getProductobyId(id);
+          const [productoRes, resenasRes] = await Promise.all([
+            ProductoService.getProductobyId(id),
+            ResenaService.getResenasPorProducto(id), // Asume que tienes este método
+          ]);
+
           const producto = productoRes.data;
+          const valoraciones = resenasRes.data || [];
+
+          // Calcular promedio
+          const promedio =
+            valoraciones.length > 0
+              ? valoraciones.reduce(
+                  (sum, resena) => sum + resena.valoracion,
+                  0
+                ) / valoraciones.length
+              : 0;
+
+          setValoraciones(valoraciones);
+          setPromedioValoraciones(promedio);
 
           // Formatear datos para el formulario
           reset({
@@ -213,18 +251,24 @@ export function EditarProducto() {
   };
 
   const handleAddImage = () => {
-    if (previewURLs.length < 3) {
+    const MAX_IMAGES = 5;
+    if (previewURLs.length < MAX_IMAGES) {
       setImagenes([...imagenes, null]);
       setPreviewURLs([...previewURLs, null]);
     } else {
-      toast.error("Máximo 3 imágenes por producto");
+      toast.error(`Máximo ${MAX_IMAGES} imágenes por producto`);
     }
   };
 
   const handleRemoveImageClick = (index) => {
     const imageToRemove = imagenes[index];
+
     if (imageToRemove?.isExisting) {
-      setImagesToDelete([...imagesToDelete, imageToRemove.name]);
+      // Asegúrate de que imageToRemove tiene el id correcto
+      setImagesToDelete((prev) => [
+        ...prev,
+        { id: imageToRemove.id }, // Usamos el id directo en lugar de imageId
+      ]);
     }
 
     const newImages = imagenes.filter((_, idx) => idx !== index);
@@ -233,6 +277,9 @@ export function EditarProducto() {
     setImagenes(newImages);
     setPreviewURLs(newPreviews);
     setDeleteDialog({ open: false, index: null });
+
+    // Debug: muestra las imágenes a eliminar
+    console.log("Imágenes marcadas para eliminar:", imagesToDelete);
   };
 
   const handleChangeImage = (e, index) => {
@@ -278,69 +325,66 @@ export function EditarProducto() {
       navigate("/productos");
     }
   };
-
+  const [error, setError] = useState("");
   const onSubmit = async (DataForm) => {
-    console.log("Formulario:", DataForm);
-
     try {
-      // Si tienes un esquema de validación, úsalo aquí (ejemplo con yup)
-      // await productoSchema.validate(DataForm);
-
-      // Crear objeto FormData para enviar archivos + datos
-      const formDataToSend = new FormData();
-
-      // Armar datos del producto (sin imágenes)
+      // Prepara el objeto de datos para el producto
       const productoData = {
+        id: id,
         nombre: DataForm.nombre,
         descripcion: DataForm.descripcion,
-        precio: parseFloat(DataForm.precio),
-        categoria_id: parseInt(DataForm.categoria_id),
-        stock: parseInt(DataForm.stock),
+        precio: DataForm.precio,
+        categoria_id: DataForm.categoria_id,
+        IdImpuesto: DataForm.IdImpuesto,
+        stock: DataForm.stock,
+        ano_compatible: DataForm.ano_compatible,
+        marca_compatible: DataForm.marca_compatible,
+        modelo_compatible: DataForm.modelo_compatible,
+        motor_compatible: DataForm.motor_compatible,
+        certificaciones: DataForm.certificaciones,
         estado: DataForm.estado ? 1 : 0,
-        IdImpuesto: DataForm.IdImpuesto ? parseInt(DataForm.IdImpuesto) : null,
-        ano_compatible: DataForm.ano_compatible || null,
-        marca_compatible: DataForm.marca_compatible || null,
-        modelo_compatible: DataForm.modelo_compatible || null,
-        motor_compatible: DataForm.motor_compatible || null,
-        certificaciones: DataForm.certificaciones || null,
-        etiquetas: selectedEtiquetas, // Suponiendo que viene de un estado
-        imagenes_eliminar: imagesToDelete, // También de estado
+        etiqueta: selectedEtiquetas,
+        // Envía las imágenes a eliminar como array de objetos
+        imagenes_a_eliminar: imagesToDelete.map((img) => ({ id: img.id })),
       };
 
-      // Agregar datos JSON como string
-      formDataToSend.append("data", JSON.stringify(productoData));
+      console.log("Datos finales a enviar:", {
+        ...productoData,
+        imagenes_a_eliminar: productoData.imagenes_a_eliminar,
+      });
+      console.log("Datos a enviar:", JSON.stringify(productoData, null, 2));
 
-      // Agregar archivos nuevos (solo si vienen)
-      if (imagenes && imagenes.length) {
-        imagenes.forEach((img) => {
-          if (img instanceof File) {
-            formDataToSend.append("imagenes", img);
-          }
-        });
+      // Validar el esquema
+      const isValid = await productoSchema.isValid(DataForm);
+      if (!isValid) {
+        toast.error("Complete todos los campos requeridos correctamente");
+        return;
       }
 
-      // Añadir el ID al FormData si tu backend lo necesita así
-      formDataToSend.append("id", id);
+      // 1. Primero actualiza el producto
+      const response = await ProductoService.updateProducto(productoData);
+      console.log("Respuesta actualización:", response);
 
-      // Enviar al backend usando el servicio axios
-      const response = await ProductoService.updateProducto(id, formDataToSend);
-
-      if (response.data.error) {
-        throw new Error(response.data.error);
-      }
-
-      toast.success(
-        `Producto actualizado exitosamente: ${response.data.nombre}`,
-        {
-          duration: 4000,
-          position: "top-center",
+      if (response.data) {
+        // 2. Manejo de imágenes nuevas
+        const nuevasImagenes = imagenes.filter((img) => img instanceof File);
+        if (nuevasImagenes.length > 0) {
+          await Promise.all(
+            nuevasImagenes.map(async (img) => {
+              const formData = new FormData();
+              formData.append("file", img);
+              formData.append("producto_id", response.data.id);
+              return await ImageService.createImage(formData);
+            })
+          );
         }
-      );
 
-      navigate("/productos");
+        toast.success(`Producto actualizado #${response.data.id}`);
+        navigate("/productos");
+      }
     } catch (error) {
-      console.error("Error al actualizar producto:", error);
-      toast.error(error.message || "Error al actualizar el producto");
+      console.error("Error:", error);
+      toast.error("Error al actualizar el producto");
     }
   };
 
@@ -558,6 +602,30 @@ export function EditarProducto() {
                         )}
                       />
                     </Grid>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Valoración del Producto
+                    </Typography>
+                    <Box display="flex" alignItems="center">
+                      <Rating
+                        value={promedioValoraciones || 0}
+                        precision={0.1}
+                        readOnly
+                        sx={{ mr: 2 }}
+                      />
+                      <Typography variant="body1">
+                        {promedioValoraciones
+                          ? `${promedioValoraciones.toFixed(1)}/5`
+                          : "Sin valoraciones"}
+                      </Typography>
+                    </Box>
+                    <Typography variant="caption" color="textSecondary">
+                      {valoraciones.length > 0
+                        ? `Basado en ${valoraciones.length} ${valoraciones.length === 1 ? "reseña" : "reseñas"}`
+                        : "Aún no hay reseñas"}
+                    </Typography>
                   </Grid>
                 </Paper>
               </Grid>
