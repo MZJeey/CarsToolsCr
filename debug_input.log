@@ -1,0 +1,20 @@
+stdClass Object
+(
+    [IdImpuesto] => 1
+    [estado] => 1
+    [certificaciones] => ISSO
+    [motor_compatible] => 2.8L
+    [modelo_compatible] => 2000
+    [marca_compatible] => Todos
+    [ano_compatible] => 2003
+    [stock] => 3
+    [categoria_id] => 7
+    [precio] => 2000
+    [descripcion] => Dash pruebas
+    [nombre] => Dash
+    [etiquetas] => Array
+        (
+            [0] => 13
+        )
+
+)

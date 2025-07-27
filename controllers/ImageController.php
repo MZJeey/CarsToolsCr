@@ -1,30 +1,27 @@
 <?php
-//class Genre
+
 class image
 {
     //POST Crear
     public function create()
     {
         try {
-            /* $file=null;
-            if (isset($_FILES['file'])){
-                $file = $_FILES['file'];
-            } */
-            $request = new Request();
-            $response = new Response();
-            //Obtener json enviado
-            $inputFILE = $request->getBody();
-            //Instancia del modelo
-            $movie = new ImageModel();
-            //Acción del modelo a ejecutar
-            $result = $movie->uploadFile($inputFILE);
+            $imageModel = new ImageModel();
 
-            //Dar respuesta
+            $input = [
+                'file' => $_FILES['file'],
+                'producto_id' => $_POST['producto_id']
+            ];
+
+            $result = $imageModel->uploadFile($input);
+
+            $response = new Response();
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
+
     public function get($id)
     {
         try {
@@ -35,6 +32,22 @@ class image
             $result = $image->getImagen($id);
             //Dar respuesta
             $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+    public function delete($id)
+    {
+        try {
+            $imageModel = new ImageModel();
+            $result = $imageModel->deleteImagen($id);
+
+            $response = new Response();
+            $response->toJSON([
+                'success' => true,
+                'message' => 'Imagen eliminada correctamente',
+                'data' => $result
+            ]);
         } catch (Exception $e) {
             handleException($e);
         }
