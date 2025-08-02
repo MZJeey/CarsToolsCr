@@ -3,18 +3,18 @@ stdClass Object
     [IdImpuesto] => 1
     [estado] => 1
     [certificaciones] => ISSO
-    [motor_compatible] => 2.8L
-    [modelo_compatible] => 2000
-    [marca_compatible] => Todos
-    [ano_compatible] => 2003
-    [stock] => 3
-    [categoria_id] => 7
-    [precio] => 2000
-    [descripcion] => Dash pruebas
-    [nombre] => Dash
+    [motor_compatible] => Todos
+    [modelo_compatible] => Todos
+    [marca_compatible] => Full
+    [ano_compatible] => 2025
+    [stock] => 9
+    [categoria_id] => 11
+    [precio] => 1000000
+    [descripcion] => Computadora programable para distintos vehiculos y motores.
+    [nombre] => ComputadoraProgramable
     [etiquetas] => Array
         (
-            [0] => 13
+            [0] => 14
         )
 
 )

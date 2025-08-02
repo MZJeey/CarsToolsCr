@@ -209,7 +209,7 @@ export function UpdateProducto() {
       })
       .catch(err => {
         console.error('Error al actualizar producto:', err);
-        setError('Error al actualizar el producto.');
+        setError('Error al actualizar el producto......');
       });
   };
 

@@ -78,10 +78,13 @@ class producto
             $producto = new ProductoModel();
             //Acción del modelo a ejecutar
             $result = $producto->update($inputJSON);
+
+            
             //Dar respuesta
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
+           
         }
     }
     public function delete($id)

@@ -125,91 +125,7 @@ class ProductoModel
         }
     }
 
-    // public function update($id, $data)
-    // {
-    //     try {
-    //         // 🔁 Forzar conversión a array por si viene como stdClass
-    //         $data = (array)$data;
 
-    //         // ✅ Validación mínima
-    //         if (empty($data['nombre'])) {
-    //             throw new Exception('El nombre es requerido');
-    //         }
-
-    //         // 🔒 Escapar strings y convertir tipos
-    //         $nombre = addslashes($data['nombre']);
-    //         $descripcion = isset($data['descripcion']) ? addslashes($data['descripcion']) : '';
-    //         $precio = isset($data['precio']) ? floatval($data['precio']) : 0;
-    //         $categoria_id = isset($data['categoria_id']) ? intval($data['categoria_id']) : 0;
-    //         $stock = isset($data['stock']) ? intval($data['stock']) : 0;
-    //         $estado = isset($data['estado']) ? (intval($data['estado']) ? 1 : 0) : 0;
-    //         $idImpuesto = isset($data['IdImpuesto']) ? intval($data['IdImpuesto']) : "NULL";
-    //         $ano_compatible = isset($data['ano_compatible']) ? addslashes($data['ano_compatible']) : '';
-    //         $marca_compatible = isset($data['marca_compatible']) ? addslashes($data['marca_compatible']) : '';
-    //         $modelo_compatible = isset($data['modelo_compatible']) ? addslashes($data['modelo_compatible']) : '';
-    //         $motor_compatible = isset($data['motor_compatible']) ? addslashes($data['motor_compatible']) : '';
-    //         $certificaciones = isset($data['certificaciones']) ? addslashes($data['certificaciones']) : '';
-
-    //         // ✅ Actualizar producto
-    //         $sql = "
-    //         UPDATE producto SET
-    //             nombre = '$nombre',
-    //             descripcion = '$descripcion',
-    //             precio = $precio,
-    //             categoria_id = $categoria_id,
-    //             stock = $stock,
-    //             estado = $estado,
-    //             ano_compatible = '$ano_compatible',
-    //             marca_compatible = '$marca_compatible',
-    //             modelo_compatible = '$modelo_compatible',
-    //             motor_compatible = '$motor_compatible',
-    //             certificaciones = '$certificaciones',
-    //             IdImpuesto = $idImpuesto
-    //         WHERE id = $id
-    //     ";
-
-    //         $result = $this->enlace->executeSQL_DML($sql);
-
-    //         // ✅ Eliminar etiquetas anteriores
-    //         $sqlDeleteTags = "DELETE FROM productoetiqueta WHERE producto_id = $id";
-    //         $this->enlace->executeSQL_DML($sqlDeleteTags);
-
-    //         // ✅ Insertar nuevas etiquetas
-    //         if (!empty($data['etiquetas']) && is_array($data['etiquetas'])) {
-    //             foreach ($data['etiquetas'] as $etiqueta_id) {
-    //                 $sqlInsertTag = "INSERT INTO productoetiqueta (producto_id, etiqueta_id) VALUES ($id, $etiqueta_id)";
-    //                 $this->enlace->executeSQL_DML($sqlInsertTag);
-    //             }
-    //         }
-
-
-    //         // ✅ Eliminar imágenes específicas si vienen en el JSON
-    //         if (!empty($data['imagenes_eliminar']) && is_array($data['imagenes_eliminar'])) {
-    //             foreach ($data['imagenes_eliminar'] as $imagen) {
-    //                 $imagen = addslashes($imagen);
-    //                 $sqlDeleteImage = "DELETE FROM imagenproducto WHERE producto_id = $id AND imagen = '$imagen'";
-    //                 $this->enlace->executeSQL_DML($sqlDeleteImage);
-    //             }
-    //         }
-
-
-    //         // ✅ Insertar nuevas imágenes
-    //         if (!empty($data['imagenes']) && is_array($data['imagenes'])) {
-    //             foreach ($data['imagenes'] as $imagen) {
-    //                 $imagen = addslashes($imagen);
-    //                 $sqlInsertImage = "INSERT INTO imagenproducto (producto_id, imagen) VALUES ($id, '$imagen')";
-    //                 $this->enlace->executeSQL_DML($sqlInsertImage);
-    //             }
-    //         }
-
-    //         // ✅ Retornar producto actualizado
-    //         return $this->get($id);
-    //     } catch (Exception $e) {
-    //         error_log("Error en ProductoModel::update - " . $e->getMessage());
-    //         http_response_code(400);
-    //         return ['error' => $e->getMessage()];
-    //     }
-    // }
     public function update($objeto)
     {
         try {
@@ -239,19 +155,45 @@ class ProductoModel
             foreach ($objeto->etiqueta as $item) {
                 $sql = "INSERT INTO productoetiqueta(producto_id, etiqueta_id)
                     VALUES($objeto->id, $item)";
-                $this->enlace->executeSQL_DML($sql);
+                $resulth = $this->enlace->executeSQL_DML($sql);
             }
 
             // Eliminar una imagen específica (si se envió)
-            if (isset($objeto->imagen_a_eliminar) && !empty($objeto->imagen_a_eliminar)) {
-                $imagenEliminar = $objeto->imagen_a_eliminar;
-                $sqlImg = "DELETE FROM imagenproducto 
+
+            if (isset($objeto->imagenes_a_eliminar) && is_array($objeto->imagenes_a_eliminar)) {
+                foreach ($objeto->imagenes_a_eliminar as $imagenEliminar) {
+                    $sqlImg = "DELETE FROM imagenproducto 
                        WHERE producto_id = $objeto->id AND imagen = '$imagenEliminar'";
-                $this->enlace->executeSQL_DML($sqlImg);
+                    // $result = $this->enlace->executeSQL_DML($sql);
+                    $resultG = $this->enlace->executeSQL_DML($sqlImg);
+                }
             }
 
-            return $result;
+            // $modeloImagen = new ImageModel();
+            // // // Insertar nuevas imágenes (si se envió)
+            // if (isset($objeto->imagenesNuevas) && is_array($objeto->imagenesNuevas)) {
+            //     foreach ($objeto->imagenesNuevas as $imagenNuevas) {
+            //         $insertarImagen = $modeloImagen->uploadFile($imagenNuevas, $objeto->id);
+            //         $this->enlace->executeSQL_DML($insertarImagen);
+            //     }
+            // }
+
+            // if (($objeto->imagenesNuevas ?? null) && is_array($objeto->imagenesNuevas)) {
+
+                // foreach ($objeto->imagenesNuevas as $imagenNueva) {
+                    $sql = "INSERT INTO ImagenProducto (producto_id,imagen) VALUES ($objeto->id, 'bujias.jpeg')";
+                    $vResultado = $this->enlace->executeSQL_DML($sql);
+                    if ($vResultado > 0) {
+                        return 'Imagen creada';
+                    // }
+                }
+            // }
+
+
+
+            return $this->get($objeto->id);;
         } catch (Exception $e) {
+            echo "<script>alert('¡Hola desde PHP!');</script>";
             error_log("Error al actualizar producto: " . $e->getMessage());
             return false;
         }
