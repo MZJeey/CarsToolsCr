@@ -180,18 +180,16 @@ class ProductoModel
 
             // if (($objeto->imagenesNuevas ?? null) && is_array($objeto->imagenesNuevas)) {
 
-                // foreach ($objeto->imagenesNuevas as $imagenNueva) {
-                    $sql = "INSERT INTO ImagenProducto (producto_id,imagen) VALUES ($objeto->id, 'bujias.jpeg')";
-                    $vResultado = $this->enlace->executeSQL_DML($sql);
-                    if ($vResultado > 0) {
-                        return 'Imagen creada';
-                    // }
-                }
+            //     foreach ($objeto->imagenesNuevas as $imagenNueva) {
+            //         $sql = "INSERT INTO ImagenProducto (producto_id,imagen) VALUES ($objeto->id, '$imagenNueva')";
+            //         $vResultado = $this->enlace->executeSQL_DML($sql);
+            //         if ($vResultado > 0) {
+            //             return 'Imagen creada';
+            //         }
+            //     }
             // }
 
-
-
-            return $this->get($objeto->id);;
+            return $this->get($objeto->id);
         } catch (Exception $e) {
             echo "<script>alert('¡Hola desde PHP!');</script>";
             error_log("Error al actualizar producto: " . $e->getMessage());

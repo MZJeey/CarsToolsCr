@@ -9,7 +9,7 @@ class ImageModel
     {
         $this->enlace = new MySqlConnect();
     }
-    //Subir imagen de una producto registrada
+    //Subir imagen de una producto registrado
     public function uploadFile($object)
     {
         try {
