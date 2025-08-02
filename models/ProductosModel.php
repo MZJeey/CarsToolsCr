@@ -125,30 +125,58 @@ class ProductoModel
         }
     }
 
-    public function update($id, $data)
-    {
-        try {
-            // Validación mínima
-            if (empty($data['nombre'])) {
-                throw new Exception('Nombre es requerido');
+public function update($id, $data)
+{
+    try {
+        // Validación mínima
+        if (empty($data['nombre'])) {
+            throw new Exception('Nombre es requerido');
+        }
+
+        // Escapar y preparar datos
+        $nombre = addslashes($data['nombre']);
+        $descripcion = isset($data['descripcion']) ? addslashes($data['descripcion']) : '';
+        $precio = isset($data['precio']) ? floatval($data['precio']) : 0;
+        $categoria_id = isset($data['categoria_id']) ? intval($data['categoria_id']) : 0;
+        $stock = isset($data['stock']) ? intval($data['stock']) : 0;
+        $estado = isset($data['estado']) ? (intval($data['estado']) ? 1 : 0) : 0;
+        $idImpuesto = isset($data['IdImpuesto']) ? intval($data['IdImpuesto']) : "NULL";
+        $ano_compatible = isset($data['ano_compatible']) ? addslashes($data['ano_compatible']) : '';
+        $marca_compatible = isset($data['marca_compatible']) ? addslashes($data['marca_compatible']) : '';
+        $modelo_compatible = isset($data['modelo_compatible']) ? addslashes($data['modelo_compatible']) : '';
+        $motor_compatible = isset($data['motor_compatible']) ? addslashes($data['motor_compatible']) : '';
+        $certificaciones = isset($data['certificaciones']) ? addslashes($data['certificaciones']) : '';
+
+        // ✅ 1. Eliminar imágenes seleccionadas
+        if (isset($data['imagenes_a_eliminar']) && is_array($data['imagenes_a_eliminar'])) {
+            foreach ($data['imagenes_a_eliminar'] as $idImagen) {
+                $idImagen = intval($idImagen);
+                $sqlGet = "SELECT imagen FROM imagenproducto WHERE id = $idImagen AND producto_id = $id LIMIT 1";
+                $imagen = $this->enlace->executeSQL($sqlGet)[0]['imagen'] ?? null;
+
+                if ($imagen) {
+                    $ruta = "uploads/" . $imagen;
+                    if (file_exists($ruta)) {
+                        unlink($ruta);
+                    }
+
+                    $sqlDel = "DELETE FROM imagenproducto WHERE id = $idImagen AND producto_id = $id";
+                    $this->enlace->executeSQL_DML($sqlDel);
+                }
             }
+        }
 
-            // Escapar strings
-            $nombre = addslashes($data['nombre']);
-            $descripcion = isset($data['descripcion']) ? addslashes($data['descripcion']) : '';
-            $precio = isset($data['precio']) ? floatval($data['precio']) : 0;
-            $categoria_id = isset($data['categoria_id']) ? intval($data['categoria_id']) : 0;
-            $stock = isset($data['stock']) ? intval($data['stock']) : 0;
-            $estado = isset($data['estado']) ? (intval($data['estado']) ? 1 : 0) : 0;
-            $idImpuesto = isset($data['IdImpuesto']) ? intval($data['IdImpuesto']) : "NULL";
-            $ano_compatible = isset($data['ano_compatible']) ? addslashes($data['ano_compatible']) : '';
-            $marca_compatible = isset($data['marca_compatible']) ? addslashes($data['marca_compatible']) : '';
-            $modelo_compatible = isset($data['modelo_compatible']) ? addslashes($data['modelo_compatible']) : '';
-            $motor_compatible = isset($data['motor_compatible']) ? addslashes($data['motor_compatible']) : '';
-            $certificaciones = isset($data['certificaciones']) ? addslashes($data['certificaciones']) : '';
+        // ✅ 2. Insertar imágenes nuevas si vienen
+        if (isset($data['imagenes']) && is_array($data['imagenes'])) {
+            foreach ($data['imagenes'] as $nombreImagen) {
+                $nombreImagen = addslashes($nombreImagen);
+                $sqlInsert = "INSERT INTO imagenproducto (producto_id, imagen) VALUES ($id, '$nombreImagen')";
+                $this->enlace->executeSQL_DML($sqlInsert);
+            }
+        }
 
-            // Preparar consulta SQL
-            $sql = "
+        // ✅ 3. Actualizar producto
+        $sql = "
             UPDATE producto SET
                 nombre = '$nombre',
                 descripcion = '$descripcion',
@@ -165,19 +193,20 @@ class ProductoModel
             WHERE id = $id
         ";
 
-            $result = $this->enlace->executeSQL_DML($sql);
+        $result = $this->enlace->executeSQL_DML($sql);
 
-            if ($result) {
-                return $this->get($id); // Devuelve el producto actualizado
-            } else {
-                throw new Exception('Error al ejecutar la actualización');
-            }
-        } catch (Exception $e) {
-            error_log("Error en modelo Producto::update - " . $e->getMessage());
-            http_response_code(400);
-            return ['error' => $e->getMessage()];
+        if (!$result) {
+            throw new Exception('Error al ejecutar la actualización');
         }
+
+        return $this->get($id); // Devuelve el producto actualizado
+
+    } catch (Exception $e) {
+        error_log("Error en modelo Producto::update - " . $e->getMessage());
+        http_response_code(400);
+        return ['error' => $e->getMessage()];
     }
+}
 
 
     public function delete($id)

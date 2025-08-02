@@ -22,13 +22,16 @@ class ProductoService {
   //     },
   //   });
   // }
-updateProducto(id, productoData) {
-  return axios.post(`${BASE_URL}/update/${id}`, productoData, {
+// ✅ SIN ID EN LA URL
+// ✅ SIN ID EN LA URL
+updateProducto(productoData) {
+  return axios.post(`${BASE_URL}/update`, productoData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 }
+
 
   deleteProducto(id) {
     return axios.delete(BASE_URL + "/" + id);

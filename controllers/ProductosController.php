@@ -85,54 +85,42 @@ class producto
 public function update()
 {
     try {
-        // ✅ Obtener ID desde la URL
-        $urlParts = explode("/", $_SERVER["REQUEST_URI"]);
-        $id = end($urlParts);
+        $urlParts = explode('/', $_SERVER["REQUEST_URI"]);
+        $id = end($urlParts); // 🟢 Captura el último segmento de la URL como ID
 
-        // Validar que sea numérico
         if (!is_numeric($id)) {
-            throw new Exception("ID de producto inválido");
+            throw new Exception("ID de producto no recibido o inválido");
         }
 
-        // ✅ Obtener datos desde $_POST si se usa FormData
-        $inputData = $_POST;
+        // Manejo de multipart/form-data o JSON
+        $data = $_POST;
 
-        if (empty($inputData)) {
-            throw new Exception("No se recibieron datos válidos");
+        // Si se envía como JSON crudo
+        if (empty($data)) {
+            $input = file_get_contents("php://input");
+            $data = json_decode($input, true);
         }
 
-        // ✅ Agregar imágenes a eliminar si vienen como JSON
-        if (isset($_POST['imagenes_a_eliminar'])) {
-            $inputData['imagenes_a_eliminar'] = json_decode($_POST['imagenes_a_eliminar'], true);
+        // Manejo de imágenes desde FormData (si las hay)
+        if (!empty($_FILES['imagenes'])) {
+            $data['imagenes'] = array_map(function ($f) {
+                return $f['name'];
+            }, $_FILES['imagenes']);
         }
 
-        // ✅ Agregar etiquetas si vienen como array en formato FormData[] (ya vienen como array)
-        if (isset($_POST['etiquetas'])) {
-            $inputData['etiquetas'] = $_POST['etiquetas'];
+        // Si viene como string JSON
+        if (isset($data['imagenes_a_eliminar']) && is_string($data['imagenes_a_eliminar'])) {
+            $data['imagenes_a_eliminar'] = json_decode($data['imagenes_a_eliminar'], true);
         }
 
-        // ✅ Procesar imágenes nuevas
-        $imagenesNuevas = [];
-        if (!empty($_FILES['imagenes']['name'])) {
-            foreach ($_FILES['imagenes']['name'] as $index => $fileName) {
-                $tmpName = $_FILES['imagenes']['tmp_name'][$index];
-                $newName = basename($fileName);
+        require_once __DIR__ . '/../models/ProductoModel.php';
+        $modelo = new ProductoModel();
+        $resultado = $modelo->update($id, $data);
 
-                $destination = "uploads/" . $newName;
-                move_uploaded_file($tmpName, $destination);
-
-                $imagenesNuevas[] = $newName;
-            }
-        }
-        $inputData['imagenes'] = $imagenesNuevas;
-
-        // ✅ Llamar al modelo
-        $productoModel = new ProductoModel();
-        $result = $productoModel->update($id, $inputData);
-
-        (new Response())->toJSON($result);
+        echo json_encode(['status' => 'success', 'producto' => $resultado]);
     } catch (Exception $e) {
-        handleException($e);
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
     }
 }
 

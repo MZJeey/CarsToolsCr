@@ -285,16 +285,25 @@ export function EditarProducto() {
     });
   };
 
-  const handleConfirmDelete = () => {
-    const newImages = imagenes.filter((_, idx) => idx !== deleteDialog.index);
-    const newPreviews = previewURLs.filter(
-      (_, idx) => idx !== deleteDialog.index
-    );
+const [imagenesAEliminar, setImagenesAEliminar] = useState([]);
 
-    setImagenes(newImages);
-    setPreviewURLs(newPreviews);
-    setDeleteDialog({ open: false, index: null });
-  };
+const handleConfirmDelete = () => {
+  const index = deleteDialog.index;
+  const imagenAEliminar = imagenes[index];
+
+  // ✅ Si es imagen existente, guardar su ID para eliminar en BD
+  if (imagenAEliminar?.isExisting) {
+    setImagenesAEliminar((prev) => [...prev, imagenAEliminar.id]);
+  }
+
+  // ✅ Eliminar de los estados
+  const newImages = imagenes.filter((_, idx) => idx !== index);
+  const newPreviews = previewURLs.filter((_, idx) => idx !== index);
+  setImagenes(newImages);
+  setPreviewURLs(newPreviews);
+  setDeleteDialog({ open: false, index: null });
+};
+
 
   const handleChangeImage = (e, index) => {
     const file = e.target.files[0];
@@ -343,52 +352,46 @@ const onSubmit = async (formData) => {
   try {
     setLoading(true);
 
-    // ✅ Crear FormData para enviar todo (datos + imágenes)
     const data = new FormData();
 
-    // Agregar campos del producto
+    // ✅ ID del producto
+    data.append("id", id); // Este ID lo va a leer el backend desde $_POST["id"]
+
+    // ✅ Datos del producto
     data.append("nombre", formData.nombre);
     data.append("descripcion", formData.descripcion);
-    data.append("precio", formData.precio);
-    data.append("categoria_id", formData.categoria_id);
-    data.append("stock", formData.stock);
+    data.append("precio", parseFloat(formData.precio));
+    data.append("categoria_id", parseInt(formData.categoria_id));
+    data.append("stock", parseInt(formData.stock));
     data.append("estado", formData.estado ? 1 : 0);
-    data.append("IdImpuesto", formData.IdImpuesto || "");
-    data.append("ano_compatible", formData.ano_compatible || "");
-    data.append("marca_compatible", formData.marca_compatible || "");
-    data.append("modelo_compatible", formData.modelo_compatible || "");
-    data.append("motor_compatible", formData.motor_compatible || "");
-    data.append("certificaciones", formData.certificaciones || "");
+    data.append("IdImpuesto", formData.IdImpuesto ?? "");
+    data.append("ano_compatible", formData.ano_compatible ?? "");
+    data.append("marca_compatible", formData.marca_compatible ?? "");
+    data.append("modelo_compatible", formData.modelo_compatible ?? "");
+    data.append("motor_compatible", formData.motor_compatible ?? "");
+    data.append("certificaciones", formData.certificaciones ?? "");
 
     // ✅ Etiquetas (array)
-    if (formData.etiquetas && Array.isArray(formData.etiquetas)) {
-      formData.etiquetas.forEach((etiqueta) => {
-        data.append("etiquetas[]", etiqueta);
-      });
+    selectedEtiquetas.forEach((etiqueta) => {
+      data.append("etiquetas[]", etiqueta);
+    });
+
+    // ✅ Imágenes a eliminar (enviar como JSON string)
+    if (imagenesAEliminar.length > 0) {
+      data.append("imagenes_a_eliminar", JSON.stringify(imagenesAEliminar));
     }
 
-    // ✅ Imágenes a eliminar (JSON string)
-    if (
-      formData.imagenes_a_eliminar &&
-      Array.isArray(formData.imagenes_a_eliminar)
-    ) {
-      data.append(
-        "imagenes_a_eliminar",
-        JSON.stringify(formData.imagenes_a_eliminar)
-      );
-    }
-
-    // ✅ Imágenes nuevas (FileList o array de archivos)
-    if (formData.imagenes && formData.imagenes.length > 0) {
-      for (let i = 0; i < formData.imagenes.length; i++) {
-        data.append("imagenes[]", formData.imagenes[i]);
+    // ✅ Imágenes nuevas (solo las nuevas que son tipo File)
+    imagenes.forEach((img) => {
+      if (img instanceof File) {
+        data.append("imagenes[]", img);
+      } else if (img.file instanceof File) {
+        data.append("imagenes[]", img.file);
       }
-    }
+    });
 
-    console.log("Datos a enviar:", data);
-
-    // ✅ Enviar al backend
-    await ProductoService.updateProducto(id, data);
+    // ✅ Enviar al backend (NO PASAR ID POR URL)
+    await ProductoService.updateProducto(data);
 
     toast.success("Producto actualizado exitosamente");
     navigate("/productos");
@@ -397,11 +400,13 @@ const onSubmit = async (formData) => {
       error.response?.data?.error ||
       error.message ||
       "Error al actualizar el producto";
+
     console.error("Detalles del error:", {
       error: errorMessage,
       responseData: error.response?.data,
       status: error.response?.status,
     });
+
     toast.error(errorMessage);
   } finally {
     setLoading(false);
