@@ -1,15 +1,26 @@
-<?php 
+<?php
 class ProductoEtiquetaModel
 {
-       private $enlace;
+    private $enlace;
 
     public function __construct()
     {
-          $this->enlace = new MySqlConnect();
+        $this->enlace = new MySqlConnect();
     }
 
-   // Obtener todas las etiquetas asociadas a un producto
-    public function getEtiquetasByProducto($producto_id) {
+    public function all()
+    {
+        try {
+            $sql = "SELECT * FROM etiqueta";
+            return $this->enlace->executeSQL($sql);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    // Obtener todas las etiquetas asociadas a un producto
+    public function getEtiquetasByProducto($producto_id)
+    {
         try {
             $sql = "SELECT e.* FROM etiqueta e
                     JOIN productoetiqueta pe ON e.id = pe.etiqueta_id
@@ -21,7 +32,8 @@ class ProductoEtiquetaModel
     }
 
     // Asignar una o varias etiquetas a un producto
-    public function asignarEtiquetas($producto_id, $etiquetas) {
+    public function asignarEtiquetas($producto_id, $etiquetas)
+    {
         try {
             foreach ($etiquetas as $etiqueta_id) {
                 $sql = "INSERT INTO productoetiqueta (producto_id, etiqueta_id)
@@ -35,7 +47,8 @@ class ProductoEtiquetaModel
     }
 
     // Eliminar una etiqueta específica de un producto
-    public function eliminarEtiqueta($producto_id, $etiqueta_id) {
+    public function eliminarEtiqueta($producto_id, $etiqueta_id)
+    {
         try {
             $sql = "DELETE FROM productoetiqueta
                     WHERE producto_id = $producto_id AND etiqueta_id = $etiqueta_id";
@@ -46,7 +59,8 @@ class ProductoEtiquetaModel
     }
 
     // Eliminar todas las etiquetas de un producto
-    public function eliminarTodas($producto_id) {
+    public function eliminarTodas($producto_id)
+    {
         try {
             $sql = "DELETE FROM productoetiqueta WHERE producto_id = $producto_id";
             return $this->enlace->executeSQL_DML($sql);
@@ -54,6 +68,4 @@ class ProductoEtiquetaModel
             handleException($e);
         }
     }
-
-
 }

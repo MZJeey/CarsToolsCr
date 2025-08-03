@@ -30,7 +30,7 @@ require_once "models/ImageModel.php";
 
 //Modelo de api de carstools
 require_once "models/ProductosModel.php";
-require_once "models/EtiquetaModel.php";
+
 require_once "models/ImageModel.php";
 require_once "models/ResenaModel.php";
 require_once "models/ProductoEtiquetaModel.php";
@@ -39,6 +39,7 @@ require_once "models/CarritoModel.php";
 require_once "models/PedidoModel.php";
 require_once "models/CategoriaModel.php";
 require_once "models/ProductoPersonalizadoModel.php";
+require_once "models/ImpuestoModel.php";
 /***--- Agregar todos los controladores*/
 require_once "controllers/UserController.php";
 require_once "controllers/DirectorController.php";
@@ -52,7 +53,7 @@ require_once "controllers/ImageController.php";
 //Controller de Productos y del api de carstools
 require_once "controllers/ProductosController.php";
 //Controller de Etiqueta y del api de carstools
-require_once "controllers/EtiquetaController.php";
+
 
 //Controller de Imagenes y del api de carstools
 require_once "controllers/ImageController.php";
@@ -60,6 +61,8 @@ require_once "controllers/ImageController.php";
 //Controller de Resena y del api de carstools
 require_once "controllers/ResenaController.php";
 
+// Controller de Impuesto y del api de carstools
+require_once "controllers/ImpuestoController.php";
 
 //Controller de ProductoEtiqueta y del api de carstools
 require_once "controllers/ProductoEtiquetaController.php";

@@ -27,8 +27,8 @@ class ProductoPersonalizadoModel
     pp.subtotal
 FROM producto_personalizado pp
 JOIN producto p ON pp.producto_id = p.id
-LEFT JOIN impuesto i ON p.IdImpuesto = i.IdImpuesto
-WHERE pp.pedido_id = $pedido_id
+JOIN impuesto i ON p.IdImpuesto = i.IdImpuesto
+WHERE pp.pedido_id = $pedido_id;
 ";
 
         return $this->db->executeSQL($sql);
@@ -76,8 +76,6 @@ WHERE pp.pedido_id = $pedido_id
                 pp.pedido_id,
                 pp.producto_id,
                 p.nombre AS nombre_producto_base,
-                p.IdImpuesto AS id_impuesto,
-                i.Porcentaje AS porcentaje,
                 pp.nombre_personalizado,
                 pp.costo_base,
                 pp.opciones_personalizacion,
@@ -86,8 +84,7 @@ WHERE pp.pedido_id = $pedido_id
                 pp.precio_unitario,
                 pp.subtotal
             FROM producto_personalizado pp
-            JOIN producto p ON pp.producto_id = p.id
-            LEFT JOIN impuesto i ON p.IdImpuesto = i.IdImpuesto";
+            JOIN producto p ON pp.producto_id = p.id";
 
         return $this->db->executeSQL($sql);
     }

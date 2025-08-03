@@ -96,7 +96,7 @@ const ListaResenas = () => {
             sx={{ my: 1 }}
           />
           <Typography variant="body2" color="text.secondary">
-            {totalResenas} reviews
+            {totalResenas} reseñas
           </Typography>
         </Box>
 

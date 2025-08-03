@@ -23,7 +23,7 @@ class ProductoModel
             $promos = $promocion->all();
             $resena = new ResenaModel();
             $resenas = $resena->all();
-            $etiqueta = new EtiquetaModel();
+            $etiqueta = new ProductoEtiquetaModel();
             $etiquetas = $etiqueta->all();
             // Consulta SQL
             $vSQL = "SELECT p.*, c.nombre as categoria_nombre
@@ -58,66 +58,42 @@ class ProductoModel
         }
     }
 
-public function create($data, $imagenes)
-{
-    try {
-        // Extraer datos del producto
-        $nombre = $data['nombre'];
-        $descripcion = $data['descripcion'];
-        $precio = floatval($data['precio']);
-        $categoria_id = intval($data['categoria_id']);
-        $stock = isset($data['stock']) ? intval($data['stock']) : 0;
-        $ano_compatible = $data['ano_compatible'];
-        $marca_compatible = $data['marca_compatible'];
-        $modelo_compatible = $data['modelo_compatible'];
-        $motor_compatible = $data['motor_compatible'];
-        $certificaciones = $data['certificaciones'];
-        $estado = $data['estado'];
-
-        // Verificar si ya existe producto con ese nombre
-        $sqlCheck = "SELECT COUNT(*) AS total FROM Producto WHERE nombre = '$nombre'";
-        $result = $this->enlace->executeSQL($sqlCheck);
-
-        if (!$result || $result[0]->total > 0) {
-            return false; // Producto ya existe
-        }
-
-        // Insertar producto
-        $sql = "
-            INSERT INTO Producto (
-                nombre, descripcion, precio, categoria_id, stock,
-                promedio_valoraciones, ano_compatible, marca_compatible,
-                modelo_compatible, motor_compatible, certificaciones, estado
-            ) VALUES (
-                '$nombre', '$descripcion', $precio, $categoria_id, $stock,
-                0.00, '$ano_compatible', '$marca_compatible',
-                '$modelo_compatible', '$motor_compatible', '$certificaciones', '$estado'
-            )
+    public function create($data)
+    {
+        try {
+            // Insertar producto
+            $sql = "
+        INSERT INTO Producto (
+            nombre, descripcion, precio, categoria_id, stock,
+            ano_compatible, marca_compatible,
+            modelo_compatible, motor_compatible, certificaciones, estado,IdImpuesto
+        ) VALUES (
+            '$data->nombre', '$data->descripcion', $data->precio, $data->categoria_id, $data->stock, 
+            '$data->ano_compatible', '$data->marca_compatible', '$data->modelo_compatible',
+            '$data->motor_compatible', '$data->certificaciones', '$data->estado', $data->IdImpuesto
+        )
         ";
 
-        $producto_id = $this->enlace->executeSQL_DML_last($sql);
+            //obtener el último ID insertado
+            // Ejecutar la consulta
+            $producto_id = $this->enlace->executeSQL_DML_last($sql);
 
-        if (!$producto_id || $producto_id <= 0) {
-            error_log("No se pudo insertar el producto");
+
+            // Insertar etiquetas
+            foreach ($data->etiquetas as $etiqueta_id) {
+                $sqlTag = "INSERT INTO productoetiqueta (producto_id, etiqueta_id) VALUES ($producto_id, $etiqueta_id)";
+                $resTag = $this->enlace->executeSQL_DML($sqlTag);
+                if (!$resTag) {
+                    error_log("Error insertando etiqueta $etiqueta_id para producto $producto_id");
+                }
+            }
+
+            return $this->get($producto_id);
+        } catch (Exception $e) {
+            error_log("Error en modelo Producto::create - " . $e->getMessage());
             return false;
         }
-
-    
-    foreach ($imagenes as $nombreArchivo) {
-    $sqlImg = "INSERT INTO ImagenProducto (producto_id, imagen) VALUES ($producto_id, '$nombreArchivo')";
-    $resImg = $this->enlace->executeSQL_DML($sqlImg);
-    if (!$resImg) {
-        error_log("Error insertando imagen '$nombreArchivo' para producto $producto_id");
     }
-}
-        
-
-        return true;
-    } catch (Exception $e) {
-        error_log("Error en modelo Producto::create - " . $e->getMessage());
-        return false;
-    }
-}
 
 
     public function get($id)
@@ -125,8 +101,8 @@ public function create($data, $imagenes)
         try {
             $imagenP = new ImageModel();
             $promocion = new PromocionModel();
-            $resena = new ResenaModel();
-            $etiqueta = new EtiquetaModel();
+            $resenaModel = new ResenaModel();
+            $etiqueta = new ProductoEtiquetaModel();
             $sql = "SELECT p.*, c.nombre as categoria_nombre
                 FROM Producto p
                 JOIN Categoria c ON p.categoria_id = c.id
@@ -139,8 +115,8 @@ public function create($data, $imagenes)
                 // Obtener imágenes asociadas al producto
                 $producto->imagen = $imagenP->getImagen($producto->id);
                 $producto->promocion = $promocion->get($producto->id);
-                $producto->resena = $resena->getByProducto($producto->id);
-                $producto->etiquetas = $etiqueta->get($producto->id);
+                $producto->resena = $resenaModel->getByProducto($producto->id);
+                $producto->etiquetas = $etiqueta->getEtiquetasByProducto($producto->id);
             }
 
             return $producto;
@@ -149,42 +125,135 @@ public function create($data, $imagenes)
         }
     }
 
-    public function update($id, $data)
+    // public function update($id, $data)
+    // {
+    //     try {
+    //         // 🔁 Forzar conversión a array por si viene como stdClass
+    //         $data = (array)$data;
+
+    //         // ✅ Validación mínima
+    //         if (empty($data['nombre'])) {
+    //             throw new Exception('El nombre es requerido');
+    //         }
+
+    //         // 🔒 Escapar strings y convertir tipos
+    //         $nombre = addslashes($data['nombre']);
+    //         $descripcion = isset($data['descripcion']) ? addslashes($data['descripcion']) : '';
+    //         $precio = isset($data['precio']) ? floatval($data['precio']) : 0;
+    //         $categoria_id = isset($data['categoria_id']) ? intval($data['categoria_id']) : 0;
+    //         $stock = isset($data['stock']) ? intval($data['stock']) : 0;
+    //         $estado = isset($data['estado']) ? (intval($data['estado']) ? 1 : 0) : 0;
+    //         $idImpuesto = isset($data['IdImpuesto']) ? intval($data['IdImpuesto']) : "NULL";
+    //         $ano_compatible = isset($data['ano_compatible']) ? addslashes($data['ano_compatible']) : '';
+    //         $marca_compatible = isset($data['marca_compatible']) ? addslashes($data['marca_compatible']) : '';
+    //         $modelo_compatible = isset($data['modelo_compatible']) ? addslashes($data['modelo_compatible']) : '';
+    //         $motor_compatible = isset($data['motor_compatible']) ? addslashes($data['motor_compatible']) : '';
+    //         $certificaciones = isset($data['certificaciones']) ? addslashes($data['certificaciones']) : '';
+
+    //         // ✅ Actualizar producto
+    //         $sql = "
+    //         UPDATE producto SET
+    //             nombre = '$nombre',
+    //             descripcion = '$descripcion',
+    //             precio = $precio,
+    //             categoria_id = $categoria_id,
+    //             stock = $stock,
+    //             estado = $estado,
+    //             ano_compatible = '$ano_compatible',
+    //             marca_compatible = '$marca_compatible',
+    //             modelo_compatible = '$modelo_compatible',
+    //             motor_compatible = '$motor_compatible',
+    //             certificaciones = '$certificaciones',
+    //             IdImpuesto = $idImpuesto
+    //         WHERE id = $id
+    //     ";
+
+    //         $result = $this->enlace->executeSQL_DML($sql);
+
+    //         // ✅ Eliminar etiquetas anteriores
+    //         $sqlDeleteTags = "DELETE FROM productoetiqueta WHERE producto_id = $id";
+    //         $this->enlace->executeSQL_DML($sqlDeleteTags);
+
+    //         // ✅ Insertar nuevas etiquetas
+    //         if (!empty($data['etiquetas']) && is_array($data['etiquetas'])) {
+    //             foreach ($data['etiquetas'] as $etiqueta_id) {
+    //                 $sqlInsertTag = "INSERT INTO productoetiqueta (producto_id, etiqueta_id) VALUES ($id, $etiqueta_id)";
+    //                 $this->enlace->executeSQL_DML($sqlInsertTag);
+    //             }
+    //         }
+
+
+    //         // ✅ Eliminar imágenes específicas si vienen en el JSON
+    //         if (!empty($data['imagenes_eliminar']) && is_array($data['imagenes_eliminar'])) {
+    //             foreach ($data['imagenes_eliminar'] as $imagen) {
+    //                 $imagen = addslashes($imagen);
+    //                 $sqlDeleteImage = "DELETE FROM imagenproducto WHERE producto_id = $id AND imagen = '$imagen'";
+    //                 $this->enlace->executeSQL_DML($sqlDeleteImage);
+    //             }
+    //         }
+
+
+    //         // ✅ Insertar nuevas imágenes
+    //         if (!empty($data['imagenes']) && is_array($data['imagenes'])) {
+    //             foreach ($data['imagenes'] as $imagen) {
+    //                 $imagen = addslashes($imagen);
+    //                 $sqlInsertImage = "INSERT INTO imagenproducto (producto_id, imagen) VALUES ($id, '$imagen')";
+    //                 $this->enlace->executeSQL_DML($sqlInsertImage);
+    //             }
+    //         }
+
+    //         // ✅ Retornar producto actualizado
+    //         return $this->get($id);
+    //     } catch (Exception $e) {
+    //         error_log("Error en ProductoModel::update - " . $e->getMessage());
+    //         http_response_code(400);
+    //         return ['error' => $e->getMessage()];
+    //     }
+    // }
+    public function update($objeto)
     {
         try {
-            $id = (int)$id; // ← Aquí fuerzas que sea un número
+            // Actualizar el producto
+            $sql = "UPDATE producto SET 
+            nombre = '$objeto->nombre',
+            descripcion = '$objeto->descripcion',
+            precio = '$objeto->precio',
+            categoria_id = '$objeto->categoria_id',
+            stock = '$objeto->stock',
+            estado = '$objeto->estado',
+            ano_compatible = '$objeto->ano_compatible',
+            marca_compatible = '$objeto->marca_compatible',
+            modelo_compatible = '$objeto->modelo_compatible',
+            motor_compatible = '$objeto->motor_compatible',
+            certificaciones = '$objeto->certificaciones',
+            IdImpuesto = '$objeto->IdImpuesto'
+            WHERE id = '$objeto->id'";
 
-            $nombre = $data['nombre'] ?? '';
-            $descripcion = $data['descripcion'] ?? '';
-            $precio = $data['precio'] ?? 0;
-            $categoria_id = $data['categoria_id'] ?? 0;
-            $stock = $data['stock'] ?? 0;
-            $promedio_valoraciones = $data['promedio_valoraciones'] ?? 0;
-            $ano_compatible = $data['ano_compatible'] ?? '';
-            $marca_compatible = $data['marca_compatible'] ?? '';
-            $modelo_compatible = $data['modelo_compatible'] ?? '';
-            $motor_compatible = $data['motor_compatible'] ?? '';
-            $certificaciones = $data['certificaciones'] ?? '';
-            $estado = isset($data['estado']) ? (int)$data['estado'] : 1;
+            $result = $this->enlace->executeSQL_DML($sql);
 
-            $sql = "UPDATE Producto 
-            SET nombre = '{$nombre}',
-                descripcion = '{$descripcion}',
-                precio = {$precio},
-                categoria_id = {$categoria_id},
-                stock = {$stock},
-                promedio_valoraciones = {$promedio_valoraciones},
-                ano_compatible = '{$ano_compatible}',
-                marca_compatible = '{$marca_compatible}',
-                modelo_compatible = '{$modelo_compatible}',
-                motor_compatible = '{$motor_compatible}',
-                certificaciones = '{$certificaciones}',
-                estado = {$estado}
-            WHERE id = {$id}";
+            // Eliminar etiquetas del producto
+            $sqlDeleteTags = "DELETE FROM productoetiqueta WHERE producto_id = $objeto->id";
+            $this->enlace->executeSQL_DML($sqlDeleteTags);
 
-            return $this->enlace->executeSQL_DML($sql);
+            // Insertar nuevas etiquetas
+            foreach ($objeto->etiqueta as $item) {
+                $sql = "INSERT INTO productoetiqueta(producto_id, etiqueta_id)
+                    VALUES($objeto->id, $item)";
+                $this->enlace->executeSQL_DML($sql);
+            }
+
+            // Eliminar una imagen específica (si se envió)
+            if (isset($objeto->imagen_a_eliminar) && !empty($objeto->imagen_a_eliminar)) {
+                $imagenEliminar = $objeto->imagen_a_eliminar;
+                $sqlImg = "DELETE FROM imagenproducto 
+                       WHERE producto_id = $objeto->id AND imagen = '$imagenEliminar'";
+                $this->enlace->executeSQL_DML($sqlImg);
+            }
+
+            return $result;
         } catch (Exception $e) {
-            handleException($e);
+            error_log("Error al actualizar producto: " . $e->getMessage());
+            return false;
         }
     }
 

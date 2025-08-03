@@ -59,7 +59,7 @@ const DetalleProducto = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await ProductoService.getDetalleProducto(id);
+        const response = await ProductoService.getProductobyId(id);
         if (!response.data) throw new Error("Producto no encontrado");
         setProducto(response.data);
 

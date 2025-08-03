@@ -1,7 +1,20 @@
 <?php
 
-class productoetiqueta {
-    public function getByProducto($producto_id) {
+class productoetiqueta
+{
+    public function index()
+    {
+        try {
+            $response = new Response();
+            $model = new ProductoEtiquetaModel();
+            $result = $model->all();
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+    public function getByProducto($producto_id)
+    {
         try {
             $response = new Response();
             $model = new ProductoEtiquetaModel();
@@ -12,7 +25,8 @@ class productoetiqueta {
         }
     }
 
-    public function asignar() {
+    public function asignar()
+    {
         try {
             $request = new Request();
             $response = new Response();
@@ -29,7 +43,8 @@ class productoetiqueta {
         }
     }
 
-    public function eliminar() {
+    public function eliminar()
+    {
         try {
             $request = new Request();
             $response = new Response();
@@ -46,27 +61,27 @@ class productoetiqueta {
         }
     }
 
-public function eliminarTodas() {
-    try {
-        $request = new Request();
-        $response = new Response();
-        $input = (array)$request->getJSON();
+    public function eliminarTodas()
+    {
+        try {
+            $request = new Request();
+            $response = new Response();
+            $input = (array)$request->getJSON();
 
-        $producto_id = $input['producto_id'] ?? 0;
+            $producto_id = $input['producto_id'] ?? 0;
 
-        if ($producto_id <= 0) {
-            return $response->toJSON([
-                'status' => 'error',
-                'message' => 'ID de producto inválido'
-            ]);
+            if ($producto_id <= 0) {
+                return $response->toJSON([
+                    'status' => 'error',
+                    'message' => 'ID de producto inválido'
+                ]);
+            }
+
+            $model = new ProductoEtiquetaModel();
+            $result = $model->eliminarTodas($producto_id);
+            $response->toJSON(['status' => $result ? 'ok' : 'error']);
+        } catch (Exception $e) {
+            handleException($e);
         }
-
-        $model = new ProductoEtiquetaModel();
-        $result = $model->eliminarTodas($producto_id);
-        $response->toJSON(['status' => $result ? 'ok' : 'error']);
-    } catch (Exception $e) {
-        handleException($e);
     }
-}
-
 }

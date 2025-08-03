@@ -281,7 +281,8 @@ export function ListaProductos() {
                     <IconButton
                       aria-label="editar"
                       color="primary"
-                      onClick={() => handleEditar(producto)}
+                      component={Link}
+                      to={`/editar/${producto.id}`}
                       sx={{ ml: 1 }}
                     >
                       <EditIcon />
