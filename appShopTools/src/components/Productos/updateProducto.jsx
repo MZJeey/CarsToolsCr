@@ -74,9 +74,13 @@ export function EditarProducto() {
   const [loadingValoraciones, setLoadingValoraciones] = useState(false);
   const [impuestos, setImpuestos] = useState([]);
 
+  //Imagenes a eliminar
+  // Reemplaza estos estados:
+
   const [previewURLs, setPreviewURLs] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
 
+  // Por este:
   const [imagenes, setImagenes] = useState({
     existentes: [], // {id: number, url: string}
     nuevas: [], // Array de File objects
@@ -258,7 +262,7 @@ export function EditarProducto() {
   const handleEtiquetasChange = (event) => {
     setSelectedEtiquetas(event.target.value.map(Number));
   };
-  //agregar imagenes
+
   const handleAddImage = () => {
     const MAX_IMAGES = 5;
     if (previewURLs.length < MAX_IMAGES) {
@@ -368,26 +372,8 @@ export function EditarProducto() {
       // Llamada al servicio para actualizar
       const response = await ProductoService.updateProducto(productoData);
 
-      // Subir imágenes si hay
-      // const newProductId = response.data.id;
-
-      // // Subir imágenes si hay
-      // if (imagenes.length > 0) {
-      //   await Promise.all(
-      //     imagenes
-      //       .filter((img) => img instanceof File)
-      //       .map(async (img) => {
-      //         const imgFormData = new FormData();
-      //         imgFormData.append("file", img);
-      //         imgFormData.append("producto_id", newProductId);
-      //         return await ImageService.createImage(imgFormData);
-      //       })
-      //   );
-      // }
-      console.log("Respuesta del servicio de actualización:", response);
-
       if (response?.error) {
-        toast.error(response.message || "Error al actualizar el producto---->");
+        toast.error(response.message || "Error al actualizar el producto");
         return;
       }
 
@@ -399,7 +385,7 @@ export function EditarProducto() {
       }, 1000);
     } catch (error) {
       console.error("Error:", error.response?.data || error.message || error);
-      toast.error("Error al actualizar el producto Producto Model");
+      toast.error("Error al actualizar el producto");
     }
   };
 
