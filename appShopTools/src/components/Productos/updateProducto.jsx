@@ -35,6 +35,7 @@ import {
   DialogTitle,
   Tooltip,
   InputAdornment,
+  Grid2,
 } from "@mui/material";
 import {
   ArrowBack as ArrowBackIcon,
@@ -42,7 +43,7 @@ import {
   Cancel as CancelIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { data, Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -54,6 +55,7 @@ import CategoriaService from "../../services/CategoriaService";
 import ProductoEtiquetaService from "../../services/ProductoEtiquetaService";
 import ResenaService from "../../services/ResenaService";
 import ImpuestoService from "../../services/ImpuestoService";
+import ImageService from "../../services/ImageService";
 
 export function EditarProducto() {
   const navigate = useNavigate();
@@ -65,13 +67,21 @@ export function EditarProducto() {
   const [categorias, setCategorias] = useState([]);
   const [etiquetasDisponibles, setEtiquetasDisponibles] = useState([]);
   const [selectedEtiquetas, setSelectedEtiquetas] = useState([]);
-  const [imagenes, setImagenes] = useState([]);
-  const [previewURLs, setPreviewURLs] = useState([]);
+  //Imagenes
+
   const [valoraciones, setValoraciones] = useState([]);
   const [promedioValoraciones, setPromedioValoraciones] = useState(0);
   const [loadingValoraciones, setLoadingValoraciones] = useState(false);
   const [impuestos, setImpuestos] = useState([]);
+
+  const [previewURLs, setPreviewURLs] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
+
+  const [imagenes, setImagenes] = useState({
+    existentes: [], // {id: number, url: string}
+    nuevas: [], // Array de File objects
+    aEliminar: [], // Array de IDs de imágenes a eliminar
+  });
   const [deleteDialog, setDeleteDialog] = useState({
     open: false,
     index: null,
@@ -126,6 +136,22 @@ export function EditarProducto() {
     reset,
     watch,
   } = useForm({
+    defaultValues: {
+      nombre: "",
+      descripcion: "",
+      precio: "",
+      categoria_id: "",
+      IdImpuesto: "",
+      stock: "",
+      ano_compatible: "",
+      marca_compatible: "",
+      modelo_compatible: "",
+      motor_compatible: "",
+      certificaciones: "",
+      estado: "",
+      imagesToDelete: [],
+      etiquetasDisponibles: [],
+    },
     resolver: yupResolver(productoSchema),
   });
 
@@ -155,6 +181,27 @@ export function EditarProducto() {
         if (id) {
           const productoRes = await ProductoService.getProductobyId(id);
           const producto = productoRes.data;
+
+          let valoraciones = [];
+          try {
+            const resenasRes = await ResenaService.getResenasPorProducto(id);
+            valoraciones = resenasRes.data || [];
+          } catch (error) {
+            console.log("No se encontraron reseñas para este producto", error);
+            valoraciones = [];
+          }
+
+          // Calcular promedio
+          const promedio =
+            valoraciones.length > 0
+              ? valoraciones.reduce(
+                  (sum, resena) => sum + resena.valoracion,
+                  0
+                ) / valoraciones.length
+              : 0;
+
+          setValoraciones(valoraciones);
+          setPromedioValoraciones(promedio);
 
           // Formatear datos para el formulario
           reset({
@@ -211,20 +258,30 @@ export function EditarProducto() {
   const handleEtiquetasChange = (event) => {
     setSelectedEtiquetas(event.target.value.map(Number));
   };
-
+  //agregar imagenes
   const handleAddImage = () => {
-    if (previewURLs.length < 3) {
+    const MAX_IMAGES = 5;
+    if (previewURLs.length < MAX_IMAGES) {
       setImagenes([...imagenes, null]);
       setPreviewURLs([...previewURLs, null]);
     } else {
-      toast.error("Máximo 3 imágenes por producto");
+      toast.error(`Máximo ${MAX_IMAGES} imágenes por producto`);
     }
   };
 
   const handleRemoveImageClick = (index) => {
     const imageToRemove = imagenes[index];
+
     if (imageToRemove?.isExisting) {
-      setImagesToDelete([...imagesToDelete, imageToRemove.name]);
+      // Verifica que imageToRemove.name exista antes de agregarlo
+      if (imageToRemove.name) {
+        setImagesToDelete((prev) => [
+          ...prev,
+          imageToRemove.name, // Solo el nombre del archivo
+        ]);
+      } else {
+        console.error("La imagen a eliminar no tiene nombre:", imageToRemove);
+      }
     }
 
     const newImages = imagenes.filter((_, idx) => idx !== index);
@@ -233,8 +290,11 @@ export function EditarProducto() {
     setImagenes(newImages);
     setPreviewURLs(newPreviews);
     setDeleteDialog({ open: false, index: null });
+
+    console.log("Imágenes a eliminar actualizadas:", imagesToDelete);
   };
 
+  // Modifica handleChangeImage
   const handleChangeImage = (e, index) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -249,22 +309,17 @@ export function EditarProducto() {
       return;
     }
 
-    const newImages = [...imagenes];
-    const newPreviews = [...previewURLs];
+    setImagenes((prev) => {
+      const newImages = [...prev];
+      newImages[index] = { file, isExisting: false };
+      return newImages;
+    });
 
-    if (newImages[index]?.isExisting) {
-      newImages[index] = {
-        ...newImages[index],
-        file,
-        shouldUpdate: true,
-      };
-    } else {
-      newImages[index] = file;
-    }
-
-    newPreviews[index] = URL.createObjectURL(file);
-    setImagenes(newImages);
-    setPreviewURLs(newPreviews);
+    setPreviewURLs((prev) => {
+      const newPreviews = [...prev];
+      newPreviews[index] = URL.createObjectURL(file);
+      return newPreviews;
+    });
   };
 
   const handleCancel = () => {
@@ -278,69 +333,73 @@ export function EditarProducto() {
       navigate("/productos");
     }
   };
-
+  const [error, setError] = useState("");
   const onSubmit = async (DataForm) => {
-    console.log("Formulario:", DataForm);
-
     try {
-      // Si tienes un esquema de validación, úsalo aquí (ejemplo con yup)
-      // await productoSchema.validate(DataForm);
+      // Validar el esquema antes de enviar
+      const isValid = await productoSchema.isValid(DataForm);
+      if (!isValid) {
+        toast.error("Complete todos los campos requeridos correctamente");
+        return;
+      }
 
-      // Crear objeto FormData para enviar archivos + datos
-      const formDataToSend = new FormData();
-
-      // Armar datos del producto (sin imágenes)
+      const imagenesAEliminar = imagesToDelete.filter((img) => img);
       const productoData = {
+        id: id,
         nombre: DataForm.nombre,
         descripcion: DataForm.descripcion,
-        precio: parseFloat(DataForm.precio),
-        categoria_id: parseInt(DataForm.categoria_id),
-        stock: parseInt(DataForm.stock),
+        precio: DataForm.precio,
+        categoria_id: DataForm.categoria_id,
+        IdImpuesto: DataForm.IdImpuesto,
+        stock: DataForm.stock,
+        ano_compatible: DataForm.ano_compatible,
+        marca_compatible: DataForm.marca_compatible,
+        modelo_compatible: DataForm.modelo_compatible,
+        motor_compatible: DataForm.motor_compatible,
+        certificaciones: DataForm.certificaciones,
         estado: DataForm.estado ? 1 : 0,
-        IdImpuesto: DataForm.IdImpuesto ? parseInt(DataForm.IdImpuesto) : null,
-        ano_compatible: DataForm.ano_compatible || null,
-        marca_compatible: DataForm.marca_compatible || null,
-        modelo_compatible: DataForm.modelo_compatible || null,
-        motor_compatible: DataForm.motor_compatible || null,
-        certificaciones: DataForm.certificaciones || null,
-        etiquetas: selectedEtiquetas, // Suponiendo que viene de un estado
-        imagenes_eliminar: imagesToDelete, // También de estado
+        etiqueta: selectedEtiquetas,
+        imagenes_a_eliminar:
+          imagenesAEliminar.length > 0 ? imagenesAEliminar : undefined,
       };
 
-      // Agregar datos JSON como string
-      formDataToSend.append("data", JSON.stringify(productoData));
+      console.log("Datos finales a enviar:", productoData);
 
-      // Agregar archivos nuevos (solo si vienen)
-      if (imagenes && imagenes.length) {
-        imagenes.forEach((img) => {
-          if (img instanceof File) {
-            formDataToSend.append("imagenes", img);
-          }
-        });
+      // Llamada al servicio para actualizar
+      const response = await ProductoService.updateProducto(productoData);
+
+      // Subir imágenes si hay
+      // const newProductId = response.data.id;
+
+      // // Subir imágenes si hay
+      // if (imagenes.length > 0) {
+      //   await Promise.all(
+      //     imagenes
+      //       .filter((img) => img instanceof File)
+      //       .map(async (img) => {
+      //         const imgFormData = new FormData();
+      //         imgFormData.append("file", img);
+      //         imgFormData.append("producto_id", newProductId);
+      //         return await ImageService.createImage(imgFormData);
+      //       })
+      //   );
+      // }
+      console.log("Respuesta del servicio de actualización:", response);
+
+      if (response?.error) {
+        toast.error(response.message || "Error al actualizar el producto---->");
+        return;
       }
 
-      // Añadir el ID al FormData si tu backend lo necesita así
-      formDataToSend.append("id", id);
+      console.log("Producto actualizado correctamente:", response);
+      toast.success("Producto actualizado");
 
-      // Enviar al backend usando el servicio axios
-      const response = await ProductoService.updateProducto(id, formDataToSend);
-
-      if (response.data.error) {
-        throw new Error(response.data.error);
-      }
-
-      toast.success(
-        `Producto actualizado exitosamente: ${response.data.nombre}`,
-        {
-          duration: 4000,
-          position: "top-center",
-        }
-      );
-
-      navigate("/productos");
+      setTimeout(() => {
+        navigate("/productos");
+      }, 1000);
     } catch (error) {
-      console.error("Error al actualizar producto:", error);
-      toast.error(error.message || "Error al actualizar el producto");
+      console.error("Error:", error.response?.data || error.message || error);
+      toast.error("Error al actualizar el producto Producto Model");
     }
   };
 
@@ -558,6 +617,30 @@ export function EditarProducto() {
                         )}
                       />
                     </Grid>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Valoración del Producto
+                    </Typography>
+                    <Box display="flex" alignItems="center">
+                      <Rating
+                        value={promedioValoraciones || 0}
+                        precision={0.1}
+                        readOnly
+                        sx={{ mr: 2 }}
+                      />
+                      <Typography variant="body1">
+                        {promedioValoraciones
+                          ? `${promedioValoraciones.toFixed(1)}/5`
+                          : "Sin valoraciones"}
+                      </Typography>
+                    </Box>
+                    <Typography variant="caption" color="textSecondary">
+                      {valoraciones.length > 0
+                        ? `Basado en ${valoraciones.length} ${valoraciones.length === 1 ? "reseña" : "reseñas"}`
+                        : "Aún no hay reseñas"}
+                    </Typography>
                   </Grid>
                 </Paper>
               </Grid>
