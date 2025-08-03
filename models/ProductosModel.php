@@ -250,7 +250,7 @@ class ProductoModel
                 $this->enlace->executeSQL_DML($sqlImg);
             }
 
-            // Insertar nuevas imágenes
+            // 
             $result = $this->get($objeto->id);
         } catch (Exception $e) {
             error_log("Error al actualizar producto: " . $e->getMessage());
