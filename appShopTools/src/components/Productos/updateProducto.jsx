@@ -365,7 +365,7 @@ export function EditarProducto() {
 
       console.log("Datos finales a enviar:", productoData);
 
-      // Llamada al servicio para actualizar
+      // Llamada al servicio para actualizarrr
       const response = await ProductoService.updateProducto(productoData);
 
       // Subir imágenes si hay
