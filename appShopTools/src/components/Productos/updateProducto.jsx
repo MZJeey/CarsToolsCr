@@ -368,7 +368,6 @@ export function EditarProducto() {
       // Llamada al servicio para actualizar
       const response = await ProductoService.updateProducto(productoData);
 
-<<<<<<< HEAD
       // Subir imágenes si hay
       const newProductId = response.data.id;
 
@@ -389,10 +388,6 @@ export function EditarProducto() {
 
       if (response?.error) {
         toast.error(response.message || "Error al actualizar el producto---->");
-=======
-      if (response?.error) {
-        toast.error(response.message || "Error al actualizar el producto");
->>>>>>> developer
         return;
       }
 
@@ -404,11 +399,7 @@ export function EditarProducto() {
       }, 1000);
     } catch (error) {
       console.error("Error:", error.response?.data || error.message || error);
-<<<<<<< HEAD
       toast.error("Error al actualizar el producto Producto Model");
-=======
-      toast.error("Error al actualizar el producto");
->>>>>>> developer
     }
   };
 
