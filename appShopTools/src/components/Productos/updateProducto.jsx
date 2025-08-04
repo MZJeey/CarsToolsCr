@@ -48,7 +48,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import toast from "react-hot-toast";
-
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 // Servicios
 import ProductoService from "../../services/ProductoService";
 import CategoriaService from "../../services/CategoriaService";
@@ -76,6 +76,8 @@ export function EditarProducto() {
 
   const [previewURLs, setPreviewURLs] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
+  // imagenes adicionales
+  const [additionalImages, setAdditionalImages] = useState([]);
 
   const [imagenes, setImagenes] = useState({
     existentes: [], // {id: number, url: string}
@@ -369,21 +371,21 @@ export function EditarProducto() {
       const response = await ProductoService.updateProducto(productoData);
 
       // Subir imágenes si hay
-      const newProductId = response.data.id;
+      // const newProductId = response.data.id; // if (imagenes.length > 0) {
+      //   await Promise.all(
+      //     imagenes
+      //       .filter((img) => img instanceof File)
+      //       .map(async (img) => {
+      //         const imgFormData = new FormData();
+      //         imgFormData.append("file", img);
+      //         imgFormData.append("producto_id", newProductId);
+      //         return await ImageService.createImage(imgFormData);
+      //       })
+      //   );
+      // }
 
       // Subir imágenes si hay
-      if (imagenes.length > 0) {
-        await Promise.all(
-          imagenes
-            .filter((img) => img instanceof File)
-            .map(async (img) => {
-              const imgFormData = new FormData();
-              imgFormData.append("file", img);
-              imgFormData.append("producto_id", newProductId);
-              return await ImageService.createImage(imgFormData);
-            })
-        );
-      }
+
       console.log("Respuesta del servicio de actualización:", response);
 
       if (response?.error) {
@@ -403,6 +405,59 @@ export function EditarProducto() {
     }
   };
 
+  //Subir nuevas imagenes
+  const handleAddAdditionalImage = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Solo se permiten archivos de imagen (JPEG, PNG, etc.)");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("La imagen no debe exceder los 2MB");
+      return;
+    }
+
+    setAdditionalImages([...additionalImages, file]);
+  };
+
+  const handleRemoveAdditionalImage = (index) => {
+    const newImages = [...additionalImages];
+    newImages.splice(index, 1);
+    setAdditionalImages(newImages);
+  };
+
+ const handleUploadAdditionalImages = async () => {
+  try {
+    if (additionalImages.length === 0) return;
+
+    // Mostrar loading mientras se suben
+    setLoading(true);
+    
+    // Subir cada imagen adicional
+    await Promise.all(
+      additionalImages.map(async (img) => {
+        const imgFormData = new FormData();
+        imgFormData.append("file", img);
+        imgFormData.append("producto_id", id); // Usamos el ID existente del producto
+        
+        // Llamar al servicio de imágenes
+        return await ImageService.createImage(imgFormData);
+      })
+    );
+
+    toast.success("Imágenes adicionales subidas correctamente");
+    setAdditionalImages([]); // Limpiar el estado después de subir
+    
+  } catch (error) {
+    console.error("Error al subir imágenes adicionales:", error);
+    toast.error("Error al subir imágenes adicionales");
+  } finally {
+    setLoading(false);
+  }
+};
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
@@ -1110,6 +1165,125 @@ export function EditarProducto() {
                       </Tooltip>
                     )}
                   </Stack>
+                </Paper>
+
+                {/* Nueva sección para imágenes adicionales */}
+                <Paper
+                  elevation={0}
+                  sx={{ p: 3, mb: 3, backgroundColor: "background.paper" }}
+                >
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ mb: 3, fontWeight: 600, color: "text.primary" }}
+                  >
+                    Imágenes Adicionales
+                  </Typography>
+
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ mb: 2 }}
+                  >
+                    Puedes subir imágenes extra (JPEG, PNG, máximo 2MB cada una)
+                  </Typography>
+
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ flexWrap: "wrap", mt: 2 }}
+                  >
+                    {additionalImages.map((image, index) => (
+                      <Box
+                        key={index}
+                        sx={{
+                          position: "relative",
+                          width: 150,
+                          height: 150,
+                          border: "1px dashed",
+                          borderColor: "divider",
+                          borderRadius: 1,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          overflow: "hidden",
+                          mb: 2,
+                          "&:hover": {
+                            borderColor: "primary.main",
+                          },
+                        }}
+                      >
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={`Imagen adicional ${index + 1}`}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <Tooltip title="Eliminar imagen">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleRemoveAdditionalImage(index)}
+                            sx={{
+                              position: "absolute",
+                              top: 4,
+                              right: 4,
+                              backgroundColor: "error.main",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "error.dark",
+                              },
+                            }}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    ))}
+
+                    <Tooltip title="Agregar imagen adicional">
+                      <Button
+                        variant="outlined"
+                        component="label"
+                        sx={{
+                          width: 150,
+                          height: 150,
+                          flexDirection: "column",
+                          borderStyle: "dashed",
+                          "&:hover": {
+                            borderColor: "primary.main",
+                            backgroundColor: "action.hover",
+                          },
+                        }}
+                      >
+                        <AddPhotoIcon color="action" sx={{ mb: 1 }} />
+                        <Typography variant="caption">
+                          Agregar Imagen
+                        </Typography>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          hidden
+                          onChange={handleAddAdditionalImage}
+                        />
+                      </Button>
+                    </Tooltip>
+                  </Stack>
+
+                  <Box
+                    sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}
+                  >
+                    <Button
+                      variant="contained"
+                      onClick={handleUploadAdditionalImages}
+                      disabled={additionalImages.length === 0}
+                      startIcon={<CloudUploadIcon />}
+                    >
+                      Subir Imágenes
+                    </Button>
+                  </Box>
                 </Paper>
               </Grid>
 
