@@ -1,0 +1,40 @@
+{
+  "todosProductosPersonalizados": {
+    "title": "Todos los Productos Personalizados",
+    "button": {
+      "customizeProduct": "+ PERSONALIZAR PRODUCTO",
+      "close": "CERRAR"
+    },
+    "table": {
+      "header": {
+        "order": "Pedido",
+        "customName": "Nombre Personalizado",
+        "baseProduct": "Producto Base",
+        "baseCost": "Base ₡",
+        "customizations": "Personalizaciones",
+        "additionalCost": "Adicional ₡",
+        "unitPrice": "Unitario ₡",
+        "quantity": "Cantidad",
+        "subtotal": "Subtotal ₡"
+      },
+      "noCustomizations": "Sin personalizaciones"
+    },
+    "dialog": {
+      "title": "Detalle del Producto Personalizado",
+      "labels": {
+        "name": "Nombre:",
+        "baseProduct": "Producto Base:",
+        "baseCost": "Base ₡:",
+        "additionalCost": "Adicional ₡:",
+        "unitPrice": "Precio Unitario ₡:",
+        "quantity": "Cantidad:",
+        "subtotal": "Subtotal ₡:"
+      },
+      "customizationsTitle": "Personalizaciones:"
+    },
+    "loading": "Cargando...",
+    "error": {
+      "loadProducts": "Error al cargar productos personalizados"
+    }
+  }
+}

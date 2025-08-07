@@ -1,0 +1,54 @@
+{
+  "crearProducto": {
+    "title": "Crear Nuevo Producto",
+    "form": {
+      "sections": {
+        "basicInfo": "Información Básica",
+        "priceStock": "Precio e Inventario",
+        "compatibility": "Compatibilidad del Producto",
+        "technicalSpecs": "Especificaciones Técnicas",
+        "certifications": "Certificaciones y Estándares",
+        "labels": "Etiquetas y Categorización",
+        "images": "Imágenes del Producto"
+      },
+      "fields": {
+        "productName": "Nombre del Producto *",
+        "category": "Categoría *",
+        "description": "Descripción",
+        "price": "Precio (₡) *",
+        "stock": "Stock Disponible *",
+        "tax": "Impuesto aplicable",
+        "productStatus": "Estado del Producto",
+        "statusActive": "Activo (visible en la tienda)",
+        "statusInactive": "Inactivo (no visible)",
+        "year": "Año Compatible",
+        "brand": "Marca Compatible",
+        "model": "Modelo Compatible",
+        "engine": "Motor Compatible",
+        "certificationsInput": "Certificaciones (separadas por comas)",
+        "tagLabel": "Seleccione etiquetas",
+        "tagNone": "Ninguna etiqueta seleccionada",
+        "imageDescription": "Agrega imágenes del producto (máximo 3). Las imágenes deben ser en formato JPG o PNG y no exceder los 2MB.",
+        "imagePlaceholder": "Haz clic para seleccionar una imagen",
+        "imageNote": "(JPG/PNG, max 2MB)",
+        "addImage": "Agregar Imagen",
+        "remainingImages": "restantes"
+      },
+      "buttons": {
+        "cancel": "Cancelar",
+        "saving": "Creando...",
+        "save": "Guardar Producto"
+      },
+      "errors": {
+        "loadInitialData": "Error al cargar datos iniciales",
+        "createError": "Error al crear el producto"
+      },
+      "toasts": {
+        "maxImages": "Solo puedes subir hasta 3 imágenes por producto",
+        "invalidImage": "Por favor selecciona un archivo de imagen válido",
+        "imageTooLarge": "La imagen no debe exceder los 2MB",
+        "success": "Producto creado exitosamente!"
+      }
+    }
+  }
+}

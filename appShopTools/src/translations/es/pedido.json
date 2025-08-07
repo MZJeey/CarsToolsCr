@@ -1,0 +1,66 @@
+{
+  "pedidoComponent": {
+    "title": "Gestión de Pedidos",
+    "button": {
+      "newOrder": "Nuevo Pedido",
+      "createFirstOrder": "Crear primer pedido",
+      "printInvoice": "Imprimir Factura",
+      "close": "Cerrar",
+      "retry": "Reintentar"
+    },
+    "table": {
+      "header": {
+        "orderNumber": "N° Pedido",
+        "date": "Fecha",
+        "customer": "Cliente",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "noOrders": "No hay pedidos registrados"
+    },
+    "invoice": {
+      "title": "Factura del Pedido N°",
+      "header": {
+        "commercialInvoice": "FACTURA COMERCIAL",
+        "number": "Número:",
+        "date": "Fecha:"
+      },
+      "sections": {
+        "customerData": "DATOS DEL CLIENTE",
+        "paymentInfo": "INFORMACIÓN DEL PAGO",
+        "productDetails": "DETALLE DE PRODUCTOS"
+      },
+      "fields": {
+        "client": "Cliente:",
+        "address": "Dirección:",
+        "paymentMethod": "Método de pago:",
+        "status": "Estado:",
+        "product": "Producto",
+        "customization": "Personalización",
+        "quantity": "Cantidad",
+        "unitPrice": "P. Unitario",
+        "tax": "Impuesto",
+        "subtotal": "Subtotal",
+        "subtotalLabel": "Subtotal:",
+        "taxesLabel": "Impuestos:",
+        "total": "TOTAL:",
+        "noCustomization": "Sin personalización"
+      },
+      "standardProduct": "Producto estándar",
+      "customProduct": "Producto personalizado"
+    },
+    "status": {
+      "en_proceso": "EN PROCESO",
+      "pagado": "PAGADO",
+      "entregado": "ENTREGADO"
+    },
+    "error": {
+      "loadOrders": "Error al cargar los pedidos. Intente nuevamente."
+    },
+    "tooltip": {
+      "editOrder": "Editar pedido",
+      "deleteOrder": "Eliminar pedido"
+    },
+    "loading": "Cargando..."
+  }
+}

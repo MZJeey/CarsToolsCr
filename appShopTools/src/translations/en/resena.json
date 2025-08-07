@@ -1,0 +1,10 @@
+
+{
+  "Resenas": {
+    "title": "Reviews",
+    "sin_datos": "No reviews available for this product.",
+    "error": "Error loading reviews",
+    "usuario_default": "User",
+    "fecha_formato": "{{fecha, MMMM DD, YYYY}}"
+  }
+}

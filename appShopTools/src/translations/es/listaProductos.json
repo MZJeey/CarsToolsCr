@@ -1,0 +1,23 @@
+{
+  "listaProductos": {
+    "titulo": "Catálogo de Productos",
+    "botonNuevo": "Nuevo Producto",
+    "botonAgregar": "Agregar Producto",
+    "verDetalles": "Ver Detalles",
+    "editar": "Editar",
+    "eliminar": "Eliminar",
+    "confirmarEliminarTitulo": "¿Eliminar producto?",
+    "confirmarEliminarMensaje": "¿Estás seguro de que deseas eliminar \"{{nombre}}\"?",
+    "cancelar": "Cancelar",
+    "eliminarConfirmado": "Producto \"{{nombre}}\" eliminado correctamente",
+    "errorEliminar": "Error al eliminar el producto. Por favor, intente nuevamente.",
+    "noProductos": "No hay productos disponibles",
+    "precioPromocion": "Promoción {{descuento}}% Descuento",
+    "stock": "Stock: {{cantidad}}",
+    "sinCategoria": "Sin categoría",
+    "imagenNoDisponible": "Imagen no disponible",
+    "errorCargando": "Error al cargar los productos",
+    "endpoint": "Endpoint: {{endpoint}}",
+    "verificarServidor": "Verifica que el servidor esté disponible"
+  }
+}

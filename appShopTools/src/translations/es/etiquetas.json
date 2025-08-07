@@ -1,0 +1,8 @@
+{
+  "etiquetas": {
+    "titulo": "Etiquetas",
+    "errorCarga": "Ocurrió un problema al cargar las etiquetas.",
+    "sinEtiquetas": "Este producto no tiene etiquetas asignadas.",
+    "cargando": "Cargando etiquetas..."
+  }
+}

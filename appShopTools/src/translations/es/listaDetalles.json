@@ -1,0 +1,27 @@
+{
+  "detalleProducto": {
+    "volver": "Volver",
+    "cargandoImagenes": "Cargando imágenes...",
+    "noImagenes": "No hay imágenes disponibles",
+    "nombreCategoria": "Categoría: {{categoria}}",
+    "precioOriginal": "₡{{precio}}",
+    "descuento": "{{descuento}}% Descuento",
+    "promocionValidaHasta": "Promoción válida hasta: {{fecha}}",
+    "compatibilidad": "Compatibilidad:",
+    "ano": "Año: {{ano}}",
+    "marca": "Marca: {{marca}}",
+    "modelo": "Modelo: {{modelo}}",
+    "motor": "Motor: {{motor}}",
+    "certificacion": "Certificación: {{certificacion}}",
+    "etiquetas": "Etiquetas",
+    "sinEtiquetas": "Sin etiquetas",
+    "ultimasResenas": "Últimas reseñas",
+    "agregarResena": "Agregar reseña",
+    "sinResenas": "Este producto aún no tiene reseñas.",
+    "agregarCarrito": "Agregar al carrito",
+    "noDisponible": "No disponible",
+    "error": "Error al cargar el producto",
+    "productoNoEncontrado": "No se encontró el producto solicitado",
+    "descripcion": "{{descripcion}}"
+  }
+}

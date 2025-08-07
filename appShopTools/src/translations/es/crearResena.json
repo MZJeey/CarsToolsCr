@@ -1,0 +1,27 @@
+{
+  "crearResena": {
+    "title": "Crear Reseña",
+    "fields": {
+      "usuario": "Usuario",
+      "comentario": "Comentario",
+      "comentarioPlaceholder": "Escribe tu opinión sobre el producto...",
+      "valoracion": "Valoración",
+      "valoracionSeleccionar": "Selecciona una valoración",
+      "valoracionEstrella": "{{count}} estrella",
+      "valoracionEstrellas": "{{count}} estrellas"
+    },
+    "buttons": {
+      "cancelar": "Cancelar",
+      "enviar": "Enviar",
+      "enviando": "Enviando..."
+    },
+    "messages": {
+      "debeIniciarSesion": "Debes iniciar sesión para dejar una reseña",
+      "errorSesion": "Error al verificar la sesión",
+      "sesionNoValida": "Sesión no válida. Por favor, vuelve a iniciar sesión",
+      "completaCampos": "Completa el comentario y la valoración (1 a 5)",
+      "exito": "¡Reseña enviada con éxito!",
+      "errorEnvio": "Error al enviar la reseña"
+    }
+  }
+}

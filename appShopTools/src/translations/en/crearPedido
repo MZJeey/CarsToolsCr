@@ -1,0 +1,38 @@
+{
+  "crearPedidoModal": {
+    "titulo": "New Order",
+    "formulario": {
+      "direccionEnvio": {
+        "label": "Shipping Address"
+      },
+      "estado": {
+        "label": "Status",
+        "opciones": {
+          "en_proceso": "In Process",
+          "pagado": "Paid",
+          "entregado": "Delivered"
+        }
+      },
+      "productos": {
+        "tituloSeccion": "Products",
+        "producto": {
+          "label": "Product"
+        },
+        "cantidad": {
+          "label": "Quantity"
+        }
+      }
+    },
+    "botones": {
+      "anadirProducto": {
+        "texto": "Add Product",
+        "iconoAlt": "Add"
+      },
+      "eliminarProducto": {
+        "iconoAlt": "Delete"
+      },
+      "cancelar": "Cancel",
+      "crearPedido": "Create Order"
+    }
+  }
+}
