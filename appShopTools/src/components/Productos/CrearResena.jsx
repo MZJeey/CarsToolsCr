@@ -12,8 +12,10 @@ import {
 } from "@mui/material";
 import ResenaService from "../../services/ResenaService";
 import toast from "react-hot-toast";
-
+import { useTranslation } from "react-i18next";
 const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
+  
+   const { t } = useTranslation("crearResena");
   const [userInfo, setUserInfo] = useState(null);
   const [comentario, setComentario] = useState("");
   const [valoracion, setValoracion] = useState(0);
@@ -23,7 +25,7 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
     const userFromStorage = localStorage.getItem("userData");
 
     if (!userFromStorage) {
-      toast.error("Debes iniciar sesión para dejar una reseña");
+      toast.error(t("crearResena.messages.debeIniciarSesion"));
       onClose();
       return;
     }
@@ -33,7 +35,7 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
       setUserInfo(parsedUser);
     } catch (error) {
       console.error("Error leyendo usuario del localStorage:", error);
-      toast.error("Error al verificar la sesión");
+      toast.error(t("crearResena.messages.errorSesion"));
       onClose();
     }
   }, [onClose]);
@@ -44,12 +46,12 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
 
   const handleSubmit = async () => {
     if (!userInfo?.id) {
-      toast.error("Sesión no válida. Por favor, vuelve a iniciar sesión");
+      toast.error(t("crearResena.messages.sesionNoValida"));
       return;
     }
 
     if (!comentario || valoracion < 1 || valoracion > 5) {
-      toast.error("Completa el comentario y la valoración (1 a 5)");
+      toast.error(t("crearResena.messages.completaCampos"));
       return;
     }
 
@@ -68,7 +70,7 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
       if (response.data?.status === "error") {
         toast.error(response.data.message);
       } else {
-        toast.success("¡Reseña enviada con éxito!");
+        toast.success(t("crearResena.messages.exito"));
 
         // ✅ Creamos el objeto reseña para actualizar el padre
         const nuevaResena = {
@@ -88,7 +90,7 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
       }
     } catch (error) {
       console.error("Error al enviar reseña:", error);
-      toast.error(error.response?.data?.message || "Error al enviar la reseña");
+      toast.error(error.response?.data?.message || t("crearResena.messages.errorEnvio"));
     } finally {
       setLoading(false);
     }
@@ -98,11 +100,11 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
 
   return (
     <Dialog open={true} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Crear Reseña</DialogTitle>
+      <DialogTitle>{t("crearResena.title")}</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 2 }}>
           <TextField
-            label="Usuario"
+            label={t("crearResena.fields.usuario")}
             value={userInfo.nombre_usuario || userInfo.correo}
             fullWidth
             InputProps={{ readOnly: true }}
@@ -111,7 +113,7 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
           />
 
           <TextField
-            label="Comentario"
+            label={t("crearResena.fields.comentario")}
             value={comentario}
             onChange={(e) => setComentario(e.target.value)}
             multiline
@@ -120,11 +122,11 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
             required
             sx={{ mb: 2 }}
             variant="outlined"
-            placeholder="Escribe tu opinión sobre el producto..."
+            placeholder={t("crearResena.fields.comentarioPlaceholder")}
           />
 
           <Box display="flex" alignItems="center" gap={2} sx={{ mb: 2 }}>
-            <Typography variant="body1">Valoración:</Typography>
+            <Typography variant="body1">{t("crearResena.fields.valoracion")}</Typography>
             <Rating
               name="valoracion"
               value={valoracion}
@@ -136,7 +138,7 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
             <Typography variant="body2">
               {valoracion > 0
                 ? `${valoracion} estrella${valoracion !== 1 ? "s" : ""}`
-                : "Selecciona una valoración"}
+                : t("crearResena.fields.valoracionSeleccionar")}
             </Typography>
           </Box>
         </Box>
@@ -148,7 +150,7 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
           sx={{ minWidth: 100 }}
           disabled={loading}
         >
-          Cancelar
+          {t("crearResena.buttons.cancelar")}
         </Button>
         <Button
           onClick={handleSubmit}
@@ -157,7 +159,7 @@ const CrearResena = ({ productoId, onClose, onResenaCreada }) => {
           sx={{ minWidth: 100 }}
           disabled={loading || !comentario || valoracion === 0}
         >
-          {loading ? "Enviando..." : "Enviar"}
+          {loading ? t("crearResena.buttons.enviando") : t("crearResena.buttons.enviar")}
         </Button>
       </DialogActions>
     </Dialog>

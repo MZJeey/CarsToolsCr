@@ -32,7 +32,11 @@ import {
 import { useTheme } from "@mui/material/styles";
 import MobileStepper from "@mui/material/MobileStepper";
 
+import { useTranslation } from "react-i18next";
+
 const DetalleProducto = () => {
+ const { t } = useTranslation("listaDetalles");
+
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -99,7 +103,7 @@ const DetalleProducto = () => {
         const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
         setIsFavorite(favorites.includes(response.data.id));
       } catch (err) {
-        setError(err.message || "Error al cargar el producto");
+        setError(err.message || t("listaDetalles.error"));
       } finally {
         setLoading(false);
       }
@@ -170,7 +174,7 @@ const DetalleProducto = () => {
   if (!producto) {
     return (
       <Alert severity="warning" sx={{ m: 3 }}>
-        No se encontró el producto solicitado
+        {t("listaDetalles.productoNoEncontrado")}
       </Alert>
     );
   }
@@ -194,7 +198,7 @@ const DetalleProducto = () => {
   return (
     <Box sx={{ maxWidth: 1400, margin: "auto", p: 2 }}>
       <Button variant="outlined" sx={{ mb: 2 }} onClick={() => navigate(-1)}>
-        ⬅ Volver
+        {t("listaDetalles.volver")}
       </Button>
 
       <Paper elevation={3} sx={{ borderRadius: 3, p: 3 }}>
@@ -211,7 +215,7 @@ const DetalleProducto = () => {
                       alignItems="center"
                       height={300}
                     >
-                      <Typography>Cargando imágenes...</Typography>
+                      <Typography>{t("listaDetalles.cargandoImagenes")}</Typography>
                     </Box>
                   )}
 
@@ -291,7 +295,7 @@ const DetalleProducto = () => {
                     borderRadius: 2,
                   }}
                 >
-                  <Typography>No hay imágenes disponibles</Typography>
+                  <Typography>{t("listaDetalles.noImagenes")}</Typography>
                 </Box>
               )}
 
@@ -348,7 +352,7 @@ const DetalleProducto = () => {
                     display="block"
                     sx={{ mt: 0.5 }}
                   >
-                    Promoción válida hasta:{" "}
+                    {t("listaDetalles.promovalida")}{" "}
                     {new Date(producto.promocion.FechaFin).toLocaleDateString(
                       "es-CR"
                     )}
@@ -368,7 +372,7 @@ const DetalleProducto = () => {
 
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
                 {producto.categoria_nombre && (
-                  <Chip label={`Categoría: ${producto.categoria_nombre}`} />
+                  <Chip label={`${t("listaDetalles.categoria")} ${producto.categoria_nombre}`} />
                 )}
               </Box>
 
@@ -379,36 +383,36 @@ const DetalleProducto = () => {
 
               {/* Compatibilidad */}
               <Typography variant="subtitle1" gutterBottom>
-                Compatibilidad:
+                {t("listaDetalles.compatibilidad")}
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
                 {producto.ano_compatible && (
                   <Chip
-                    label={`Año: ${producto.ano_compatible}`}
+                    label={`${t("listaDetalles.ano")} ${producto.ano_compatible}`}
                     variant="outlined"
                   />
                 )}
                 {producto.marca_compatible && (
                   <Chip
-                    label={`Marca: ${producto.marca_compatible}`}
+                    label={`${t("listaDetalles.marca")} ${producto.marca_compatible}`}
                     variant="outlined"
                   />
                 )}
                 {producto.modelo_compatible && (
                   <Chip
-                    label={`Modelo: ${producto.modelo_compatible}`}
+                    label={`${t("listaDetalles.modelo")} ${producto.modelo_compatible}`}
                     variant="outlined"
                   />
                 )}
                 {producto.motor_compatible && (
                   <Chip
-                    label={`Motor: ${producto.motor_compatible}`}
+                    label={`${t("listaDetalles.motor")} ${producto.motor_compatible}`}
                     variant="outlined"
                   />
                 )}
                 {producto.certificaciones && (
                   <Chip
-                    label={`Certificación: ${producto.certificaciones}`}
+                    label={`${t("listaDetalles.certificacion")} ${producto.certificaciones}`}
                     variant="outlined"
                     color="success"
                   />
@@ -427,7 +431,7 @@ const DetalleProducto = () => {
             <Box sx={{ flex: 1, overflow: "auto", mb: 2 }}>
               {/* Etiquetas */}
               <Typography variant="subtitle1" fontWeight={700} gutterBottom>
-                Etiquetas
+                {t("listaDetalles.etiquetas")}
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
                 {producto.etiquetas ? (
@@ -443,7 +447,7 @@ const DetalleProducto = () => {
                       ))
                     ) : (
                       <Typography variant="body2" color="text.secondary">
-                        Sin etiquetas
+                        {t("listaDetalles.sinEtiquetas")}
                       </Typography>
                     )
                   ) : (
@@ -455,14 +459,14 @@ const DetalleProducto = () => {
                   )
                 ) : (
                   <Typography variant="body2" color="text.secondary">
-                    Sin etiquetas
+                    {t("listaDetalles.sinEtiquetas")}
                   </Typography>
                 )}
               </Box>
 
               {/* Reseñas */}
               <Typography variant="h6" gutterBottom fontWeight={700}>
-                Últimas reseñas
+                {t("listaDetalles.ultimasResenas")}
               </Typography>
               <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}>
                 <Button
@@ -470,7 +474,7 @@ const DetalleProducto = () => {
                   size="small"
                   onClick={handleOpenResenaModal}
                 >
-                  Agregar reseña
+                  {t("listaDetalles.agregarResena")}
                 </Button>
               </Box>
 
@@ -525,7 +529,7 @@ const DetalleProducto = () => {
                 </List>
               ) : (
                 <Typography variant="body2" color="text.secondary">
-                  Este producto aún no tiene reseñas.
+                  {t("listaDetalles.sinResenas")}
                 </Typography>
               )}
             </Box>
@@ -551,8 +555,8 @@ const DetalleProducto = () => {
                 disabled={parseInt(producto.stock) <= 0}
               >
                 {parseInt(producto.stock) > 0
-                  ? "Agregar al carrito"
-                  : "No disponible"}
+                  ? t("listaDetalles.agregarCarrito")
+                  : t("listaDetalles.noDisponible")}
               </Button>
             </Box>
           </Grid>

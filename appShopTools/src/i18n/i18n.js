@@ -30,6 +30,7 @@ i18n
       "pedido",
       "personalizarProducto",
       "promociones",
+      
       "resena",
       "todosProductosPersonalizados",
     ], // "namespaces" o nombres de los archivos JSON

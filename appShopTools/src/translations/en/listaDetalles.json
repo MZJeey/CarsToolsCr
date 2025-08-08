@@ -1,6 +1,8 @@
 {
-  "detalleProducto": {
+  "listaDetalles": {
     "volver": "Back",
+    "categoria": "Category:",
+     "promovalida": "Promotion valid until:",
     "cargandoImagenes": "Loading images...",
     "noImagenes": "No images available",
     "nombreCategoria": "Category: {{categoria}}",
@@ -8,11 +10,11 @@
     "descuento": "{{descuento}}% Off",
     "promocionValidaHasta": "Promotion valid until: {{fecha}}",
     "compatibilidad": "Compatibility:",
-    "ano": "Year: {{ano}}",
-    "marca": "Brand: {{marca}}",
-    "modelo": "Model: {{modelo}}",
-    "motor": "Engine: {{motor}}",
-    "certificacion": "Certification: {{certificacion}}",
+    "ano": "Year:",
+    "marca": "Brand:",
+    "modelo": "Model:",
+    "motor": "Engine:",
+    "certificacion": "Certification:",
     "etiquetas": "Tags",
     "sinEtiquetas": "No tags",
     "ultimasResenas": "Latest reviews",

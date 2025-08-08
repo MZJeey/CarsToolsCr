@@ -100,7 +100,12 @@ const SecondaryActionButton = styled(ActionButton)(({ theme }) => ({
   },
 }));
 
+import { useTranslation } from "react-i18next";
+
 export function Lista() {
+
+ const { t } = useTranslation("lista");
+
   const theme = useTheme();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -427,7 +432,7 @@ export function Lista() {
                   startIcon={<ShoppingCart />}
                   onClick={() => handleAddToCart(producto)}
                 >
-                  Comprar
+                  {t("lista.comprar")}
                 </PrimaryActionButton>
 
                 <SecondaryActionButton
@@ -436,7 +441,7 @@ export function Lista() {
                   component={Link}
                   to={`/detalles/${producto.id}`}
                 >
-                  Ver detalle
+                  {t("lista.verDetalle")}
                 </SecondaryActionButton>
               </CardActions>
             </ProductCard>
@@ -463,3 +468,4 @@ export function Lista() {
     </Box>
   );
 }
+export default Lista;
