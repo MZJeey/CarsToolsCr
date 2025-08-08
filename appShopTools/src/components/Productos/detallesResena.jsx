@@ -13,10 +13,15 @@ import {
 import { deepPurple } from "@mui/material/colors";
 import ResenaService from "../../services/ResenaService";
 import { useParams, useNavigate } from "react-router-dom";
+
+import { useTranslation } from "react-i18next";
+
 // URL base para subir imágenes si se necesitara en el futuro
 const urlBase = import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
 
 const DetalleResenas = () => {
+const { t } = useTranslation("detallesResena");
+
   const { producto_id: id } = useParams();
 
   const navigate = useNavigate();
@@ -69,14 +74,15 @@ const DetalleResenas = () => {
     <Container maxWidth="md" sx={{ py: 4 }}>
       {/* Encabezado con rating promedio */}
       <Button variant="outlined" sx={{ mb: 3 }} onClick={() => navigate(-1)}>
-        ⬅ Volver
+   {t("detallesResena.buttonVolver")}
+
       </Button>
       <Box textAlign="center" mb={4}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Reseñas de clientes a nuestros productos
+      {t("detallesResena.tituloPrincipal")}
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" mb={2}>
-          Lee las reseñas de otros clientes que han comprado este producto.
+         {t("detallesResena.subtitulo")}
         </Typography>
 
         <Box display="flex" flexDirection="column" alignItems="center" mb={3}>
@@ -91,7 +97,7 @@ const DetalleResenas = () => {
             sx={{ my: 1 }}
           />
           <Typography variant="body2" color="text.secondary">
-            {totalResenas} reviews
+            {totalResenas} {t("detallesResena.resenna")}
           </Typography>
         </Box>
 

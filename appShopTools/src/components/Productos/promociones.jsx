@@ -50,6 +50,8 @@ import PromocionService from "../../services/PromocionService";
 import ProductoService from "../../services/ProductoService";
 import CategoriaService from "../../services/CategoriaService";
 
+import { useTranslation } from "react-i18next";
+
 // Componente estilizado para las celdas de estado
 const StatusBadge = styled(Box)(({ theme, status }) => ({
   display: "inline-flex",
@@ -94,6 +96,9 @@ const formatDate = (dateString) => {
 };
 
 const Promociones = () => {
+
+ const { t } = useTranslation("Promociones");
+
   const theme = useTheme();
   const [promociones, setPromociones] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -329,7 +334,7 @@ const handleTipoChange = (e) => {
         }}
       >
         <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
-          Gestión de Promociones
+          {t("Promociones.title")}
         </Typography>
         <Button
           variant="contained"
@@ -343,7 +348,7 @@ const handleTipoChange = (e) => {
             },
           }}
         >
-          Nueva Promoción
+          {t("Promociones.button.nueva")}
         </Button>
       </Box>
 
@@ -361,11 +366,11 @@ const handleTipoChange = (e) => {
           <Table>
             <TableHead sx={{ backgroundColor: theme.palette.background.paper }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: 600 }}>Promoción</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Descuento</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Vigencia</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Estado</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Acciones</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>{t("Promociones.table.Promoción")}</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>{t("Promociones.table.Descuento")}</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>{t("Promociones.table.Vigencia")}</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>{t("Promociones.table.Estado")}</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>{t("Promociones.table.Acciones")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -388,10 +393,10 @@ const handleTipoChange = (e) => {
                         }}
                       />
                       <Typography variant="body1">
-                        No hay promociones registradas
+                        {t("Promociones.table.sin_datos")}
                       </Typography>
                       <Typography variant="body2" sx={{ mt: 1 }}>
-                        Crea tu primera promoción haciendo clic en el botón
+                        {t("Promociones.table.indicacion")}
                       </Typography>
                     </Box>
                   </TableCell>
@@ -460,7 +465,7 @@ const handleTipoChange = (e) => {
                       </TableCell>
                       <TableCell>
                         <Box sx={{ display: "flex", gap: 1 }}>
-                          <Tooltip title="Editar">
+                          <Tooltip title={t("Promociones.button.editar")}>
                             <IconButton
                               size="small"
                               onClick={(e) => {
@@ -483,14 +488,14 @@ const handleTipoChange = (e) => {
                               <Edit fontSize="small" color="primary" />
                             </IconButton>
                           </Tooltip>
-                          <Tooltip title="Eliminar">
+                          <Tooltip title={t("Promociones.button.eliminar")}>
                             <IconButton
                               size="small"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if (
                                   window.confirm(
-                                    "¿Estás seguro de eliminar esta promoción?"
+                                    t("Promociones.messages.confirmar_eliminar")
                                   )
                                 ) {
                                   handleDelete(promo.IdPromocion);
@@ -561,7 +566,7 @@ const handleTipoChange = (e) => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Nombre de la promoción"
+                label={t("Promociones.form.Nombre")}
                 name="Nombre"
                 value={formData.Nombre}
                 onChange={handleInputChange}
@@ -574,7 +579,7 @@ const handleTipoChange = (e) => {
 <Grid item xs={12}>
   <TextField
     fullWidth
-    label="Descripción"
+    label={t("Promociones.form.Descripcion")}
     name="Descripcion"
     value={formData.Descripcion}
     onChange={handleInputChange}
@@ -589,7 +594,7 @@ const handleTipoChange = (e) => {
             <Grid item xs={6}>
               <TextField
                 fullWidth
-                label="Descuento (%)"
+                label={t("Promociones.form.Descuento")}
                 name="Descuento"
                 type="number"
                 value={formData.Descuento}
@@ -607,7 +612,7 @@ const handleTipoChange = (e) => {
             </Grid>
             <Grid item xs={6}>
       <FormControl fullWidth required size="small">
-  <InputLabel>Tipo de promoción</InputLabel>
+  <InputLabel>{t("Promociones.form.Tipo")}</InputLabel>
   <Select
     name="Tipo" // ✅ Este es el cambio más importante
     value={formData.Tipo}
@@ -615,9 +620,9 @@ const handleTipoChange = (e) => {
     label="Tipo de promoción"
     variant="outlined"
   >
-    <MenuItem value="producto">Para producto específico</MenuItem>
-    <MenuItem value="categoria">Para categoría</MenuItem>
-    <MenuItem value="general">General (todos los productos)</MenuItem>
+    <MenuItem value="producto">{t("Promociones.form.TipoOpciones.producto")}</MenuItem>
+    <MenuItem value="categoria">{t("Promociones.form.TipoOpciones.categoria")}</MenuItem>
+    <MenuItem value="general">{t("Promociones.form.TipoOpciones.general")}</MenuItem>
   </Select>
 </FormControl>
 
@@ -625,7 +630,7 @@ const handleTipoChange = (e) => {
             {formData.Tipo === "producto" && (
               <Grid item xs={12}>
                 <FormControl fullWidth required size="small">
-                  <InputLabel>Seleccionar producto</InputLabel>
+                  <InputLabel>{t("Promociones.form.IdProducto")}</InputLabel>
                   <Select
                     name="IdProducto"
                     value={formData.IdProducto}
@@ -645,7 +650,7 @@ const handleTipoChange = (e) => {
             {formData.Tipo === "categoria" && (
               <Grid item xs={12}>
                 <FormControl fullWidth required size="small">
-                  <InputLabel>Seleccionar categoría</InputLabel>
+                  <InputLabel>{t("Promociones.form.IdCategoria")}</InputLabel>
                   <Select
                     name="IdCategoria"
                     value={formData.IdCategoria}
@@ -665,7 +670,7 @@ const handleTipoChange = (e) => {
             <Grid item xs={6}>
               <TextField
                 fullWidth
-                label="Fecha de inicio"
+                label={t("Promociones.form.FechaInicio")}
                 type="date"
                 name="FechaInicio"
                 value={formData.FechaInicio}
@@ -688,7 +693,7 @@ const handleTipoChange = (e) => {
             <Grid item xs={6}>
               <TextField
                 fullWidth
-                label="Fecha de fin"
+                label={t("Promociones.form.FechaFin")}
                 type="date"
                 name="FechaFin"
                 value={formData.FechaFin}
@@ -719,7 +724,7 @@ const handleTipoChange = (e) => {
                   }}
                 >
                   <Typography variant="body2" color="text.secondary">
-                    Estado:
+                    {t("Promociones.form.Estado")}
                   </Typography>
                   <StatusBadge
                     status={
@@ -754,7 +759,7 @@ const handleTipoChange = (e) => {
               borderColor: theme.palette.divider,
             }}
           >
-            Cancelar
+            {t("Promociones.button.cancelar")}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -814,7 +819,7 @@ const handleTipoChange = (e) => {
                 }}
               >
                 <Discount fontSize="large" />
-                Detalles de la Promoción
+                {t("Promociones.detail.title")}
               </DialogTitle>
             </Box>
             <DialogContent dividers sx={{ pt: 3 }}>
@@ -869,7 +874,7 @@ const handleTipoChange = (e) => {
                         }}
                       >
                         <Typography variant="body2" color="text.secondary">
-                          Descuento
+                          {t("Promociones.detail.Descuento")}
                         </Typography>
                         <Typography
                           variant="h4"
@@ -891,7 +896,7 @@ const handleTipoChange = (e) => {
                         }}
                       >
                         <Typography variant="body2" color="text.secondary">
-                          Aplica a
+                          {t("Promociones.detail.AplicaA")}
                         </Typography>
                         <Typography
                           variant="h6"
@@ -909,7 +914,7 @@ const handleTipoChange = (e) => {
 
                     <Grid item xs={12} sm={6}>
                       <Typography variant="subtitle2" color="text.secondary">
-                        Fecha de inicio
+                        {t("Promociones.detail.FechaInicio")}
                       </Typography>
                       <Typography variant="body1" fontWeight={500}>
                         {formatDate(selectedPromo.FechaInicio)}
@@ -918,7 +923,7 @@ const handleTipoChange = (e) => {
 
                     <Grid item xs={12} sm={6}>
                       <Typography variant="subtitle2" color="text.secondary">
-                        Fecha de fin
+                        {t("Promociones.detail.FechaFin")}
                       </Typography>
                       <Typography variant="body1" fontWeight={500}>
                         {formatDate(selectedPromo.FechaFin)}
@@ -927,7 +932,7 @@ const handleTipoChange = (e) => {
 
                     <Grid item xs={12}>
                       <Typography variant="subtitle2" color="text.secondary">
-                        Estado
+                        {t("Promociones.detail.Estado")}
                       </Typography>
                       <Box sx={{ mt: 1 }}>
                         <StatusBadge
@@ -995,7 +1000,7 @@ const handleTipoChange = (e) => {
                   },
                 }}
               >
-                Volver
+                {t("Promociones.button.volver")}
               </Button>
               <Button
                 startIcon={<Edit />}
@@ -1030,7 +1035,7 @@ const handleTipoChange = (e) => {
                   },
                 }}
               >
-                Editar
+                {t("Promociones.button.editar")}
               </Button>
               <Button
                 startIcon={<Delete />}
@@ -1070,7 +1075,7 @@ const handleTipoChange = (e) => {
                   },
                 }}
               >
-                Eliminar
+                {t("Promociones.button.eliminar")}
               </Button>
             </DialogActions>
           </>

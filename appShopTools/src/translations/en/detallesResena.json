@@ -1,6 +1,7 @@
 {
-  "detalleResenas": {
+  "detallesResena": {
     "buttonVolver": "Back",
+     "resenna": "Reviews",
     "tituloPrincipal": "Customer reviews of our products",
     "subtitulo": "Read reviews from other customers who have purchased this product.",
     "ratingPromedio": {
