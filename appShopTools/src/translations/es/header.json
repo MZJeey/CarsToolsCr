@@ -1,0 +1,35 @@
+{
+  "header": {
+    "menu": {
+      "repuestos": "Repuestos",
+      "marcas": "Marcas",
+      "servicios": "Servicios",
+      "mantenimientos": "Mantenimientos",
+      "productos": "Productos",
+      "dashboard": "Dashboard",
+      "reseñas": "Reseñas",
+      "promociones": "Promociones",
+      "pedidos": "Pedidos",
+      "productos_personalizados": "Productos Personalizados"
+    },
+    "user": {
+      "login": "Login",
+      "registrarse": "Registrarse",
+      "logout": "Logout",
+      "email": "Email"
+    },
+    "search": {
+      "placeholder": "Buscar repuesto...",
+      "button": "Buscar"
+    },
+    "icons": {
+      "compras": "Compras",
+      "notificaciones": "Notificaciones",
+      "carrito": "Carrito",
+      "idioma": "Idioma"
+    },
+    "tooltips": {
+      "inicio": "Repuestos"
+    }
+  }
+}

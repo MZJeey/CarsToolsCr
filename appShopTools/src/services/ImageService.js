@@ -24,6 +24,14 @@ class ImageService {
       withCredentials: true, // Importante para cookies/sesiones
     });
   }
+
+getImagen(id) {
+  return axios
+    .get(`${BASE_URL}/${id}`)
+    .then((res) => res.data);
+}
+
+
 }
 
 export default new ImageService();

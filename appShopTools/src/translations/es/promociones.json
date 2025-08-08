@@ -1,0 +1,66 @@
+{
+  "Promociones": {
+    "title": "Gestión de Promociones",
+    "button": {
+      "nueva": "Nueva Promoción",
+      "crear": "Crear Promoción",
+      "guardar": "Guardar Cambios",
+      "cancelar": "Cancelar",
+      "editar": "Editar",
+      "eliminar": "Eliminar",
+      "volver": "Volver"
+    },
+    "table": {
+      "Promoción": "Promoción",
+      "Descuento": "Descuento",
+      "Vigencia": "Vigencia",
+      "Estado": "Estado",
+      "Acciones": "Acciones",
+      "sin_datos": "No hay promociones registradas",
+      "indicacion": "Crea tu primera promoción haciendo clic en el botón"
+    },
+    "form": {
+      "Nombre": "Nombre de la promoción",
+      "Descripcion": "Descripción",
+      "Descuento": "Descuento (%)",
+      "Tipo": "Tipo de promoción",
+      "TipoOpciones": {
+        "producto": "Para producto específico",
+        "categoria": "Para categoría",
+        "general": "General (todos los productos)"
+      },
+      "IdProducto": "Seleccionar producto",
+      "IdCategoria": "Seleccionar categoría",
+      "FechaInicio": "Fecha de inicio",
+      "FechaFin": "Fecha de fin",
+      "Estado": "Estado:"
+    },
+    "detail": {
+      "title": "Detalles de la Promoción",
+      "Descuento": "Descuento",
+      "AplicaA": "Aplica a",
+      "FechaInicio": "Fecha de inicio",
+      "FechaFin": "Fecha de fin",
+      "Estado": "Estado"
+    },
+    "status": {
+      "Pendiente": "Pendiente",
+      "Vigente": "Vigente",
+      "Aplicado": "Aplicado"
+    },
+    "messages": {
+      "confirmar_eliminar": "¿Estás seguro de eliminar esta promoción?",
+      "agregada": "Promoción agregada exitosamente",
+      "actualizada": "Promoción actualizada exitosamente",
+      "eliminada": "Promoción eliminada exitosamente",
+      "error_guardar": "Error al guardar la promoción",
+      "error_eliminar": "Error al eliminar la promoción",
+      "error_obtener": "Error al obtener promociones",
+      "error_productos": "Error al obtener productos",
+      "error_categorias": "Error al obtener categorías",
+      "fecha_invalida": "La fecha de fin no puede ser anterior a la fecha de inicio",
+      "no_editable": "No se puede editar una promoción que ya ha sido aplicada."
+    },
+    "General": "Todos los productos"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "pedidoComponent": {
+    "title": "Order Management",
+    "button": {
+      "newOrder": "New Order",
+      "createFirstOrder": "Create First Order",
+      "printInvoice": "Print Invoice",
+      "close": "Close",
+      "retry": "Retry"
+    },
+    "table": {
+      "header": {
+        "orderNumber": "Order No.",
+        "date": "Date",
+        "customer": "Customer",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "noOrders": "No orders registered"
+    },
+    "invoice": {
+      "title": "Invoice for Order No.",
+      "header": {
+        "commercialInvoice": "COMMERCIAL INVOICE",
+        "number": "Number:",
+        "date": "Date:"
+      },
+      "sections": {
+        "customerData": "CUSTOMER INFORMATION",
+        "paymentInfo": "PAYMENT INFORMATION",
+        "productDetails": "PRODUCT DETAILS"
+      },
+      "fields": {
+        "client": "Customer:",
+        "address": "Address:",
+        "paymentMethod": "Payment Method:",
+        "status": "Status:",
+        "product": "Product",
+        "customization": "Customization",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price",
+        "tax": "Tax",
+        "subtotal": "Subtotal",
+        "subtotalLabel": "Subtotal:",
+        "taxesLabel": "Taxes:",
+        "total": "TOTAL:",
+        "noCustomization": "No customization"
+      },
+      "standardProduct": "Standard Product",
+      "customProduct": "Customized Product"
+    },
+    "status": {
+      "en_proceso": "IN PROCESS",
+      "pagado": "PAID",
+      "entregado": "DELIVERED"
+    },
+    "error": {
+      "loadOrders": "Error loading orders. Please try again."
+    },
+    "tooltip": {
+      "editOrder": "Edit order",
+      "deleteOrder": "Delete order"
+    },
+    "loading": "Loading..."
+  }
+}

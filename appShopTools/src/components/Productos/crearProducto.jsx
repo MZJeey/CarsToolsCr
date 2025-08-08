@@ -42,6 +42,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 // Servicios
 import ProductoService from "../../services/ProductoService";
@@ -51,6 +52,8 @@ import ImageService from "../../services/ImageService";
 import ImpuestoService from "../../services/ImpuestoService";
 
 export function CrearProducto() {
+  const { t } = useTranslation("crearProducto");
+
   const navigate = useNavigate();
 
   // Estados
@@ -153,7 +156,7 @@ export function CrearProducto() {
         console.log("Datos de impuestos recibidos:", impuestosRes.data);
         setImpuestos(impuestosRes.data || []);
       } catch (err) {
-        toast.error("Error al cargar datos iniciales");
+        toast.error(t("crearProducto.form.errors.loadInitialData"));
         console.error(err);
       } finally {
         setLoading(false);
@@ -283,14 +286,15 @@ export function CrearProducto() {
           <ArrowBackIcon fontSize="large" />
         </IconButton>
         <Typography variant="h3" fontWeight="bold" color="primary">
-          Crear Nuevo Producto
+          {/*Asi debe ponerse para que agarre la traducción*/}
+          {t("crearProducto.title")}
         </Typography>
       </Box>
 
       {/* Formulario Principal */}
       <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
         <CardHeader
-          title="Detalles del Producto"
+          title={t("crearProducto.form.sections.details")}
           titleTypographyProps={{
             variant: "h4",
             fontWeight: 600,
@@ -312,7 +316,8 @@ export function CrearProducto() {
                 <Accordion defaultExpanded elevation={0} sx={{ mb: 3 }}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                      Información Básica
+                      {/*Prueba de traducción*/}
+                      {t("crearProducto.form.sections.basicInfo")}
                     </Typography>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -325,7 +330,7 @@ export function CrearProducto() {
                             <TextField
                               {...field}
                               fullWidth
-                              label="Nombre del Producto *"
+                              label={t("crearProducto.form.fields.productName")}
                               variant="outlined"
                               error={!!errors.nombre}
                               helperText={errors.nombre?.message}
@@ -345,10 +350,12 @@ export function CrearProducto() {
                               error={!!errors.categoria_id}
                               size="medium"
                             >
-                              <InputLabel>Categoría *</InputLabel>
+                              <InputLabel>
+                                {t("crearProducto.form.fields.category")}
+                              </InputLabel>
                               <Select
                                 {...field}
-                                label="Categoría *"
+                                label={t("crearProducto.form.fields.category")}
                                 MenuProps={{
                                   PaperProps: {
                                     style: {
@@ -379,7 +386,7 @@ export function CrearProducto() {
                             <TextField
                               {...field}
                               fullWidth
-                              label="Descripción"
+                              label={t("crearProducto.form.fields.description")}
                               multiline
                               rows={4}
                               variant="outlined"
@@ -398,7 +405,7 @@ export function CrearProducto() {
                 <Accordion defaultExpanded elevation={0} sx={{ mb: 3 }}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                      Precio e Inventario
+                      {t("crearProducto.form.sections.priceStock")}
                     </Typography>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -411,7 +418,7 @@ export function CrearProducto() {
                             <TextField
                               {...field}
                               fullWidth
-                              label="Precio (₡) *"
+                              label={t("crearProducto.form.fields.price")}
                               type="number"
                               variant="outlined"
                               inputProps={{ step: "0.01", min: "0" }}
@@ -438,7 +445,7 @@ export function CrearProducto() {
                             <TextField
                               {...field}
                               fullWidth
-                              label="Stock Disponible *"
+                              label={t("crearProducto.form.fields.stock")}
                               type="number"
                               variant="outlined"
                               error={!!errors.stock}

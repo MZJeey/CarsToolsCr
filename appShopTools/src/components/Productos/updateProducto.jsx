@@ -79,6 +79,10 @@ export function EditarProducto() {
   // imagenes adicionales
   const [additionalImages, setAdditionalImages] = useState([]);
 
+  // para las imagenes, se pone la coma para que sea como un array, existia algo pero con la coma lo opmití
+
+  const [imagenesExistentes, setImagenesExistentes] = useState([]);
+
   const [imagenes, setImagenes] = useState({
     existentes: [], // {id: number, url: string}
     nuevas: [], // Array de File objects
@@ -367,7 +371,7 @@ export function EditarProducto() {
 
       console.log("Datos finales a enviar:", productoData);
 
-      // Llamada al servicio para actualizar
+      // Llamada al servicio para actualizarrr
       const response = await ProductoService.updateProducto(productoData);
 
       // Subir imágenes si hay
@@ -428,36 +432,44 @@ export function EditarProducto() {
     newImages.splice(index, 1);
     setAdditionalImages(newImages);
   };
+  ///delay para probar que pasa
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
- const handleUploadAdditionalImages = async () => {
-  try {
-    if (additionalImages.length === 0) return;
+  const handleUploadAdditionalImages = async () => {
+    try {
+      if (additionalImages.length === 0) return;
 
-    // Mostrar loading mientras se suben
-    setLoading(true);
-    
-    // Subir cada imagen adicional
-    await Promise.all(
-      additionalImages.map(async (img) => {
-        const imgFormData = new FormData();
-        imgFormData.append("file", img);
-        imgFormData.append("producto_id", id); // Usamos el ID existente del producto
-        
-        // Llamar al servicio de imágenes
-        return await ImageService.createImage(imgFormData);
-      })
-    );
+      // Mostrar loading mientras se suben
+      setLoading(true);
 
-    toast.success("Imágenes adicionales subidas correctamente");
-    setAdditionalImages([]); // Limpiar el estado después de subir
-    
-  } catch (error) {
-    console.error("Error al subir imágenes adicionales:", error);
-    toast.error("Error al subir imágenes adicionales");
-  } finally {
-    setLoading(false);
-  }
-};
+      // Subir cada imagen adicional
+      await Promise.all(
+        additionalImages.map(async (img) => {
+          const imgFormData = new FormData();
+          imgFormData.append("file", img);
+          imgFormData.append("producto_id", id); // Usamos el ID existente del producto
+
+          // Llamar al servicio de imágenes
+          return await ImageService.createImage(imgFormData);
+        })
+      );
+
+      toast.success("Imágenes adicionales subidas correctamente");
+      setAdditionalImages([]); // Limpiar el estado después de subir
+
+      // 🕒 Esperar un poco antes de consultar al backend
+      await delay(500);
+
+      // 🔄 Actualizar imágenes cargadas desde el backend
+      const nuevasImagenes = await ImageService.getImagen(id);
+      nuevasImagenes; // Actualiza la vista sin recargar
+    } catch (error) {
+      console.error("Error al subir imágenes adicionales:", error);
+      toast.error("Error al subir imágenes adicionales");
+    } finally {
+      setLoading(false);
+    }
+  };
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
@@ -1023,8 +1035,8 @@ export function EditarProducto() {
                     color="textSecondary"
                     sx={{ mb: 2 }}
                   >
-                    Puedes subir hasta 3 imágenes (JPEG, PNG, máximo 2MB cada
-                    una)
+                    {/* Puedes subir hasta 3 imágenes (JPEG, PNG, máximo 2MB cada
+                    una) */}
                   </Typography>
 
                   <Stack
@@ -1141,7 +1153,7 @@ export function EditarProducto() {
                       );
                     })}
 
-                    {previewURLs.length < 3 && (
+                    {/* {previewURLs.length < 3 && (
                       <Tooltip title="Agregar nueva imagen">
                         <Button
                           variant="outlined"
@@ -1163,7 +1175,7 @@ export function EditarProducto() {
                           </Typography>
                         </Button>
                       </Tooltip>
-                    )}
+                    )} */}
                   </Stack>
                 </Paper>
 

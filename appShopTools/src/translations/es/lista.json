@@ -1,0 +1,17 @@
+{
+  "productos": {
+    "comprar": "Comprar",
+    "verDetalle": "Ver detalle",
+    "precioConDescuento": "{{descuento}}% Descuento",
+    "descuentoExclusivo": "Exclusivo",
+    "descuentoCategoria": "Por Categorías",
+    "agregadoFavoritos": "Producto agregado a favoritos",
+    "removidoFavoritos": "Producto removido de favoritos",
+    "agregadoCarrito": "\"{{nombre}}\" agregado al carrito",
+    "cargando": "Cargando productos...",
+    "errorCarga": "Error al cargar los productos",
+    "productoSinImagen": "Producto sin imagen",
+    "placeholderDescripcion": "...",
+    "sinValoraciones": "Sin valoraciones"
+  }
+}

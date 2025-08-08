@@ -1,0 +1,17 @@
+{
+  "productos": {
+    "comprar": "Buy",
+    "verDetalle": "View details",
+    "precioConDescuento": "{{descuento}}% Off",
+    "descuentoExclusivo": "Exclusive",
+    "descuentoCategoria": "By Categories",
+    "agregadoFavoritos": "Product added to favorites",
+    "removidoFavoritos": "Product removed from favorites",
+    "agregadoCarrito": "\"{{nombre}}\" added to cart",
+    "cargando": "Loading products...",
+    "errorCarga": "Error loading products",
+    "productoSinImagen": "Product without image",
+    "placeholderDescripcion": "...",
+    "sinValoraciones": "No reviews"
+  }
+}

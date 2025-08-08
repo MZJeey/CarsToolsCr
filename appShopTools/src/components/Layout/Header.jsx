@@ -11,6 +11,8 @@ import {
   Badge,
   Tooltip,
   TextField,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -21,8 +23,10 @@ import { TireRepair } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { UserContext } from "../../context/UserContext";
-import LanguageIcon from "@mui/icons-material/Language";
+// ❌ quitamos LanguageIcon porque ya no se usa
 import { useTranslation } from "react-i18next";
+import ReactCountryFlag from "react-country-flag";
+
 export default function Header() {
   const { user, decodeToken, autorize } = useContext(UserContext);
   const [userData, setUserData] = useState(decodeToken());
@@ -38,8 +42,24 @@ export default function Header() {
   const [mobileOpcionesAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [anchorElPrincipal, setAnchorElPrincipal] = useState(null);
 
-  // Nuevo estado para el menú desplegable de Mantenimiento Vehículos
+  // Menú desplegable de Mantenimiento Vehículos
   const [anchorElMantenimiento, setAnchorElMantenimiento] = useState(null);
+
+  // 🔤 Menú de idiomas (banderas)
+  const [anchorElLang, setAnchorElLang] = useState(null);
+  const { i18n } = useTranslation();
+  const languages = [
+    { code: "es", name: "Español", countryCode: "CR" },
+    { code: "en", name: "English", countryCode: "US" },
+  ];
+  const handleLangMenuOpen = (e) => setAnchorElLang(e.currentTarget);
+  const handleLangMenuClose = () => setAnchorElLang(null);
+  const changeLanguage = (lng) => {
+    i18n
+      .changeLanguage(lng)
+      .then(() => handleLangMenuClose())
+      .catch((err) => console.error("Error changing language:", err));
+  };
 
   const isMobileOpcionesMenuOpen = Boolean(mobileOpcionesAnchorEl);
 
@@ -53,11 +73,6 @@ export default function Header() {
   const handleOpcionesMenuOpen = (e) => setMobileMoreAnchorEl(e.currentTarget);
   const handleOpcionesMenuClose = () => setMobileMoreAnchorEl(null);
 
-  const { i18n } = useTranslation();
-  const handleToggleLanguage = () => {
-    const newLang = i18n.language === "es" ? "en" : "es";
-    i18n.changeLanguage(newLang);
-  };
   // Handlers para menú de Mantenimiento Vehículos
   const handleMantenimientoOpen = (e) =>
     setAnchorElMantenimiento(e.currentTarget);
@@ -81,7 +96,6 @@ export default function Header() {
     // { name: "Promociones", link: "/catalog-movies/", roles: null },
     { name: "Marcas", link: "/catalog-movies/", roles: null },
     { name: "Servicios", link: "/movie/filter", roles: null },
-
     { name: "Mantenimientos", link: null, roles: [] },
   ];
 
@@ -90,9 +104,8 @@ export default function Header() {
     { name: "Dashboard", link: "/dasboard" },
     { name: "Reseñas", link: "/resena" },
     { name: "Promociones", link: "/promociones" },
-{ name: "Pedidos", link: "/pedidos" },
- { name: "Productos Personalizados", link: "/productos-personalizados" }
-
+    { name: "Pedidos", link: "/pedidos" },
+    { name: "Productos Personalizados", link: "/productos-personalizados" },
   ];
 
   const menuPrincipal = (
@@ -179,7 +192,7 @@ export default function Header() {
     </Box>
   );
 
-  // Menú móvil: mantengo simple sin submenu, si quieres podemos agregar submenu también
+  // Menú móvil (sin submenú anidado)
   const menuPrincipalMobile = (
     <Box>
       {navItems.map((item, idx) => {
@@ -421,17 +434,56 @@ export default function Header() {
 
           <Box sx={{ flexGrow: 1 }} />
 
+          {/* Acciones derecha */}
           <Box
             sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}
           >
+            {/* 🔤 Botón que abre el menú de banderas */}
             <IconButton
               size="large"
               aria-label="cambiar idioma"
               color="inherit"
-              onClick={handleToggleLanguage}
+              onClick={handleLangMenuOpen}
             >
-              <LanguageIcon />
+              <ReactCountryFlag
+                countryCode={i18n.language === "es" ? "CR" : "US"}
+                svg
+                style={{ fontSize: "1.5em", lineHeight: "1.5em" }}
+              />
             </IconButton>
+
+            {/* Menú de banderas */}
+            <Menu
+              id="language-menu"
+              anchorEl={anchorElLang}
+              open={Boolean(anchorElLang)}
+              onClose={handleLangMenuClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+              {languages.map((lang) => (
+                <MenuItem
+                  key={lang.code}
+                  selected={i18n.language === lang.code}
+                  onClick={() => changeLanguage(lang.code)}
+                  sx={{
+                    "&.Mui-selected": {
+                      backgroundColor: "rgba(0,0,0,0.06)",
+                      "&:hover": { backgroundColor: "rgba(0,0,0,0.1)" },
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <ReactCountryFlag
+                      countryCode={lang.countryCode}
+                      svg
+                      style={{ fontSize: "1.5em", lineHeight: "1.5em" }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText>{lang.name}</ListItemText>
+                </MenuItem>
+              ))}
+            </Menu>
 
             <IconButton
               size="large"

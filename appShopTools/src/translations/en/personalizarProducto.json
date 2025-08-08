@@ -1,0 +1,27 @@
+{
+  "personalizarProductoModal": {
+    "title": "Customized Product Details",
+    "labels": {
+      "productoPersonalizado": "Customized Product",
+      "productoBase": "Base Product",
+      "opciones": "Customization Options",
+      "criterio": "Criterion",
+      "opcion": "Option",
+      "costoBase": "Base cost:",
+      "costoAdicional": "Add-ons:",
+      "cantidad": "Quantity:",
+      "resumenFinanciero": "Financial Summary",
+      "precioUnitario": "Unit price:",
+      "subtotalUnidades": "Subtotal",
+      "total": "Total:"
+    },
+    "units": {
+      "unidad": "unit",
+      "unidades": "units"
+    },
+    "button": {
+      "close": "Close",
+      "confirm": "Confirm Order"
+    }
+  }
+}

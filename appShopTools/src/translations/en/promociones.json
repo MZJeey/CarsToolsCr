@@ -1,0 +1,66 @@
+{
+  "Promociones": {
+    "title": "Promotion Management",
+    "button": {
+      "nueva": "New Promotion",
+      "crear": "Create Promotion",
+      "guardar": "Save Changes",
+      "cancelar": "Cancel",
+      "editar": "Edit",
+      "eliminar": "Delete",
+      "volver": "Back"
+    },
+    "table": {
+      "Promoción": "Promotion",
+      "Descuento": "Discount",
+      "Vigencia": "Validity",
+      "Estado": "Status",
+      "Acciones": "Actions",
+      "sin_datos": "No promotions registered",
+      "indicacion": "Create your first promotion by clicking the button"
+    },
+    "form": {
+      "Nombre": "Promotion Name",
+      "Descripcion": "Description",
+      "Descuento": "Discount (%)",
+      "Tipo": "Promotion Type",
+      "TipoOpciones": {
+        "producto": "For specific product",
+        "categoria": "For category",
+        "general": "General (all products)"
+      },
+      "IdProducto": "Select product",
+      "IdCategoria": "Select category",
+      "FechaInicio": "Start date",
+      "FechaFin": "End date",
+      "Estado": "Status:"
+    },
+    "detail": {
+      "title": "Promotion Details",
+      "Descuento": "Discount",
+      "AplicaA": "Applies to",
+      "FechaInicio": "Start date",
+      "FechaFin": "End date",
+      "Estado": "Status"
+    },
+    "status": {
+      "Pendiente": "Pending",
+      "Vigente": "Active",
+      "Aplicado": "Applied"
+    },
+    "messages": {
+      "confirmar_eliminar": "Are you sure you want to delete this promotion?",
+      "agregada": "Promotion successfully added",
+      "actualizada": "Promotion successfully updated",
+      "eliminada": "Promotion successfully deleted",
+      "error_guardar": "Error saving promotion",
+      "error_eliminar": "Error deleting promotion",
+      "error_obtener": "Error retrieving promotions",
+      "error_productos": "Error retrieving products",
+      "error_categorias": "Error retrieving categories",
+      "fecha_invalida": "The end date cannot be earlier than the start date",
+      "no_editable": "You cannot edit a promotion that has already been applied."
+    },
+    "General": "All products"
+  }
+}

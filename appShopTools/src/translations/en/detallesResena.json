@@ -1,0 +1,20 @@
+{
+  "detalleResenas": {
+    "buttonVolver": "Back",
+    "tituloPrincipal": "Customer reviews of our products",
+    "subtitulo": "Read reviews from other customers who have purchased this product.",
+    "ratingPromedio": {
+      "estrellas": "{{count}} review",
+      "estrellas_plural": "{{count}} reviews"
+    },
+    "comentarioVacio": "No comment.",
+    "productoDesconocido": "Product: Unknown",
+    "moderado": "Moderated",
+    "estado": {
+      "cargando": "Loading reviews...",
+      "errorCarga": "Error loading reviews. Please try again later.",
+      "noProducto": "Product not found."
+    },
+    "formatoFecha": "{{date, DD/MM/YYYY}}"
+  }
+}

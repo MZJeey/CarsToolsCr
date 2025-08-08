@@ -1,0 +1,27 @@
+{
+  "crearResena": {
+    "title": "Create Review",
+    "fields": {
+      "usuario": "User",
+      "comentario": "Comment",
+      "comentarioPlaceholder": "Write your opinion about the product...",
+      "valoracion": "Rating",
+      "valoracionSeleccionar": "Select a rating",
+      "valoracionEstrella": "{{count}} star",
+      "valoracionEstrellas": "{{count}} stars"
+    },
+    "buttons": {
+      "cancelar": "Cancel",
+      "enviar": "Submit",
+      "enviando": "Submitting..."
+    },
+    "messages": {
+      "debeIniciarSesion": "You must be logged in to leave a review",
+      "errorSesion": "Error verifying session",
+      "sesionNoValida": "Invalid session. Please log in again",
+      "completaCampos": "Please complete the comment and select a rating (1 to 5)",
+      "exito": "Review submitted successfully!",
+      "errorEnvio": "Error submitting the review"
+    }
+  }
+}

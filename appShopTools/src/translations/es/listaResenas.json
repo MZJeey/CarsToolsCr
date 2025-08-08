@@ -1,0 +1,13 @@
+{
+  "listaResenas": {
+    "titulo": "Reseñas de clientes a nuestros productos",
+    "subtitulo": "Lee las reseñas de otros clientes que han comprado este producto.",
+    "cargando": "Cargando reseñas...",
+    "error": "Error al cargar las reseñas. Intente nuevamente más tarde.",
+    "noResenas": "No hay reseñas disponibles.",
+    "resenasContador": "{{cantidad}} reseñas",
+    "valoracionPromedio": "{{promedio}}",
+    "sinComentario": "Sin comentario.",
+    "verDetalles": "Ver Detalles"
+  }
+}

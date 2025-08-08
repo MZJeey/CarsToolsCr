@@ -1,0 +1,8 @@
+{
+  "etiquetas": {
+    "titulo": "Tags",
+    "errorCarga": "There was a problem loading the tags.",
+    "sinEtiquetas": "This product has no assigned tags.",
+    "cargando": "Loading tags..."
+  }
+}

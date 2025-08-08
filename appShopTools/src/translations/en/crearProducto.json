@@ -1,0 +1,56 @@
+{
+  "crearProducto": {
+    "title": "Create New Product",
+    "form": {
+      "sections": {
+        "basicInfo": "Basic Information",
+        "priceStock": "Price and Inventory",
+        "compatibility": "Product Compatibility",
+        "technicalSpecs": "Technical Specifications",
+        "certifications": "Certifications and Standards",
+        "labels": "Tags and Categorization",
+        "images": "Product Images",
+        "details": "Product Details"
+      },
+      "fields": {
+        "productName": "Product Name *",
+        "category": "Category *",
+        "description": "Description",
+       
+        "price": "Price (₡) *",
+        "stock": "Available Stock *",
+        "tax": "Applicable Tax",
+        "productStatus": "Product Status",
+        "statusActive": "Active (visible in store)",
+        "statusInactive": "Inactive (not visible)",
+        "year": "Compatible Year",
+        "brand": "Compatible Brand",
+        "model": "Compatible Model",
+        "engine": "Compatible Engine",
+        "certificationsInput": "Certifications (comma-separated)",
+        "tagLabel": "Select Tags",
+        "tagNone": "No tag selected",
+        "imageDescription": "Add product images (maximum 3). Images must be in JPG or PNG format and not exceed 2MB.",
+        "imagePlaceholder": "Click to select an image",
+        "imageNote": "(JPG/PNG, max 2MB)",
+        "addImage": "Add Image",
+        "remainingImages": "remaining"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "saving": "Creating...",
+        "save": "Save Product"
+      },
+      "errors": {
+        "loadInitialData": "Error loading initial data",
+        "createError": "Error creating product"
+      },
+      "toasts": {
+        "maxImages": "You can upload up to 3 images per product",
+        "invalidImage": "Please select a valid image file",
+        "imageTooLarge": "Image must not exceed 2MB",
+        "success": "Product created successfully!"
+      }
+    }
+  }
+}

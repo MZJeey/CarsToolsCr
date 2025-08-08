@@ -1,0 +1,35 @@
+{
+  "header": {
+    "menu": {
+      "repuestos": "Spare Parts",
+      "marcas": "Brands",
+      "servicios": "Services",
+      "mantenimientos": "Maintenance",
+      "productos": "Products",
+      "dashboard": "Dashboard",
+      "reseñas": "Reviews",
+      "promociones": "Promotions",
+      "pedidos": "Orders",
+      "productos_personalizados": "Custom Products"
+    },
+    "user": {
+      "login": "Login",
+      "registrarse": "Register",
+      "logout": "Logout",
+      "email": "Email"
+    },
+    "search": {
+      "placeholder": "Search spare part...",
+      "button": "Search"
+    },
+    "icons": {
+      "compras": "Purchases",
+      "notificaciones": "Notifications",
+      "carrito": "Cart",
+      "idioma": "Language"
+    },
+    "tooltips": {
+      "inicio": "Spare Parts"
+    }
+  }
+}
