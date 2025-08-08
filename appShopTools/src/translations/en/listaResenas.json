@@ -3,6 +3,8 @@
     "titulo": "Customer reviews of our products",
     "subtitulo": "Read reviews from other customers who have purchased this product.",
     "cargando": "Loading reviews...",
+     "resenna": "Reviews",
+     "botonverdetalle": "View Details",
     "error": "Error loading reviews. Please try again later.",
     "noResenas": "No reviews available.",
     "resenasContador": "{{cantidad}} reviews",

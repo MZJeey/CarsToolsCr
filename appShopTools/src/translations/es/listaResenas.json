@@ -3,6 +3,9 @@
     "titulo": "Reseñas de clientes a nuestros productos",
     "subtitulo": "Lee las reseñas de otros clientes que han comprado este producto.",
     "cargando": "Cargando reseñas...",
+    "resenna": "Reseñas",
+       "botonverdetalle": "Ver detalles",
+       
     "error": "Error al cargar las reseñas. Intente nuevamente más tarde.",
     "noResenas": "No hay reseñas disponibles.",
     "resenasContador": "{{cantidad}} reseñas",

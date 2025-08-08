@@ -1,3 +1,4 @@
+
 import { useContext, useEffect, useState } from "react";
 import {
   AppBar,
@@ -23,11 +24,12 @@ import { TireRepair } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { UserContext } from "../../context/UserContext";
-// ❌ quitamos LanguageIcon porque ya no se usa
+
 import { useTranslation } from "react-i18next";
 import ReactCountryFlag from "react-country-flag";
 
 export default function Header() {
+     const { t } = useTranslation("header");
   const { user, decodeToken, autorize } = useContext(UserContext);
   const [userData, setUserData] = useState(decodeToken());
 
@@ -45,7 +47,7 @@ export default function Header() {
   // Menú desplegable de Mantenimiento Vehículos
   const [anchorElMantenimiento, setAnchorElMantenimiento] = useState(null);
 
-  // 🔤 Menú de idiomas (banderas)
+  // aca se ve el menu de idomas usanso las banderas de cada idioma
   const [anchorElLang, setAnchorElLang] = useState(null);
   const { i18n } = useTranslation();
   const languages = [
@@ -86,32 +88,32 @@ export default function Header() {
   };
 
   const userItems = [
-    { name: "Login", link: "/user/login", login: false },
-    { name: "Registrarse", link: "/user/create", login: false },
-    { name: "Logout", link: "/user/logout", login: true },
+    { name: t("header.user.login"), link: "/user/login", login: false },
+    { name: t("header.user.registrarse"), link: "/user/create", login: false },
+    { name: t("header.user.logout"), link: "/user/logout", login: true },
   ];
 
   const navItems = [
-    { name: "Repuestos", link: "/lista", roles: null },
+    { name: t("header.menu.repuestos"), link: "/lista", roles: null },
     // { name: "Promociones", link: "/catalog-movies/", roles: null },
-    { name: "Marcas", link: "/catalog-movies/", roles: null },
-    { name: "Servicios", link: "/movie/filter", roles: null },
-    { name: "Mantenimientos", link: null, roles: [] },
+    { name: t("header.menu.marcas"), link: "/catalog-movies/", roles: null },
+    { name: t("header.menu.servicios"), link: "/movie/filter", roles: null },
+    { name: t("header.menu.mantenimientos"), link: null, roles: [] },
   ];
 
   const mantenimientoOpciones = [
-    { name: "Productos", link: "/productos" },
-    { name: "Dashboard", link: "/dasboard" },
-    { name: "Reseñas", link: "/resena" },
-    { name: "Promociones", link: "/promociones" },
-    { name: "Pedidos", link: "/pedidos" },
-    { name: "Productos Personalizados", link: "/productos-personalizados" },
+    { name: t("header.menu.productos"), link: "/productos" },
+    { name: t("header.menu.dashboard"), link: "/dasboard" },
+    { name: t("header.menu.reseñas"), link: "/resena" },
+    { name: t("header.menu.promociones"), link: "/promociones" },
+    { name: t("header.menu.pedidos"), link: "/pedidos" },
+    { name: t("header.menu.productos_personalizados"), link: "/productos-personalizados" },
   ];
 
   const menuPrincipal = (
     <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
       {navItems.map((item, idx) => {
-        if (item.name === "Mantenimientos") {
+        if (item.name === t("header.menu.mantenimientos")) {
           // Menú desplegable para mantenimiento vehículos
           return (
             <Box key={idx}>
@@ -318,7 +320,7 @@ export default function Header() {
             <ShoppingCartIcon />
           </Badge>
         </IconButton>
-        <Typography>Compras</Typography>
+        <Typography>{t("header.icons.compras")}</Typography>
       </MenuItem>
 
       <MenuItem>
@@ -327,7 +329,7 @@ export default function Header() {
             <NotificationsIcon />
           </Badge>
         </IconButton>
-        <Typography>Notificaciones</Typography>
+        <Typography>{t("header.icons.notificaciones")}</Typography>
       </MenuItem>
 
       {userItems.map((setting, idx) => {
@@ -392,7 +394,7 @@ export default function Header() {
             {menuPrincipalMobile}
           </Menu>
 
-          <Tooltip title="Repuestos ">
+          <Tooltip title={t("header.tooltips.inicio")}>
             <IconButton
               size="large"
               edge="start"
@@ -416,7 +418,7 @@ export default function Header() {
             <TextField
               size="small"
               variant="outlined"
-              placeholder="Buscar repuesto..."
+              placeholder={t("header.search.placeholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -428,16 +430,14 @@ export default function Header() {
               onClick={handleSearch}
               sx={{ ml: 1 }}
             >
-              Buscar
+              {t("header.search.button")}
             </Button>
           </Box>
 
           <Box sx={{ flexGrow: 1 }} />
 
           {/* Acciones derecha */}
-          <Box
-            sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}
-          >
+          <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
             {/* 🔤 Botón que abre el menú de banderas */}
             <IconButton
               size="large"

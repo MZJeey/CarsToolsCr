@@ -1,5 +1,5 @@
 {
-  "productos": {
+  "lista": {
     "comprar": "Buy",
     "verDetalle": "View details",
     "precioConDescuento": "{{descuento}}% Off",

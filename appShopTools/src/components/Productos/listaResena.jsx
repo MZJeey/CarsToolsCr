@@ -13,10 +13,17 @@ import {
 import { deepPurple } from "@mui/material/colors";
 import ResenaService from "../../services/ResenaService";
 import { Link } from "react-router-dom";
+
+import { useTranslation } from "react-i18next";
 // URL base para subir imágenes si se necesitara en el futuro
 const urlBase = import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
 
+
+
+
+
 const ListaResenas = () => {
+ const { t } = useTranslation("listaResenas");
   const [resenas, setResenas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
@@ -40,7 +47,7 @@ const ListaResenas = () => {
         }
       } catch (error) {
         console.error("Error al cargar reseñas:", error);
-        setError("Error al cargar las reseñas. Intente nuevamente más tarde.");
+        setError(t("listaResenas.error"));
       } finally {
         setCargando(false);
       }
@@ -68,7 +75,7 @@ const ListaResenas = () => {
   if (resenas.length === 0) {
     return (
       <Typography variant="body1" align="center" mt={4}>
-        No hay reseñas disponibles.
+     {t("listaResenas.noResenas")}
       </Typography>
     );
   }
@@ -78,10 +85,10 @@ const ListaResenas = () => {
       {/* Encabezado con rating promedio */}
       <Box textAlign="center" mb={4}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Reseñas de clientes a nuestros productos
+           {t("listaResenas.titulo")}
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" mb={2}>
-          Lee las reseñas de otros clientes que han comprado este producto.
+       {t("listaResenas.subtitulo")}
         </Typography>
 
         <Box display="flex" flexDirection="column" alignItems="center" mb={3}>
@@ -96,7 +103,7 @@ const ListaResenas = () => {
             sx={{ my: 1 }}
           />
           <Typography variant="body2" color="text.secondary">
-            {totalResenas} reseñas
+            {totalResenas} {t("listaResenas.resenna")}
           </Typography>
         </Box>
 
@@ -191,7 +198,7 @@ const ListaResenas = () => {
                   to={`/detallesResena/${resena.producto_id}`} // Aquí usas producto_id
                   sx={{ borderRadius: 1 }}
                 >
-                  Ver Detalles
+                  {t("listaResenas.verDetalles")}
                 </Button>
               </Box>
             );
