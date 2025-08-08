@@ -9,7 +9,8 @@
         "technicalSpecs": "Especificaciones Técnicas",
         "certifications": "Certificaciones y Estándares",
         "labels": "Etiquetas y Categorización",
-        "images": "Imágenes del Producto"
+        "images": "Imágenes del Producto",
+        "details": "Detalles del Producto"
       },
       "fields": {
         "productName": "Nombre del Producto *",
@@ -48,6 +49,7 @@
         "invalidImage": "Por favor selecciona un archivo de imagen válido",
         "imageTooLarge": "La imagen no debe exceder los 2MB",
         "success": "Producto creado exitosamente!"
+        
       }
     }
   }

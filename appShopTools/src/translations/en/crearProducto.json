@@ -9,12 +9,14 @@
         "technicalSpecs": "Technical Specifications",
         "certifications": "Certifications and Standards",
         "labels": "Tags and Categorization",
-        "images": "Product Images"
+        "images": "Product Images",
+        "details": "Product Details"
       },
       "fields": {
         "productName": "Product Name *",
         "category": "Category *",
         "description": "Description",
+       
         "price": "Price (₡) *",
         "stock": "Available Stock *",
         "tax": "Applicable Tax",

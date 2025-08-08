@@ -83,7 +83,6 @@ export function EditarProducto() {
 
   const [imagenesExistentes, setImagenesExistentes] = useState([]);
 
-
   const [imagenes, setImagenes] = useState({
     existentes: [], // {id: number, url: string}
     nuevas: [], // Array de File objects
@@ -433,46 +432,44 @@ export function EditarProducto() {
     newImages.splice(index, 1);
     setAdditionalImages(newImages);
   };
-///delay para probar que pasa 
-const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+  ///delay para probar que pasa
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
- const handleUploadAdditionalImages = async () => {
-  try {
-    if (additionalImages.length === 0) return;
+  const handleUploadAdditionalImages = async () => {
+    try {
+      if (additionalImages.length === 0) return;
 
-    // Mostrar loading mientras se suben
-    setLoading(true);
-    
-    // Subir cada imagen adicional
-    await Promise.all(
-      additionalImages.map(async (img) => {
-        const imgFormData = new FormData();
-        imgFormData.append("file", img);
-        imgFormData.append("producto_id", id); // Usamos el ID existente del producto
-        
-        // Llamar al servicio de imágenes
-        return await ImageService.createImage(imgFormData);
-      })
-    );
+      // Mostrar loading mientras se suben
+      setLoading(true);
 
-    toast.success("Imágenes adicionales subidas correctamente");
-    setAdditionalImages([]); // Limpiar el estado después de subir
+      // Subir cada imagen adicional
+      await Promise.all(
+        additionalImages.map(async (img) => {
+          const imgFormData = new FormData();
+          imgFormData.append("file", img);
+          imgFormData.append("producto_id", id); // Usamos el ID existente del producto
 
-    // 🕒 Esperar un poco antes de consultar al backend
-await delay(500);
+          // Llamar al servicio de imágenes
+          return await ImageService.createImage(imgFormData);
+        })
+      );
 
-    // 🔄 Actualizar imágenes cargadas desde el backend
-    const nuevasImagenes = await ImageService.getImagen(id);
-    (nuevasImagenes); // Actualiza la vista sin recargar
+      toast.success("Imágenes adicionales subidas correctamente");
+      setAdditionalImages([]); // Limpiar el estado después de subir
 
-    
-  } catch (error) {
-    console.error("Error al subir imágenes adicionales:", error);
-    toast.error("Error al subir imágenes adicionales");
-  } finally {
-    setLoading(false);
-  }
-};
+      // 🕒 Esperar un poco antes de consultar al backend
+      await delay(500);
+
+      // 🔄 Actualizar imágenes cargadas desde el backend
+      const nuevasImagenes = await ImageService.getImagen(id);
+      nuevasImagenes; // Actualiza la vista sin recargar
+    } catch (error) {
+      console.error("Error al subir imágenes adicionales:", error);
+      toast.error("Error al subir imágenes adicionales");
+    } finally {
+      setLoading(false);
+    }
+  };
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
@@ -1192,7 +1189,7 @@ await delay(500);
                     gutterBottom
                     sx={{ mb: 3, fontWeight: 600, color: "text.primary" }}
                   >
-                    Imágenes Nuevas
+                    Imágenes Adicionales
                   </Typography>
 
                   <Typography

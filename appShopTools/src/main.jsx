@@ -36,11 +36,12 @@ import PedidoComponent from "./components/pedidos/pedido";
 import TodosProductosPersonalizados from "./components/pedidos/TodosProductosPersonalizados";
 
 import { I18nextProvider } from "react-i18next";
-import i18n from "./i18n"; // Ajusta la ruta según tu proyecto
+import i18n from "../src/i18n/i18n"; // Ajusta la ruta según tu proyecto
 import Promociones from "./components/Productos/promociones";
 import { patch } from "@mui/material";
 import { EditarProducto } from "./components/Productos/updateProducto";
-
+// Asegúrate que la ruta sea correcta
+// Importa la configuración de i18n
 const rutas = createBrowserRouter([
   {
     element: <App />,
