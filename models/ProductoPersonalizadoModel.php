@@ -1,94 +1,106 @@
 <?php
-
 class ProductoPersonalizadoModel
 {
     private $db;
 
-    public function __construct()
+    public function __construct(PDO $conexion)
     {
-        $this->db = new MySqlConnect();
+        $this->db = $conexion;
     }
 
-    public function obtenerPorPedido($pedido_id)
+    /**
+     * Obtiene el detalle completo de la factura incluyendo productos personalizados,
+     * con sus criterios y costos, además el resumen total y forma de pago.
+     */
+    public function obtenerDetalleFactura($factura_id)
     {
-        $sql = "SELECT 
-    pp.id_personalizado,
-    pp.pedido_id,
-    pp.producto_id,
-    p.nombre AS nombre_producto_base,
-    p.IdImpuesto AS id_impuesto,
-    i.Porcentaje AS porcentaje,
-    pp.nombre_personalizado,
-    pp.costo_base,
-    pp.opciones_personalizacion,
-    pp.costo_adicional,
-    pp.cantidad,
-    pp.precio_unitario,
-    pp.subtotal
-FROM producto_personalizado pp
-JOIN producto p ON pp.producto_id = p.id
-LEFT JOIN impuesto i ON p.IdImpuesto = i.IdImpuesto
-WHERE pp.pedido_id = $pedido_id
-";
+        // Obtener datos básicos de la factura
+        $queryFactura = "SELECT id, usuario_id, forma_pago FROM factura WHERE id = ?";
+        $stmt = $this->db->prepare($queryFactura);
+        $stmt->execute([$factura_id]);
+        $factura = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $this->db->executeSQL($sql);
-    }
-
-    public function crear($pedido_id, $productosPersonalizados)
-    {
-        foreach ($productosPersonalizados as $pp) {
-            $nombre = $pp->nombre_personalizado;
-            $producto_id = $pp->producto_id;
-            $costo_base = $pp->costo_base;
-            $cantidad = $pp->cantidad;
-
-            // Calcular costo adicional sumando cada criterio
-            $costo_adicional = 0;
-            foreach ($pp->opciones_personalizacion as $opcion) {
-                $costo_adicional += $opcion->costo ?? 0;
-            }
-
-            $precio_unitario = $costo_base + $costo_adicional;
-            $subtotal = $precio_unitario * $cantidad;
-
-            $opciones = json_encode($pp->opciones_personalizacion, JSON_UNESCAPED_UNICODE);
-
-            $sql = "INSERT INTO producto_personalizado (
-                    pedido_id, producto_id, nombre_personalizado, 
-                    costo_base, opciones_personalizacion, 
-                    costo_adicional, cantidad, precio_unitario, subtotal
-                ) VALUES (
-                    $pedido_id, $producto_id, '$nombre',
-                    $costo_base, '$opciones',
-                    $costo_adicional, $cantidad, $precio_unitario, $subtotal
-                )";
-
-            $this->db->executeSQL_DML($sql);
+        if (!$factura) {
+            throw new Exception("Factura no encontrada.");
         }
 
-        return true;
+        // Obtener productos incluidos en la factura
+        $queryProductos = "SELECT 
+                              df.id AS detalle_id,
+                              p.nombre AS nombre_producto,
+                              df.precio_unitario,
+                              df.descripcion,
+                              df.cantidad,
+                              df.subtotal,
+                              df.monto_iva,
+                              df.total
+                           FROM detalle_factura df
+                           INNER JOIN producto p ON p.id = df.producto_id
+                           WHERE df.factura_id = ?";
+        $stmt = $this->db->prepare($queryProductos);
+        $stmt->execute([$factura_id]);
+        $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $subtotal = 0;
+
+        foreach ($productos as &$producto) {
+            // Parsear criterios y opciones desde descripción JSON
+            $producto['criterios'] = $this->parsearCriteriosDesdeDescripcion($producto['descripcion']);
+            
+            // Calcular costo total producto: precio base + suma de costos de opciones
+            $costoOpciones = 0;
+            foreach ($producto['criterios'] as $criterio) {
+                $costoOpciones += floatval($criterio['costo_opcion']);
+            }
+            $producto['total_producto_personalizado'] = floatval($producto['precio_unitario']) + $costoOpciones;
+
+            // Actualizar subtotal acumulado (cantidad * total producto personalizado)
+            $subtotal += $producto['cantidad'] * $producto['total_producto_personalizado'];
+        }
+        unset($producto);
+
+        // Calcular impuesto y total
+        $impuesto = round($subtotal * 0.13, 2); // Ajusta si tienes otro porcentaje
+        $total = $subtotal + $impuesto;
+
+        return [
+            'factura_id' => $factura_id,
+            'productos' => $productos,
+            'resumen' => [
+                'subtotal' => $subtotal,
+                'impuestos' => $impuesto,
+                'total' => $total,
+                'forma_pago' => $factura['forma_pago'],
+            ],
+        ];
     }
 
-    public function obtenerTodos()
+    /**
+     * Parsea el JSON guardado en el campo descripcion para obtener
+     * criterios, opciones seleccionadas y costos asociados.
+     * 
+     * Se espera que descripcion sea un JSON con estructura:
+     * [
+     *   {
+     *      "criterio": "Color",
+     *      "opcion_seleccionada": "Rojo",
+     *      "costo_opcion": 5.00
+     *   },
+     *   ...
+     * ]
+     */
+    private function parsearCriteriosDesdeDescripcion($descripcion)
     {
-        $sql = "SELECT 
-                pp.id_personalizado,
-                pp.pedido_id,
-                pp.producto_id,
-                p.nombre AS nombre_producto_base,
-                p.IdImpuesto AS id_impuesto,
-                i.Porcentaje AS porcentaje,
-                pp.nombre_personalizado,
-                pp.costo_base,
-                pp.opciones_personalizacion,
-                pp.costo_adicional,
-                pp.cantidad,
-                pp.precio_unitario,
-                pp.subtotal
-            FROM producto_personalizado pp
-            JOIN producto p ON pp.producto_id = p.id
-            LEFT JOIN impuesto i ON p.IdImpuesto = i.IdImpuesto";
+        if (!$descripcion) return [];
 
-        return $this->db->executeSQL($sql);
+        $datos = json_decode($descripcion, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            // Si no es JSON válido, devolver vacío o lanzar error según prefieras
+            return [];
+        }
+
+        return $datos;
     }
 }
+
