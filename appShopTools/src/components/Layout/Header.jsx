@@ -1,4 +1,3 @@
-
 import { useContext, useEffect, useState } from "react";
 import {
   AppBar,
@@ -29,7 +28,7 @@ import { useTranslation } from "react-i18next";
 import ReactCountryFlag from "react-country-flag";
 
 export default function Header() {
-     const { t } = useTranslation("header");
+  const { t } = useTranslation("header");
   const { user, decodeToken, autorize } = useContext(UserContext);
   const [userData, setUserData] = useState(decodeToken());
 
@@ -107,7 +106,14 @@ export default function Header() {
     { name: t("header.menu.reseñas"), link: "/resena" },
     { name: t("header.menu.promociones"), link: "/promociones" },
     { name: t("header.menu.pedidos"), link: "/pedidos" },
-    { name: t("header.menu.productos_personalizados"), link: "/productos-personalizados" },
+    {
+      name: t("header.menu.productos_personalizados"),
+      link: "/productos-personalizados",
+    },
+    {
+      name: t("header.menu.productos_similares"),
+      link: "/productos-similares",
+    },
   ];
 
   const menuPrincipal = (
@@ -437,7 +443,9 @@ export default function Header() {
           <Box sx={{ flexGrow: 1 }} />
 
           {/* Acciones derecha */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
+          <Box
+            sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}
+          >
             {/* 🔤 Botón que abre el menú de banderas */}
             <IconButton
               size="large"
@@ -484,13 +492,13 @@ export default function Header() {
                 </MenuItem>
               ))}
             </Menu>
-
+            {/*Icono donde va a carrito  */}
             <IconButton
               size="large"
               aria-label="ver carrito"
               color="inherit"
               component={Link}
-              to="/rental/crear/"
+              to="/carrito"
             >
               <Badge badgeContent={getCountItems(cart)} color="primary">
                 <ShoppingCartIcon />

@@ -21,22 +21,21 @@ class carrito
         }
     }
 
-    public function agregar()
+    public function create()
     {
         try {
-            $response = new Response();
             $request = new Request();
-            $data = $request->getJSON()->data;
+            $inputJSON = $request->getJSON();
 
-            $model = new CarritoModel();
-            $result = $model->agregarProducto(
-                $data->usuario_id,
-                $data->session_token,
-                $data->producto_id,
-                $data->cantidad
-            );
+            // DEBUG: Imprimir el input recibido
+            file_put_contents("debug_input.log", print_r($inputJSON, true));
 
-            $response->toJSON(['status' => $result ? 'ok' : 'error']);
+            if (!$inputJSON) {
+                throw new Exception("No se recibió JSON válido");
+            }
+
+            $carrito = new CarritoModel();
+            $result = $carrito->agregarProducto($inputJSON);
         } catch (Exception $e) {
             handleException($e);
         }

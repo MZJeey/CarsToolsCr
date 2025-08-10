@@ -16,8 +16,9 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PedidoService from "../../services/PedidoService";
 import ProductoService from "../../services/ProductoService";
-
+import { useTranslation } from "react-i18next";
 const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
+  const { t } = useTranslation("crearPedido");
   const [productos, setProductos] = useState([]);
   const [pedido, setPedido] = useState({
     direccion_envio: "",
@@ -75,7 +76,7 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle sx={{ backgroundColor: "#438892", color: "white" }}>
-        Nuevo Pedido
+        {t("crearPedidoModal.titulo")}
       </DialogTitle>
       <DialogContent dividers>
         <Box>
@@ -103,7 +104,7 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
           </TextField>
 
           <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
-            Productos
+            {t("crearPedidoModal.formulario.productos.tituloSeccion")}
           </Typography>
 
           {pedido.detalles.map((detalle, index) => (
@@ -155,14 +156,16 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
             sx={{ mt: 2 }}
             onClick={agregarProducto}
           >
-            Añadir Producto
+            {t("crearPedidoModal.botones.anadirProducto.texto")}
           </Button>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancelar</Button>
+        <Button onClick={handleClose}>
+          {t("crearPedidoModal.botones.cancelar")}
+        </Button>
         <Button onClick={handleGuardar} variant="contained" color="primary">
-          Crear Pedido
+          {t("crearPedidoModal.botones.crearPedido")}
         </Button>
       </DialogActions>
     </Dialog>

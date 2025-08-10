@@ -83,6 +83,9 @@ export function EditarProducto() {
 
   // para las imagenes, se pone la coma para que sea como un array, existia algo pero con la coma lo opmití
 
+  //Refrescar las imagenes
+  const [imagenCargada, setImagenCargada] = useState(0);
+
   const [imagenesExistentes, setImagenesExistentes] = useState([]);
 
   const [imagenes, setImagenes] = useState({
@@ -260,7 +263,7 @@ export function EditarProducto() {
     };
 
     fetchInitialData();
-  }, [id, reset]);
+  }, [id, reset, imagenCargada]);
 
   // Manejadores de eventos
   const handleEtiquetasChange = (event) => {
@@ -439,6 +442,7 @@ export function EditarProducto() {
 
   const handleUploadAdditionalImages = async () => {
     try {
+      setImagenCargada(1);
       if (additionalImages.length === 0) return;
 
       // Mostrar loading mientras se suben
