@@ -457,10 +457,10 @@ export function EditarProducto() {
       toast.success("Imágenes adicionales subidas correctamente");
       setAdditionalImages([]); // Limpiar el estado después de subir
 
-      // 🕒 Esperar un poco antes de consultar al backend
+    
       await delay(500);
 
-      // 🔄 Actualizar imágenes cargadas desde el backend
+     
       const nuevasImagenes = await ImageService.getImagen(id);
       nuevasImagenes; // Actualiza la vista sin recargar
     } catch (error) {
