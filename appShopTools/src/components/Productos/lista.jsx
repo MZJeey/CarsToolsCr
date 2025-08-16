@@ -24,7 +24,10 @@ import {
   Straighten,
 } from "@mui/icons-material";
 import ProductoService from "../../services/ProductoService";
+import ImpuestoService from "../../services/ImpuestoService";
 import Carousel from "react-material-ui-carousel";
+import { useCart } from "../../hooks/useCart";
+import { useTranslation } from "react-i18next";
 
 const ProductCard = styled(Card)(({ theme }) => ({
   height: "100%",
@@ -78,7 +81,6 @@ const PrimaryActionButton = styled(ActionButton)(({ theme }) => ({
     color: "#fff",
     boxShadow: `0 2px 12px ${theme.palette.success.main}`,
     borderColor: theme.palette.success.dark,
-    // No scale ni transform
   },
 }));
 
@@ -96,18 +98,15 @@ const SecondaryActionButton = styled(ActionButton)(({ theme }) => ({
     color: "#fff",
     boxShadow: `0 2px 12px ${theme.palette.secondary.main}`,
     borderColor: theme.palette.secondary.dark,
-    // No scale ni transform
   },
 }));
 
-import { useTranslation } from "react-i18next";
-
 export function Lista() {
-
- const { t } = useTranslation("lista");
-
+  const { addItem } = useCart();
+  const { t } = useTranslation("lista");
   const theme = useTheme();
   const [productos, setProductos] = useState([]);
+  const [impuestos, setImpuestos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -131,21 +130,42 @@ export function Lista() {
     );
   };
 
-  const handleAddToCart = (producto) => {
-    setSuccess(`"${producto.nombre}" agregado al carrito`);
-    // agregar al carrito
+  const obtenerPorcentajeImpuesto = (impuestoId) => {
+    if (!impuestoId) return 0;
+    const impuesto = impuestos.find(
+      (imp) => imp.IdImpuesto == productos.IdImpuesto
+    );
+    return impuesto ? impuesto.porcentaje : 0;
+  };
+
+  console.log("Impuestos", impuestos);
+
+  const calcularPrecioConImpuesto = (precioBase, impuestoId) => {
+    if (!precioBase) return 0;
+    const porcentajeImpuesto = obtenerPorcentajeImpuesto(impuestoId);
+    return precioBase + (precioBase * porcentajeImpuesto) / 100;
   };
 
   const fetchProductos = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await ProductoService.getProductos();
+      const [productosResponse, impuestosResponse] = await Promise.all([
+        ProductoService.getProductos(),
+        ImpuestoService.getImpuesto(),
+      ]);
+      console.log("Impuesto", impuestosResponse.data);
 
-      if (response.data && Array.isArray(response.data)) {
-        setProductos(response.data);
+      if (productosResponse.data && Array.isArray(productosResponse.data)) {
+        setProductos(productosResponse.data);
       } else {
         throw new Error("Formato de respuesta inesperado");
+      }
+
+      if (impuestosResponse.data && Array.isArray(impuestosResponse.data)) {
+        setImpuestos(impuestosResponse.data);
+      } else {
+        throw new Error("Formato de respuesta inesperado para impuestos");
       }
     } catch (err) {
       console.error("Error al cargar productos:", err);
@@ -166,10 +186,8 @@ export function Lista() {
 
   const fechaActual = new Date();
 
-  // Función para determinar las promociones aplicables
   const productosConPromocionValida = productos.map((producto) => {
-    // Buscar promoción específica para este producto
-    const promocionProducto = producto.promociones.find((promo) => {
+    const promocionProducto = producto.promociones?.find((promo) => {
       const fechaInicio = new Date(promo.FechaInicio);
       const fechaFin = new Date(promo.FechaFin);
       return (
@@ -180,9 +198,8 @@ export function Lista() {
       );
     });
 
-    // Si no hay promoción por producto, buscar por categoría
     const promocionCategoria = !promocionProducto
-      ? producto.promociones.find((promo) => {
+      ? producto.promociones?.find((promo) => {
           const fechaInicio = new Date(promo.FechaInicio);
           const fechaFin = new Date(promo.FechaFin);
           return (
@@ -224,229 +241,262 @@ export function Lista() {
   return (
     <Box sx={{ p: { xs: 1, sm: 3 } }}>
       <Grid container spacing={3}>
-        {productosConPromocionValida.map((producto) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={producto.id}>
-            <ProductCard elevation={4}>
-              {producto.promocion && producto.promocion.Descuento && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: 16,
-                    left: -8,
-                    zIndex: 2,
-                    backgroundColor:
-                      producto.tipoPromocion === "producto"
-                        ? theme.palette.error.main
-                        : theme.palette.warning.main,
-                    color: theme.palette.error.contrastText,
-                    px: 1.5,
-                    py: 0.5,
-                    fontSize: "0.75rem",
-                    fontWeight: "bold",
-                    boxShadow: theme.shadows[2],
-                    borderRadius: "4px 4px 4px 0",
-                    "&:before": {
-                      content: '""',
-                      position: "absolute",
-                      bottom: -8,
-                      left: 0,
-                      borderWidth: "0 8px 8px 0",
-                      borderStyle: "solid",
-                      borderColor: "transparent",
-                      borderRightColor:
-                        producto.tipoPromocion === "producto"
-                          ? theme.palette.error.dark
-                          : theme.palette.warning.dark,
-                    },
-                  }}
-                >
-                  {Math.round(producto.promocion.Descuento)}% Descuento
-                  {producto.tipoPromocion === "producto" && " Exclusivo"}
-                  {producto.tipoPromocion === "categoria" && " Por  Categorías"}
-                </Box>
-              )}
+        {productosConPromocionValida.map((producto) => {
+          const precioBase = producto.precio || 0;
+          const porcentajeImpuesto = obtenerPorcentajeImpuesto(
+            producto.IdImpuesto
+          );
+          const montoImpuesto = precioBase * (porcentajeImpuesto / 100);
+          const precioConImpuesto = precioBase + montoImpuesto;
 
-              <IconButton
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 8,
-                  zIndex: 2,
-                  backgroundColor: "rgba(255,255,255,0.8)",
-                  "&:hover": {
-                    backgroundColor: "rgba(255,255,255,0.9)",
-                  },
-                }}
-                onClick={() => toggleFavorite(producto.id)}
-              >
-                {favorites[producto.id] ? (
-                  <Favorite color="error" />
-                ) : (
-                  <FavoriteBorder />
-                )}
-              </IconButton>
+          const precioConDescuento = producto.promocion?.Descuento
+            ? precioBase - (precioBase * producto.promocion.Descuento) / 100
+            : null;
 
-              <ImageWrapper>
-                {producto.imagen?.length > 0 ? (
-                  <Carousel
-                    autoPlay={false}
-                    navButtonsAlwaysVisible={true}
-                    indicators={producto.imagen.length > 1}
-                    indicatorContainerProps={{
-                      style: {
-                        position: "absolute",
-                        bottom: "10px",
-                        zIndex: 2,
-                        textAlign: "center",
-                        width: "100%",
-                      },
-                    }}
-                    indicatorIconButtonProps={{
-                      style: {
-                        padding: "5px",
-                        color: "rgba(90, 14, 14, 0.5)",
-                      },
-                    }}
-                    activeIndicatorIconButtonProps={{
-                      style: {
-                        color: theme.palette.primary.main,
-                      },
-                    }}
+          const precioConDescuentoEImpuesto =
+            precioConDescuento !== null
+              ? precioConDescuento +
+                precioConDescuento * (porcentajeImpuesto / 100)
+              : null;
+
+          return (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={producto.id}>
+              <ProductCard elevation={4}>
+                {producto.promocion && producto.promocion.Descuento && (
+                  <Box
                     sx={{
-                      height: "100%",
-                      backgroundColor: "#f5f5f5",
-                      borderRadius: "16px 16px 0 0",
-                      position: "relative",
+                      position: "absolute",
+                      top: 16,
+                      left: -8,
+                      zIndex: 2,
+                      backgroundColor:
+                        producto.tipoPromocion === "producto"
+                          ? theme.palette.error.main
+                          : theme.palette.warning.main,
+                      color: theme.palette.error.contrastText,
+                      px: 1.5,
+                      py: 0.5,
+                      fontSize: "0.75rem",
+                      fontWeight: "bold",
+                      boxShadow: theme.shadows[2],
+                      borderRadius: "4px 4px 4px 0",
+                      "&:before": {
+                        content: '""',
+                        position: "absolute",
+                        bottom: -8,
+                        left: 0,
+                        borderWidth: "0 8px 8px 0",
+                        borderStyle: "solid",
+                        borderColor: "transparent",
+                        borderRightColor:
+                          producto.tipoPromocion === "producto"
+                            ? theme.palette.error.dark
+                            : theme.palette.warning.dark,
+                      },
                     }}
                   >
-                    {producto.imagen.map((imgObj, idx) => (
-                      <CardMedia
-                        key={idx}
-                        component="img"
-                        image={`${BASE_URL}/${imgObj.imagen}`}
-                        alt={`${producto.nombre} - imagen ${idx + 1}`}
-                        sx={{
-                          height: 350,
-                          width: "100%",
-                          borderRadius: "16px 16px 0 0",
-                        }}
-                      />
-                    ))}
-                  </Carousel>
-                ) : (
-                  <ProductImage
-                    src="/placeholder-product.jpg"
-                    alt="Producto sin imagen"
-                  />
+                    {Math.round(producto.promocion.Descuento)}% Descuento
+                    {producto.tipoPromocion === "producto" && " Exclusivo"}
+                    {producto.tipoPromocion === "categoria" && " Por Categoría"}
+                  </Box>
                 )}
-              </ImageWrapper>
 
-              <CardContent sx={{ flexGrow: 1, p: 2, pb: "8px!important" }}>
-                <Typography
-                  variant="h6"
-                  fontWeight="bold"
-                  gutterBottom
+                <IconButton
                   sx={{
-                    minHeight: 48,
-                    lineHeight: 1.2,
-                    color: theme.palette.text.primary,
-                    mb: 0.5,
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    zIndex: 2,
+                    backgroundColor: "rgba(255,255,255,0.8)",
+                    "&:hover": {
+                      backgroundColor: "rgba(255,255,255,0.9)",
+                    },
                   }}
+                  onClick={() => toggleFavorite(producto.id)}
                 >
-                  {producto.nombre}
-                </Typography>
-                <Rating
-                  name={`product-rating-${producto.id}`}
-                  value={
-                    producto.promedio_valoraciones &&
-                    parseFloat(producto.promedio_valoraciones) > 0
-                      ? parseFloat(producto.promedio_valoraciones)
-                      : producto.resena && producto.resena.length > 0
-                        ? producto.resena.reduce(
-                            (sum, resena) =>
-                              sum + parseFloat(resena.valoracion),
-                            0
-                          ) / producto.resena.length
-                        : 0
-                  }
-                  precision={0.5}
-                  readOnly
-                  size="small"
-                  sx={{ mb: 1 }}
-                />
-                <Box sx={{ mb: 1 }}>
-                  {producto.promocion?.Descuento ? (
-                    <>
-                      <Typography
-                        variant="body2"
-                        color="text.disabled"
-                        sx={{ textDecoration: "line-through", fontSize: 14 }}
-                      >
-                        {formatPrecio(producto.precio)}
-                      </Typography>
-                      <Typography
-                        variant="h5"
-                        color="error"
-                        fontWeight="bold"
-                        sx={{ lineHeight: 1.1 }}
-                      >
-                        {formatPrecio(
-                          producto.precio -
-                            (producto.precio * producto.promocion.Descuento) /
-                              100
-                        )}
-                      </Typography>
-                    </>
+                  {favorites[producto.id] ? (
+                    <Favorite color="error" />
                   ) : (
-                    <Typography
-                      variant="h5"
-                      fontWeight="bold"
-                      sx={{ lineHeight: 1.1 }}
-                    >
-                      {formatPrecio(producto.precio)}
-                    </Typography>
+                    <FavoriteBorder />
                   )}
-                </Box>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    minHeight: 36,
-                    mb: 0,
-                    fontSize: 15,
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {producto.descripcion?.substring(0, 60)}...
-                </Typography>
-              </CardContent>
+                </IconButton>
 
-              <CardActions sx={{ p: 2, pt: 0 }}>
-                <PrimaryActionButton
-                  variant="contained"
-                  startIcon={<ShoppingCart />}
-                  onClick={() => handleAddToCart(producto)}
-                >
-                  {t("lista.comprar")}
-                </PrimaryActionButton>
+                <ImageWrapper>
+                  {producto.imagen?.length > 0 ? (
+                    <Carousel
+                      autoPlay={false}
+                      navButtonsAlwaysVisible={true}
+                      indicators={producto.imagen.length > 1}
+                      indicatorContainerProps={{
+                        style: {
+                          position: "absolute",
+                          bottom: "10px",
+                          zIndex: 2,
+                          textAlign: "center",
+                          width: "100%",
+                        },
+                      }}
+                      indicatorIconButtonProps={{
+                        style: {
+                          padding: "5px",
+                          color: "rgba(90, 14, 14, 0.5)",
+                        },
+                      }}
+                      activeIndicatorIconButtonProps={{
+                        style: {
+                          color: theme.palette.primary.main,
+                        },
+                      }}
+                      sx={{
+                        height: "100%",
+                        backgroundColor: "#f5f5f5",
+                        borderRadius: "16px 16px 0 0",
+                        position: "relative",
+                      }}
+                    >
+                      {producto.imagen.map((imgObj, idx) => (
+                        <CardMedia
+                          key={idx}
+                          component="img"
+                          image={`${BASE_URL}/${imgObj.imagen}`}
+                          alt={`${producto.nombre} - imagen ${idx + 1}`}
+                          sx={{
+                            height: 350,
+                            width: "100%",
+                            borderRadius: "16px 16px 0 0",
+                          }}
+                        />
+                      ))}
+                    </Carousel>
+                  ) : (
+                    <ProductImage
+                      src="/placeholder-product.jpg"
+                      alt="Producto sin imagen"
+                    />
+                  )}
+                </ImageWrapper>
 
-                <SecondaryActionButton
-                  variant="contained"
-                  startIcon={<Straighten />}
-                  component={Link}
-                  to={`/detalles/${producto.id}`}
-                >
-                  {t("lista.verDetalle")}
-                </SecondaryActionButton>
-              </CardActions>
-            </ProductCard>
-          </Grid>
-        ))}
+                <CardContent sx={{ flexGrow: 1, p: 2, pb: "8px!important" }}>
+                  <Typography
+                    variant="h6"
+                    fontWeight="bold"
+                    gutterBottom
+                    sx={{
+                      minHeight: 48,
+                      lineHeight: 1.2,
+                      color: theme.palette.text.primary,
+                      mb: 0.5,
+                      textOverflow: "ellipsis",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {producto.nombre}
+                  </Typography>
+                  <Rating
+                    name={`product-rating-${producto.id}`}
+                    value={
+                      producto.promedio_valoraciones &&
+                      parseFloat(producto.promedio_valoraciones) > 0
+                        ? parseFloat(producto.promedio_valoraciones)
+                        : producto.resena && producto.resena.length > 0
+                          ? producto.resena.reduce(
+                              (sum, resena) =>
+                                sum + parseFloat(resena.valoracion),
+                              0
+                            ) / producto.resena.length
+                          : 0
+                    }
+                    precision={0.5}
+                    readOnly
+                    size="small"
+                    sx={{ mb: 1 }}
+                  />
+                  <Box sx={{ mb: 1 }}>
+                    {producto.promocion?.Descuento ? (
+                      <>
+                        <Typography
+                          variant="body2"
+                          color="text.disabled"
+                          sx={{ textDecoration: "line-through", fontSize: 14 }}
+                        >
+                          {formatPrecio(precioConImpuesto)}
+                        </Typography>
+                        <Typography
+                          variant="h5"
+                          color="error"
+                          fontWeight="bold"
+                          sx={{ lineHeight: 1.1 }}
+                        >
+                          {formatPrecio(precioConDescuentoEImpuesto)}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Incluye {porcentajeImpuesto}% de impuestos (₡
+                          {montoImpuesto.toFixed(2)})
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <Typography
+                          variant="h5"
+                          fontWeight="bold"
+                          sx={{ lineHeight: 1.1 }}
+                        >
+                          {formatPrecio(precioConImpuesto)}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Incluye {porcentajeImpuesto}% de impuestos (₡
+                          {montoImpuesto.toFixed(2)})
+                        </Typography>
+                      </>
+                    )}
+                  </Box>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      minHeight: 36,
+                      mb: 0,
+                      fontSize: 15,
+                      textOverflow: "ellipsis",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {producto.descripcion?.substring(0, 60)}...
+                  </Typography>
+                </CardContent>
+
+                <CardActions sx={{ p: 2, pt: 0 }}>
+                  <PrimaryActionButton
+                    variant="contained"
+                    startIcon={<ShoppingCart />}
+                    onClick={() =>
+                      addItem({
+                        ...producto,
+                        precioFinal: producto.promocion?.Descuento
+                          ? precioConDescuentoEImpuesto
+                          : precioConImpuesto,
+                        impuesto: montoImpuesto,
+                      })
+                    }
+                  >
+                    {t("lista.comprar")}
+                  </PrimaryActionButton>
+
+                  <SecondaryActionButton
+                    variant="contained"
+                    startIcon={<Straighten />}
+                    component={Link}
+                    to={`/detalles/${producto.id}`}
+                  >
+                    {t("lista.verDetalle")}
+                  </SecondaryActionButton>
+                </CardActions>
+              </ProductCard>
+            </Grid>
+          );
+        })}
       </Grid>
 
       <Snackbar
@@ -468,4 +518,5 @@ export function Lista() {
     </Box>
   );
 }
+
 export default Lista;

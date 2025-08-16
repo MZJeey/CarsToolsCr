@@ -41,7 +41,7 @@ import Promociones from "./components/Productos/promociones";
 import { patch } from "@mui/material";
 import { EditarProducto } from "./components/Productos/updateProducto";
 import ProductosSimilares from "./components/Productos/productoSimilares";
-import CarritoComponent from "./components/Carrito/carrito";
+import { Cart } from "./components/Carrito/carrito";
 
 // Asegúrate que la ruta sea correcta
 // Importa la configuración de i18n
@@ -113,7 +113,7 @@ const rutas = createBrowserRouter([
       },
       {
         path: "/carrito",
-        element: <CarritoComponent />,
+        element: <Cart />,
       },
       {
         //Grupo 1S

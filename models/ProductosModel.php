@@ -26,9 +26,16 @@ class ProductoModel
             $etiqueta = new ProductoEtiquetaModel();
             $etiquetas = $etiqueta->all();
             // Consulta SQL
-            $vSQL = "SELECT p.*, c.nombre as categoria_nombre
-                 FROM Producto p
-                 JOIN Categoria c ON p.categoria_id = c.id";
+            $vSQL = "SELECT 
+    p.id,
+    p.nombre,
+    (p.precio + (p.precio * i.porcentaje / 100)) AS precio,
+    c.nombre AS categoria_nombre
+FROM Producto p
+JOIN Categoria c ON p.categoria_id = c.id
+JOIN Impuesto i ON p.IdImpuesto = i.IdImpuesto;
+
+";
             // Ejecutar la consulta
             $vResultado = $this->enlace->ExecuteSQL($vSQL);
             // Incluir imágenes (todas)
@@ -103,9 +110,13 @@ class ProductoModel
             $promocion = new PromocionModel();
             $resenaModel = new ResenaModel();
             $etiqueta = new ProductoEtiquetaModel();
-            $sql = "SELECT p.*, c.nombre as categoria_nombre
+            $sql = "SELECT 
+                    p.*,
+                    (p.precio + (p.precio * i.porcentaje / 100)) AS precio,
+                    c.nombre AS categoria_nombre
                 FROM Producto p
                 JOIN Categoria c ON p.categoria_id = c.id
+                JOIN Impuesto i ON p.IdImpuesto = i.IdImpuesto
                 WHERE p.id = $id";
 
             $producto = $this->enlace->executeSQL($sql);

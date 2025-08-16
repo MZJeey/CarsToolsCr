@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ProductoService from "../../services/ProductoService";
-import CrearResena from "./CrearResena"; 
+import CrearResena from "./CrearResena";
 
 import {
   Box,
@@ -35,7 +35,7 @@ import MobileStepper from "@mui/material/MobileStepper";
 import { useTranslation } from "react-i18next";
 
 const DetalleProducto = () => {
- const { t } = useTranslation("listaDetalles");
+  const { t } = useTranslation("listaDetalles");
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -193,8 +193,6 @@ const DetalleProducto = () => {
     });
   };
 
-  
-
   return (
     <Box sx={{ maxWidth: 1400, margin: "auto", p: 2 }}>
       <Button variant="outlined" sx={{ mb: 2 }} onClick={() => navigate(-1)}>
@@ -215,7 +213,9 @@ const DetalleProducto = () => {
                       alignItems="center"
                       height={300}
                     >
-                      <Typography>{t("listaDetalles.cargandoImagenes")}</Typography>
+                      <Typography>
+                        {t("listaDetalles.cargandoImagenes")}
+                      </Typography>
                     </Box>
                   )}
 
@@ -372,7 +372,9 @@ const DetalleProducto = () => {
 
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
                 {producto.categoria_nombre && (
-                  <Chip label={`${t("listaDetalles.categoria")} ${producto.categoria_nombre}`} />
+                  <Chip
+                    label={`${t("listaDetalles.categoria")} ${producto.categoria_nombre}`}
+                  />
                 )}
               </Box>
 
@@ -570,10 +572,10 @@ const DetalleProducto = () => {
         maxWidth="sm"
         fullWidth
       >
-        <CrearResena 
-          productoId={producto.id} 
+        <CrearResena
+          productoId={producto.id}
           onClose={handleCloseResenaModal}
-          onResenaCreada={handleNuevaResena} 
+          onResenaCreada={handleNuevaResena}
         />
       </Dialog>
     </Box>

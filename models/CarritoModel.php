@@ -22,6 +22,12 @@ class CarritoModel
                 VALUES ('$data->usuario_id', '$data->producto_id', '$data->cantidad', NOW())";
 
             $carrito_id = $this->enlace->executeSQL_DML_last($sql);
+            $sqlUpdate = "UPDATE producto 
+                      SET stock = stock - $data->cantidad 
+                      WHERE id = '$data->producto_id' AND stock >= $data->cantidad";
+
+            $affectedRows = $this->enlace->executeSQL_DML($sqlUpdate);
+
 
             return $this->get($carrito_id);
         } catch (Exception $e) {
