@@ -6,6 +6,7 @@ export const CART_ACTION = {
   ADD_ITEM: "ADD_ITEM",
   REMOVE_ITEM: "REMOVE_ITEM",
   CLEAN_CART: "CLEAN_CART",
+  UPDATE_QUANTITY: "UPDATE_QUANTITY",
 };
 
 // Actualiza el localStorage con el estado del carrito
@@ -71,11 +72,29 @@ export const cartReducer = (state, action) => {
       return [];
     }
 
+    // Actualizar cantidad de un ítem
+    case CART_ACTION.UPDATE_QUANTITY: {
+      const { id, cantidad } = actionPayload;
+      const newState = structuredClone(state);
+      const productIndex = newState.findIndex((item) => item.id === id);
+
+      if (productIndex >= 0) {
+        // Asegurar que la cantidad sea al menos 1
+        newState[productIndex].cantidad = Math.max(1, cantidad);
+        newState[productIndex].subtotal = calculateSubtotal(
+          newState[productIndex]
+        );
+        updateLocalStorage(newState);
+        return newState;
+      }
+
+      return state; // Si no encuentra el producto, no hace cambios
+    }
+
     default:
       return state;
   }
 };
-
 // Función para obtener el total del carrito
 export const getTotal = (state) => {
   return calculateTotal(state);

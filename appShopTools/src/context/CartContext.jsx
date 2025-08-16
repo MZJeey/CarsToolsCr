@@ -61,6 +61,15 @@ export function CartProvider({ children, impuestos }) {
       icon: <DeleteIcon color="warning" />,
     });
   };
+  const updateQuantity = (producto, cantidad) => {
+    dispatch({
+      type: CART_ACTION.UPDATE_QUANTITY,
+      payload: {
+        ...producto,
+        cantidad: parseInt(cantidad),
+      },
+    });
+  };
 
   return (
     <CartContext.Provider
@@ -69,6 +78,7 @@ export function CartProvider({ children, impuestos }) {
         addItem,
         removeItem,
         cleanCart,
+        updateQuantity,
         getTotal: () => getTotal(state),
         getCountItems: () => getCountItems(state),
       }}
