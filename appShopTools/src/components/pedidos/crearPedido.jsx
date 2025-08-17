@@ -13,14 +13,19 @@ import {
   Grid,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { toast } from "react-hot-toast";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PedidoService from "../../services/PedidoService";
 import ProductoService from "../../services/ProductoService";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+
 const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
+  const [userInfo, setUserInfo] = useState(null);
   const { t } = useTranslation("crearPedido");
   const [productos, setProductos] = useState([]);
   const [pedido, setPedido] = useState({
+    usuario_id: "",
     direccion_envio: "",
     estado: "en_proceso",
     detalles: [{ producto_id: "", cantidad: 1 }],
@@ -34,16 +39,32 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
     fetchProductos();
   }, []);
 
-  // Reiniciar el pedido cada vez que se abre el modal
+  // Reiniciar el pedido cada vez que se abre el modal y obtener usuario
   useEffect(() => {
     if (open) {
-      setPedido({
-        direccion_envio: "",
-        estado: "en_proceso",
-        detalles: [{ producto_id: "", cantidad: 1 }],
-      });
+      const userFromStorage = localStorage.getItem("userData");
+      if (!userFromStorage) {
+        toast.error("Debes iniciar sesión para continuar");
+        handleClose();
+        return;
+      }
+
+      try {
+        const userData = JSON.parse(userFromStorage);
+        setUserInfo(userData);
+        setPedido({
+          usuario_id: userData.id, // Asegúrate de que el objeto userData tenga el id
+          direccion_envio: "",
+          estado: "en_proceso",
+          detalles: [{ producto_id: "", cantidad: 1 }],
+        });
+      } catch (error) {
+        console.error("Error parsing user data", error);
+        toast.error("Error al cargar la información del usuario");
+        handleClose();
+      }
     }
-  }, [open]);
+  }, [open, handleClose]);
 
   const handleDetalleChange = (index, field, value) => {
     const updatedDetalles = [...pedido.detalles];
@@ -65,11 +86,42 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
 
   const handleGuardar = async () => {
     try {
-      await PedidoService.crearPedido(pedido);
+      // Validar que todos los campos estén completos
+      if (!pedido.direccion_envio) {
+        toast.error("Debe ingresar una dirección de envío");
+        return;
+      }
+
+      // Validar que todos los productos tengan un producto seleccionado
+      const hasEmptyProducts = pedido.detalles.some(
+        (detalle) => !detalle.producto_id
+      );
+      if (hasEmptyProducts) {
+        toast.error("Todos los productos deben estar seleccionados");
+        return;
+      }
+
+      // Preparar los datos para enviar al backend
+      const pedidoData = {
+        usuario_id: pedido.usuario_id,
+        direccion_envio: pedido.direccion_envio,
+        estado: pedido.estado,
+        productos: pedido.detalles.map((detalle) => ({
+          producto_id: detalle.producto_id,
+          cantidad: detalle.cantidad,
+        })),
+      };
+
+      const response = await PedidoService.crearPedido(pedidoData);
+      
+      localStorage.setItem("ultimoPedidoId", response.data.id);
+      console.log("Último pedido creado:", response.data.id);
+      toast.success("Pedido creado con éxito");
       refreshPedidos();
       handleClose();
     } catch (error) {
       console.error("Error al guardar el pedido", error);
+      toast.error("Error al crear el pedido");
     }
   };
 
@@ -88,6 +140,7 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
             onChange={(e) =>
               setPedido({ ...pedido, direccion_envio: e.target.value })
             }
+            required
           />
 
           <TextField
@@ -118,7 +171,11 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
                   onChange={(e) =>
                     handleDetalleChange(index, "producto_id", e.target.value)
                   }
+                  required
                 >
+                  <MenuItem value="">
+                    <em>Seleccione un producto</em>
+                  </MenuItem>
                   {productos.map((p) => (
                     <MenuItem key={p.id} value={p.id}>
                       {p.nombre}
@@ -136,6 +193,7 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
                     handleDetalleChange(index, "cantidad", e.target.value)
                   }
                   inputProps={{ min: 1 }}
+                  required
                 />
               </Grid>
               <Grid item xs={2}>

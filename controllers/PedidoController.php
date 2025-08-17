@@ -3,21 +3,21 @@ class pedido
 {
     public function crear()
     {
-        // Esto es un controller de ejemplo para manejar pedidos
-
         try {
             $request = new Request();
             $response = new Response();
             $data = $request->getJSON()->data;
 
             $model = new PedidoModel();
-            $exito = $model->crearPedido($data->usuario_id, $data->direccion_envio, $data->productos);
+            $resultado = $model->crearPedido($data);
 
-            $response->toJSON(['status' => $exito ? 'ok' : 'error']);
+            // Enviar el resultado completo al frontend
+            $response->toJSON($resultado);
         } catch (Exception $e) {
             handleException($e);
         }
     }
+
 
     public function listar()
     {
@@ -69,9 +69,11 @@ class pedido
     public function listarTodos()
     {
         try {
+            $request = new Request();
             $response = new Response();
             $model = new PedidoModel();
-            $pedidos = $model->all();
+            $data = $request->getJSON();
+            $pedidos = $model->all($data->usuario_id);
             $response->toJSON($pedidos);
         } catch (Exception $e) {
             handleException($e);

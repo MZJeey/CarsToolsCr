@@ -71,72 +71,72 @@ WHERE pp.pedido_id = $pedido_id;
 
 
 
-public function crear($pedido_id, $productosPersonalizados) 
-{
-    // helper para DECIMAL(10,2)
-    $fmt = fn($n) => number_format((float)$n, 2, '.', '');
+    public function crear($pedido_id, $productosPersonalizados)
+    {
+        // helper para DECIMAL(10,2)
+        $fmt = fn($n) => number_format((float)$n, 2, '.', '');
 
-    foreach ($productosPersonalizados as $pp) {
-        // Normaliza a array asociativo
-        if (is_object($pp)) $pp = json_decode(json_encode($pp), true);
+        foreach ($productosPersonalizados as $pp) {
+            // Normaliza a array asociativo
+            if (is_object($pp)) $pp = json_decode(json_encode($pp), true);
 
-        $nombre      = substr(trim($pp['nombre_personalizado'] ?? ''), 0, 100);
-        $producto_id = (int)($pp['producto_id'] ?? 0);
-        $costo_base  = (float)($pp['costo_base'] ?? 0);
-        $cantidad    = max(1, (int)($pp['cantidad'] ?? 1));
+            $nombre      = substr(trim($pp['nombre_personalizado'] ?? ''), 0, 100);
+            $producto_id = (int)($pp['producto_id'] ?? 0);
+            $costo_base  = (float)($pp['costo_base'] ?? 0);
+            $cantidad    = max(1, (int)($pp['cantidad'] ?? 1));
 
-        // Opciones puede venir como array o como string JSON (o alias *_json)
-        $opciones = $pp['opciones_personalizacion'] ?? ($pp['opciones_personalizacion_json'] ?? []);
-        if (is_string($opciones)) {
-            $tmp = json_decode($opciones, true);
-            if ($tmp !== null) $opciones = $tmp;
-        }
+            // Opciones puede venir como array o como string JSON (o alias *_json)
+            $opciones = $pp['opciones_personalizacion'] ?? ($pp['opciones_personalizacion_json'] ?? []);
+            if (is_string($opciones)) {
+                $tmp = json_decode($opciones, true);
+                if ($tmp !== null) $opciones = $tmp;
+            }
 
-        // Suma costos adicionales
-        $costo_adicional = 0.0;
-        if (is_array($opciones)) {
-            foreach ($opciones as $op) $costo_adicional += (float)($op['costo'] ?? 0);
-        }
+            // Suma costos adicionales
+            $costo_adicional = 0.0;
+            if (is_array($opciones)) {
+                foreach ($opciones as $op) $costo_adicional += (float)($op['costo'] ?? 0);
+            }
 
-        // Totales sin IVA
-        $precio_unitario   = $costo_base + $costo_adicional;
-        $subtotal_sin_iva  = $precio_unitario * $cantidad;
+            // Totales sin IVA
+            $precio_unitario   = $costo_base + $costo_adicional;
+            $subtotal_sin_iva  = $precio_unitario * $cantidad;
 
-        // IVA (si no viene, 13%)
-        $iva_pct   = isset($pp['iva_porcentaje']) && is_numeric($pp['iva_porcentaje'])
-                     ? (float)$pp['iva_porcentaje'] : 0.13;
-        $iva_monto = $subtotal_sin_iva * $iva_pct;
+            // IVA (si no viene, 13%)
+            $iva_pct   = isset($pp['iva_porcentaje']) && is_numeric($pp['iva_porcentaje'])
+                ? (float)$pp['iva_porcentaje'] : 0.13;
+            $iva_monto = $subtotal_sin_iva * $iva_pct;
 
-        // ✅ Guardar subtotal CON IVA
-        $subtotal = $subtotal_sin_iva + $iva_monto;
+            // ✅ Guardar subtotal CON IVA
+            $subtotal = $subtotal_sin_iva + $iva_monto;
 
-        // JSON y escapes
-        $opciones_json = json_encode($opciones, JSON_UNESCAPED_UNICODE);
-        $nombre_esc   = addslashes($nombre);
-        $opciones_esc = addslashes($opciones_json);
+            // JSON y escapes
+            $opciones_json = json_encode($opciones, JSON_UNESCAPED_UNICODE);
+            $nombre_esc   = addslashes($nombre);
+            $opciones_esc = addslashes($opciones_json);
 
-        // INSERT (números sin comillas)
-        $sql = "INSERT INTO producto_personalizado
+            // INSERT (números sin comillas)
+            $sql = "INSERT INTO producto_personalizado
                 (pedido_id, producto_id, nombre_personalizado,
                  costo_base, opciones_personalizacion, costo_adicional,
                  cantidad, precio_unitario, subtotal)
                 VALUES (
-                 ".(int)$pedido_id.",
-                 ".$producto_id.",
-                 '".$nombre_esc."',
-                 ".$fmt($costo_base).",
-                 '".$opciones_esc."',
-                 ".$fmt($costo_adicional).",
-                 ".$cantidad.",
-                 ".$fmt($precio_unitario).",
-                 ".$fmt($subtotal)."
+                 " . (int)$pedido_id . ",
+                 " . $producto_id . ",
+                 '" . $nombre_esc . "',
+                 " . $fmt($costo_base) . ",
+                 '" . $opciones_esc . "',
+                 " . $fmt($costo_adicional) . ",
+                 " . $cantidad . ",
+                 " . $fmt($precio_unitario) . ",
+                 " . $fmt($subtotal) . "
                 )";
 
-        $this->db->executeSQL_DML($sql);
-    }
+            $this->db->executeSQL_DML($sql);
+        }
 
-    return true;
-}
+        return true;
+    }
 
 
 
@@ -163,10 +163,10 @@ public function crear($pedido_id, $productosPersonalizados)
 
 
 
-
-public function listarProductosBase()
-{
-    $sql = "
+    // ========== NUEVO ==========
+    public function listarProductosBase()
+    {
+        $sql = "
     SELECT
         p.id,
         p.nombre,
@@ -183,15 +183,15 @@ public function listarProductosBase()
     LEFT JOIN impuesto i ON i.IdImpuesto = p.IdImpuesto
     WHERE p.estado = 1
     ORDER BY p.nombre ASC";
-    return $this->db->executeSQL($sql);
-}
+        return $this->db->executeSQL($sql);
+    }
 
-// ========== NUEVO ==========
-public function detalleProductoBase($producto_id)
-{
-    $producto_id = (int)$producto_id; // seguridad básica
+    // ========== NUEVO ==========
+    public function detalleProductoBase($producto_id)
+    {
+        $producto_id = (int)$producto_id; // seguridad básica
 
-    $sqlProd = "
+        $sqlProd = "
     SELECT
         p.id,
         p.nombre,
@@ -203,23 +203,18 @@ public function detalleProductoBase($producto_id)
     WHERE p.id = $producto_id
     LIMIT 1";
 
-    $prod = $this->db->executeSQL($sqlProd);
-    if (!$prod || count($prod) === 0) return null;
+        $prod = $this->db->executeSQL($sqlProd);
+        if (!$prod || count($prod) === 0) return null;
 
-    $sqlImgs = "
+        $sqlImgs = "
     SELECT imagen
     FROM imagenproducto
     WHERE producto_id = $producto_id
     ORDER BY id ASC";
 
-    $imgs = $this->db->executeSQL($sqlImgs);
-    $prod[0]['imagenes'] = array_map(fn($r) => $r['imagen'], $imgs ?? []);
+        $imgs = $this->db->executeSQL($sqlImgs);
+        $prod[0]['imagenes'] = array_map(fn($r) => $r['imagen'], $imgs ?? []);
 
-    return $prod[0];
-}
-
-
-
-
-
+        return $prod[0];
+    }
 }

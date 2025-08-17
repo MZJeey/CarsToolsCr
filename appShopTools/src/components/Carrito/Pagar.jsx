@@ -12,27 +12,25 @@ import {
 } from "@mui/material";
 import { toast } from "react-hot-toast";
 
-export const ProcesarPago = ({ open, onClose }) => {
-  const { cart, cleanCart } = useCart();
+export const ProcesarPago = ({ open, onClose, onSuccess }) => {
+  const { cart } = useCart(); // ⬅️ quitamos cleanCart aquí
   const [userInfo, setUserInfo] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // ✅ Leemos la info del usuario desde localStorage al montar el componente
   useEffect(() => {
     const userFromStorage = localStorage.getItem("userData");
     if (!userFromStorage) {
       toast.error("Debes iniciar sesión para continuar");
-      onClose();
+      onClose?.();
       return;
     }
-
     try {
       const parsedUser = JSON.parse(userFromStorage);
       setUserInfo(parsedUser);
     } catch (error) {
       console.error("Error leyendo usuario del localStorage:", error);
       toast.error("Error con la sesión, inicia sesión nuevamente");
-      onClose();
+      onClose?.();
     }
   }, [onClose]);
 
@@ -41,25 +39,36 @@ export const ProcesarPago = ({ open, onClose }) => {
       toast.error("Debes iniciar sesión para continuar");
       return;
     }
+    if (!cart?.length) {
+      toast.error("Tu carrito está vacío");
+      return;
+    }
 
     setIsProcessing(true);
-
     try {
-      for (const item of cart) {
-        const payload = {
-          usuario_id: userInfo.id,
-          producto_id: item.id,
-          cantidad: item.cantidad,
-        };
-        await CarritoService.crearCarrito(payload);
-      }
+      // mejor en paralelo
+      await Promise.all(
+        cart.map((item) =>
+          CarritoService.crearCarrito({
+            usuario_id: userInfo.id,
+            producto_id: item.id,
+            cantidad: item.cantidad,
+          })
+        )
+      );
 
-      toast.success("Compra realizada con éxito");
-      cleanCart();
-      onClose();
+      toast.success("Productos registrados en tu carrito");
+
+      // 🔑 Primero avisa al padre para que abra FormaPagoModal
+      onSuccess?.();
+
+      // Luego cierra este modal
+      onClose?.();
+
+      // ❌ NO limpiar carrito aquí (hazlo tras pagar en FormaPagoModal.onSuccess)
     } catch (error) {
-      toast.error(error.message || "Error al procesar los productos");
       console.error("Error:", error);
+      toast.error(error?.message || "Error al procesar los productos");
     } finally {
       setIsProcessing(false);
     }
