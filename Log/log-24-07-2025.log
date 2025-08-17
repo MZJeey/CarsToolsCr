@@ -1,0 +1,33 @@
+[24-07-2025 17:40:55] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 113 - Message: syntax error, unexpected variable "$resena"
+ [24-07-2025 17:40:56] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 113 - Message: syntax error, unexpected variable "$resena"
+ [24-07-2025 17:41:00] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 113 - Message: syntax error, unexpected variable "$resena"
+ [24-07-2025 17:41:01] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 113 - Message: syntax error, unexpected variable "$resena"
+ [24-07-2025 17:41:18] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 113 - Message: syntax error, unexpected variable "$resena"
+ [24-07-2025 17:41:20] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 113 - Message: syntax error, unexpected variable "$resena"
+ [24-07-2025 17:41:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 113 - Message: syntax error, unexpected variable "$resena"
+ [24-07-2025 23:02:05] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [24-07-2025 23:02:05] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [24-07-2025 23:05:10] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [24-07-2025 23:06:20] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [24-07-2025 23:06:21] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [24-07-2025 23:06:33] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [24-07-2025 23:06:34] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [24-07-2025 23:07:05] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [24-07-2025 23:07:18] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [24-07-2025 23:26:56] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:27:34] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:27:40] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:30:15] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:36:50] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:36:50] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:37:01] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:37:18] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:37:20] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:42:06] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:42:26] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:42:35] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:43:05] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:43:15] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:43:30] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ [24-07-2025 23:43:39] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 77 - Message: syntax error, unexpected token "return"
+ 

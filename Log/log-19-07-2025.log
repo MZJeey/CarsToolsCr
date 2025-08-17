@@ -1,0 +1,5 @@
+[19-07-2025 22:56:22] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 33 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [19-07-2025 22:56:22] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 33 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [19-07-2025 22:56:25] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 33 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [19-07-2025 22:56:26] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 33 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ 

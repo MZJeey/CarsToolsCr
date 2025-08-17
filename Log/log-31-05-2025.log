@@ -1,0 +1,8 @@
+[31-05-2025 04:51:50] [jason] error: File: C:\xampp\htdocs\apimovie\controllers\core\MySqlConnect.php - line: 29 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [31-05-2025 04:52:00] [jason] error: File: C:\xampp\htdocs\apimovie\controllers\core\MySqlConnect.php - line: 29 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [31-05-2025 04:52:02] [jason] error: File: C:\xampp\htdocs\apimovie\controllers\core\MySqlConnect.php - line: 29 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [31-05-2025 04:52:33] [jason] error: File: C:\xampp\htdocs\apimovie\controllers\core\MySqlConnect.php - line: 29 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [31-05-2025 04:52:35] [jason] error: File: C:\xampp\htdocs\apimovie\controllers\core\MySqlConnect.php - line: 29 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [31-05-2025 04:55:38] [jason] error: File: C:\xampp\htdocs\apimovie\controllers\core\MySqlConnect.php - line: 29 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [31-05-2025 22:34:28] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 46 - Message: Table 'carstoolscr.user' doesn't exist
+ 

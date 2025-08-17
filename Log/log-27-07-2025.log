@@ -1,0 +1,9 @@
+[27-07-2025 02:09:35] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 249 - Message: Array to string conversion
+ [27-07-2025 02:09:57] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 249 - Message: Array to string conversion
+ [27-07-2025 02:10:06] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 249 - Message: Array to string conversion
+ [27-07-2025 02:11:46] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 249 - Message: Array to string conversion
+ [27-07-2025 02:14:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 249 - Message: Array to string conversion
+ [27-07-2025 02:18:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 249 - Message: Array to string conversion
+ [27-07-2025 02:24:00] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ImageController.php - line: 13 - Message: Undefined array key "producto_id"
+ [27-07-2025 02:28:28] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ImageController.php - line: 13 - Message: Undefined array key "producto_id"
+ 

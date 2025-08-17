@@ -1,0 +1,11 @@
+[15-06-2025 04:36:58] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 69 - Message: Unclosed '{' on line 3
+ [15-06-2025 20:29:39] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 109 - Message: Data truncated for column 'ano_compatible' at row 1
+ [15-06-2025 20:30:48] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Data truncated for column 'ano_compatible' at row 1
+ [15-06-2025 20:30:55] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Data truncated for column 'ano_compatible' at row 1
+ [15-06-2025 20:50:12] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Table 'carstoolscr.shop_rental' doesn't exist
+ [15-06-2025 20:50:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Table 'carstoolscr.shop_rental' doesn't exist
+ [15-06-2025 20:50:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Table 'carstoolscr.movie' doesn't exist
+ [15-06-2025 20:50:30] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Table 'carstoolscr.movie' doesn't exist
+ [15-06-2025 20:50:38] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Table 'carstoolscr.movie' doesn't exist
+ [15-06-2025 20:50:39] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Table 'carstoolscr.movie' doesn't exist
+ 

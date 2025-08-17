@@ -1,0 +1,4 @@
+[04-08-2025 03:26:00] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 33 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [04-08-2025 04:08:22] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ImageController.php - line: 12 - Message: Undefined array key "file"
+ [04-08-2025 04:08:36] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ImageController.php - line: 12 - Message: Undefined array key "file"
+ 

@@ -1,0 +1,4 @@
+[16-08-2025 18:18:59] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'i.id' in 'on clause'
+ [16-08-2025 21:52:27] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Duplicate entry 'Jeeyson' for key 'usuario.nombre_usuario'
+ [16-08-2025 21:52:39] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Duplicate entry 'Jeeyson' for key 'usuario.nombre_usuario'
+ 

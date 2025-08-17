@@ -1,0 +1,25 @@
+[09-08-2025 22:29:19] [jason] error: File: C:\xampp\htdocs\carstoolscr\index.php - line: 43 - Message: require_once(models/ProductoSimilarModel.php): Failed to open stream: No such file or directory
+ [09-08-2025 22:38:17] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'similar_id' in 'field list'
+ [09-08-2025 22:38:38] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ':producto_id, :similar_id, :tipo_relacion)
+                  ON DUPLICATE KEY U' at line 2
+ [09-08-2025 22:39:53] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'similar_id' in 'field list'
+ [09-08-2025 22:40:28] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'similar_id' in 'field list'
+ [09-08-2025 22:43:27] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'similar_id' in 'field list'
+ [09-08-2025 22:43:56] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'similar_id' in 'field list'
+ [09-08-2025 22:44:38] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'similar_id' in 'field list'
+ [09-08-2025 22:45:49] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Check constraint 'chk_producto_diferente' is violated.
+ [09-08-2025 22:46:50] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Check constraint 'chk_producto_diferente' is violated.
+ [09-08-2025 22:47:02] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Check constraint 'chk_producto_diferente' is violated.
+ [09-08-2025 22:47:08] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Check constraint 'chk_producto_diferente' is violated.
+ [09-08-2025 22:48:58] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Check constraint 'chk_producto_diferente' is violated.
+ [09-08-2025 22:50:56] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Check constraint 'chk_producto_diferente' is violated.
+ [09-08-2025 22:53:54] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [09-08-2025 22:54:33] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [09-08-2025 22:57:43] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'homologado' in 'field list'
+ [09-08-2025 22:58:44] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'homologado' in 'field list'
+ [09-08-2025 23:01:33] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'homologado' in 'field list'
+ [09-08-2025 23:01:42] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'homologado' in 'field list'
+ [09-08-2025 23:01:44] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'homologado' in 'field list'
+ [09-08-2025 23:02:12] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'homologado' in 'field list'
+ [09-08-2025 23:05:17] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 90 - Message: Unknown column 'homologado' in 'field list'
+ 

@@ -1,0 +1,44 @@
+[10-08-2025 01:53:04] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 01:53:37] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 01:55:33] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 01:57:49] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 02:00:54] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 02:01:56] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 02:05:57] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 02:06:55] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 02:06:58] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 02:07:44] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 02:20:02] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 02:23:04] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 02:28:10] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 02:31:19] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Attempt to read property "producto_id" on array
+ [10-08-2025 04:37:38] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 04:37:39] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:20:32] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:20:32] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:20:37] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:20:38] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:22:24] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:22:25] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:24:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:24:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:24:09] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:24:10] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:24:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:24:16] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:24:16] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [10-08-2025 05:34:49] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\CarritoModel.php - line: 21 - Message: Trying to access array offset on value of type int
+ [10-08-2025 05:50:33] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\CarritoModel.php - line: 21 - Message: Attempt to read property "usuario_id" on int
+ [10-08-2025 05:56:20] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\CarritoModel.php - line: 21 - Message: Attempt to read property "usuario_id" on int
+ [10-08-2025 06:02:46] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\CarritoModel.php - line: 21 - Message: Undefined property: stdClass::$usuario_id
+ [10-08-2025 06:05:14] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [10-08-2025 06:09:28] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Cannot add or update a child row: a foreign key constraint fails (`carstoolscr`.`carrito`, CONSTRAINT `carrito_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`))
+ [10-08-2025 06:10:00] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Duplicate entry '1-4' for key 'carrito.PRIMARY'
+ [10-08-2025 06:12:54] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Duplicate entry '1-4' for key 'carrito.PRIMARY'
+ [10-08-2025 06:14:12] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [10-08-2025 06:22:22] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'id' in 'where clause'
+ [10-08-2025 06:23:45] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Cannot add or update a child row: a foreign key constraint fails (`carstoolscr`.`carrito`, CONSTRAINT `carrito_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`))
+ [10-08-2025 06:34:02] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Cannot add or update a child row: a foreign key constraint fails (`carstoolscr`.`carrito`, CONSTRAINT `carrito_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`))
+ [10-08-2025 06:34:58] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Cannot add or update a child row: a foreign key constraint fails (`carstoolscr`.`carrito`, CONSTRAINT `carrito_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`))
+ [10-08-2025 06:38:54] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Cannot add or update a child row: a foreign key constraint fails (`carstoolscr`.`carrito`, CONSTRAINT `carrito_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`))
+ 
