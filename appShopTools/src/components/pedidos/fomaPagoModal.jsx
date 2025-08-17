@@ -251,7 +251,7 @@ export default function FormaPagoModal({
         generatePDFClient({ factura, items, totalMostrar, metodo });
       }
 
-      // Callback al padre y cerrar
+      // Callback al padre y cerrar todo 
       onSuccess && onSuccess(factura);
       handleClose();
     } catch (e) {
