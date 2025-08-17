@@ -69,38 +69,49 @@ export function CrearProducto() {
   const productoSchema = yup.object({
     nombre: yup
       .string()
-      .required("Por favor ingresa un nombre para el producto")
-      .max(100, "El nombre no puede exceder los 100 caracteres"),
-    descripcion: yup.string().max(500, "La descripción es demasiado larga"),
+      .required(t("crearProducto.form.validations.nombre.required"))
+      .max(100, t("crearProducto.form.validations.max")),
+    descripcion: yup
+      .string()
+      .max(500, t("crearProducto.form.validations.descripcion.max")),
     precio: yup
       .number()
-      .typeError("Debe ser un valor numérico")
-      .required("El precio es obligatorio")
-      .positive("El precio debe ser positivo"),
+      .typeError(t("crearProducto.form.validations.precio.typeError"))
+      .required(t("crearProducto.form.validations.precio.required"))
+      .positive(t("crearProducto.form.validations.precio.positive")),
     categoria_id: yup
       .number()
-      .typeError("Selecciona una categoría válida")
-      .required("La categoría es obligatoria"),
+      .typeError(t("crearProducto.form.validations.categoria_id.typeError"))
+      .required(t("crearProducto.form.validations.categoria_id.required")),
     stock: yup
       .number()
-      .typeError("Debe ser un número entero")
-      .required("El stock es obligatorio")
-      .integer("El stock debe ser un número entero")
-      .min(0, "El stock no puede ser negativo"),
+      .typeError(t("crearProducto.form.validations.stock.typeError"))
+      .required(t("crearProducto.form.validations.stock.required"))
+      .integer(t("crearProducto.form.validations.stock.integer"))
+      .min(0, t("crearProducto.form.validations.stock.min")),
     ano_compatible: yup
       .number()
-      .typeError("Ingresa un año válido")
-      .min(1900, "El año debe ser posterior a 1900")
-      .max(new Date().getFullYear() + 1, "El año no puede ser en el futuro")
+      .typeError(t("crearProducto.form.validations.ano_compatible.typeError"))
+      .min(1900, t("crearProducto.form.validations.ano_compatible.min"))
+      .max(
+        new Date().getFullYear() + 1,
+        t("crearProducto.form.validations.ano_compatible.max")
+      )
       .nullable(),
-    marca_compatible: yup.string().max(50, "Máximo 50 caracteres"),
-    modelo_compatible: yup.string().max(50, "Máximo 50 caracteres"),
-    motor_compatible: yup.string().max(50, "Máximo 50 caracteres"),
+    marca_compatible: yup
+      .string()
+      .max(50, t("crearProducto.form.validations.marca_compatible.max")),
+    modelo_compatible: yup
+      .string()
+      .max(50, t("crearProducto.form.validations.modelo_compatible.max")),
+    motor_compatible: yup
+      .string()
+      .max(50, t("crearProducto.form.validations.motor_compatible.max")),
     certificaciones: yup.string(),
     estado: yup.boolean(),
     IdImpuesto: yup
       .number()
-      .typeError("Selecciona un impuesto válido")
+      .typeError(t("crearProducto.form.validations.idImpuesto.typeError"))
       .nullable()
       .transform((value, originalValue) =>
         originalValue === "" ? null : value
@@ -175,7 +186,7 @@ export function CrearProducto() {
       setImagenes([...imagenes, null]);
       setPreviewURLs([...previewURLs, null]);
     } else {
-      toast.error("Solo puedes subir hasta 3 imágenes por producto");
+      toast.error(t("crearProducto.form.toasts.maxImages"));
     }
   };
 
@@ -195,12 +206,12 @@ export function CrearProducto() {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Por favor selecciona un archivo de imagen válido");
+      toast.error(t("crearProducto.form.toasts.invalidImage"));
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      toast.error("La imagen no debe exceder los 2MB");
+      toast.error(t("crearProducto.form.toasts.imageTooLarge"));
       return;
     }
 
@@ -254,7 +265,9 @@ export function CrearProducto() {
         );
       }
 
-      toast.success("Producto creado exitosamente!", { duration: 5000 });
+      toast.success(t("crearProducto.form.toasts.successs"), {
+        duration: 5000,
+      });
       navigate("/productos");
     } catch (error) {
       console.error("Error al crear el producto:", error);
@@ -262,9 +275,13 @@ export function CrearProducto() {
       if (error.response) {
         errorMessage = error.response.data.message || "Error en el servidor";
       } else if (error.request) {
-        errorMessage = "No se recibió respuesta del servidor";
+        errorMessage = {
+          errorMessage: t("crearProducto.form.errors.errorMessage"),
+        };
       }
-      toast.error(`${errorMessage} al crear el producto`);
+      toast.error(
+        `${errorMessage.errorMessage} ${t("crearProducto.form.errors.createError")}`
+      );
     } finally {
       setLoading(false);
     }
@@ -467,10 +484,12 @@ export function CrearProducto() {
                               size="medium"
                               error={!!errors.IdImpuesto}
                             >
-                              <InputLabel>Impuesto aplicable</InputLabel>
+                              <InputLabel>
+                                {t("crearProducto.form.fields.tax")}
+                              </InputLabel>
                               <Select
                                 {...field}
-                                label="Impuesto aplicable"
+                                label={t("crearProducto.form.fields.tax")}
                                 value={field.value || ""}
                                 MenuProps={{
                                   PaperProps: {
@@ -499,10 +518,6 @@ export function CrearProducto() {
                                   {errors.IdImpuesto.message}
                                 </FormHelperText>
                               )}
-                              <FormHelperText>
-                                Selecciona el impuesto que aplica a este
-                                producto
-                              </FormHelperText>
                             </FormControl>
                           )}
                         />
@@ -529,12 +544,14 @@ export function CrearProducto() {
                           label={
                             <Box>
                               <Typography variant="h6">
-                                Estado del Producto
+                                {t("crearProducto.form.fields.productStatus")}
                               </Typography>
                               <Typography variant="body2" color="textSecondary">
                                 {watch("estado")
-                                  ? "Activo (visible en la tienda)"
-                                  : "Inactivo (no visible)"}
+                                  ? t("crearProducto.form.fields.statusActive")
+                                  : t(
+                                      "crearProducto.form.fields.statusInactive"
+                                    )}
                               </Typography>
                             </Box>
                           }
@@ -560,7 +577,7 @@ export function CrearProducto() {
                     <Box display="flex" alignItems="center">
                       <CarIcon sx={{ mr: 2, color: "primary.main" }} />
                       <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                        Compatibilidad del Producto
+                        {t("crearProducto.form.sections.compatibility")}
                       </Typography>
                     </Box>
                   </AccordionSummary>
@@ -582,7 +599,7 @@ export function CrearProducto() {
                         sx={{ mb: 2 }}
                       >
                         <BuildIcon sx={{ mr: 1, verticalAlign: "middle" }} />
-                        Especificaciones Técnicas
+                        {t("crearProducto.form.sections.technicalSpecs")}
                       </Typography>
 
                       <Grid container spacing={2}>
@@ -594,17 +611,13 @@ export function CrearProducto() {
                               <TextField
                                 {...field}
                                 fullWidth
-                                label="Año Compatible"
+                                label={t("crearProducto.form.fields.year")}
                                 type="number"
                                 variant="outlined"
                                 error={!!errors.ano_compatible}
                                 helperText={errors.ano_compatible?.message}
                                 size="medium"
-                                InputProps={{
-                                  startAdornment: (
-                                    <Typography sx={{ mr: 1 }}>Año:</Typography>
-                                  ),
-                                }}
+                                InputProps={{}}
                               />
                             )}
                           />
@@ -618,7 +631,7 @@ export function CrearProducto() {
                               <TextField
                                 {...field}
                                 fullWidth
-                                label="Marca Compatible"
+                                label={t("crearProducto.form.fields.brand")}
                                 variant="outlined"
                                 error={!!errors.marca_compatible}
                                 helperText={errors.marca_compatible?.message}
@@ -636,7 +649,7 @@ export function CrearProducto() {
                               <TextField
                                 {...field}
                                 fullWidth
-                                label="Modelo Compatible"
+                                label={t("crearProducto.form.fields.model")}
                                 variant="outlined"
                                 error={!!errors.modelo_compatible}
                                 helperText={errors.modelo_compatible?.message}
@@ -654,7 +667,7 @@ export function CrearProducto() {
                               <TextField
                                 {...field}
                                 fullWidth
-                                label="Motor Compatible"
+                                label={t("crearProducto.form.fields.engine")}
                                 variant="outlined"
                                 error={!!errors.motor_compatible}
                                 helperText={errors.motor_compatible?.message}
@@ -682,7 +695,7 @@ export function CrearProducto() {
                         sx={{ mb: 2 }}
                       >
                         <VerifiedIcon sx={{ mr: 1, verticalAlign: "middle" }} />
-                        Certificaciones y Estándares
+                        {t("crearProducto.form.sections.certifications")}
                       </Typography>
                       <Controller
                         name="certificaciones"
@@ -691,12 +704,13 @@ export function CrearProducto() {
                           <TextField
                             {...field}
                             fullWidth
-                            label="Certificaciones (separadas por comas)"
+                            label={t(
+                              "crearProducto.form.fields.certificationsInput"
+                            )}
                             variant="outlined"
                             multiline
                             rows={2}
                             size="medium"
-                            placeholder="Ej: ISO 9001, CE, RoHS"
                           />
                         )}
                       />
@@ -708,12 +722,14 @@ export function CrearProducto() {
                 <Accordion defaultExpanded elevation={0}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                      Etiquetas y Categorización
+                      {t("crearProducto.form.sections.labels")}
                     </Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <FormControl fullWidth size="medium">
-                      <InputLabel>Seleccione etiquetas</InputLabel>
+                      <InputLabel>
+                        {t("crearProducto.form.fields.tagLabel")}
+                      </InputLabel>
                       <Select
                         multiple
                         value={selectedEtiquetas}
@@ -724,7 +740,7 @@ export function CrearProducto() {
                           >
                             {selected.length === 0 ? (
                               <Typography variant="body2" color="textSecondary">
-                                Ninguna etiqueta seleccionada
+                                {t("crearProducto.form.fields.noNone")}
                               </Typography>
                             ) : (
                               selected.map((id) => {
@@ -761,9 +777,6 @@ export function CrearProducto() {
                           </MenuItem>
                         ))}
                       </Select>
-                      <FormHelperText sx={{ mt: 1 }}>
-                        Selecciona las etiquetas que describan tu producto
-                      </FormHelperText>
                     </FormControl>
                   </AccordionDetails>
                 </Accordion>
@@ -774,7 +787,7 @@ export function CrearProducto() {
                 <Accordion defaultExpanded elevation={0}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                      Imágenes del Producto
+                      {t("crearProducto.form.sections.images")}
                     </Typography>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -783,8 +796,7 @@ export function CrearProducto() {
                       color="textSecondary"
                       sx={{ mb: 3 }}
                     >
-                      Agrega imágenes del producto (máximo 3). Las imágenes
-                      deben ser en formato JPG o PNG y no exceder los 2MB.
+                      {t("crearProducto.form.fields.imageDescription")}
                     </Typography>
 
                     <Stack
@@ -868,7 +880,9 @@ export function CrearProducto() {
                               >
                                 <AddPhotoIcon fontSize="large" color="action" />
                                 <Typography variant="body1">
-                                  Haz clic para seleccionar una imagen
+                                  {t(
+                                    "crearProducto.form.fields.imagePlaceholder"
+                                  )}
                                 </Typography>
                                 <Typography
                                   variant="caption"
@@ -901,7 +915,7 @@ export function CrearProducto() {
                           }}
                         >
                           <Typography variant="body1" fontWeight={500}>
-                            Agregar Imagen
+                            {t("crearProducto.form.fields.addImage")}
                           </Typography>
                           <Typography variant="caption" color="textSecondary">
                             ({3 - previewURLs.length} restantes)
@@ -934,7 +948,7 @@ export function CrearProducto() {
                       fontWeight: "bold",
                     }}
                   >
-                    Cancelar
+                    {t("crearProducto.form.buttons.cancel")}
                   </Button>
 
                   <Box display="flex" alignItems="center">
@@ -951,7 +965,9 @@ export function CrearProducto() {
                         minWidth: 200,
                       }}
                     >
-                      {loading ? "Creando..." : "Guardar Producto"}
+                      {loading
+                        ? t("crearProducto.form.buttons.saving")
+                        : t("crearProducto.form.buttons.save")}
                     </Button>
                   </Box>
                 </Box>

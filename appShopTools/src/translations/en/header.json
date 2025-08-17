@@ -10,7 +10,8 @@
       "reseñas": "Reviews",
       "promociones": "Promotions",
       "pedidos": "Orders",
-      "productos_personalizados": "Custom Products"
+      "productos_personalizados": "Custom Products",
+      "productos_similares": "Similar Products"
     },
     "user": {
       "login": "Login",

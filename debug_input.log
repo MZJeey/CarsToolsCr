@@ -1,20 +1,6 @@
 stdClass Object
 (
-    [IdImpuesto] => 1
-    [estado] => 1
-    [certificaciones] => ISSO
-    [motor_compatible] => Todos
-    [modelo_compatible] => Todos
-    [marca_compatible] => Full
-    [ano_compatible] => 2025
-    [stock] => 9
-    [categoria_id] => 11
-    [precio] => 1000000
-    [descripcion] => Computadora programable para distintos vehiculos y motores.
-    [nombre] => ComputadoraProgramable
-    [etiquetas] => Array
-        (
-            [0] => 14
-        )
-
+    [usuario_id] => 4
+    [producto_id] => 6
+    [cantidad] => 3
 )

@@ -25,7 +25,7 @@ import {
 } from "@mui/icons-material";
 import ProductoService from "../../services/ProductoService";
 import Carousel from "react-material-ui-carousel";
-
+import { useCart } from "../../hooks/useCart";
 const ProductCard = styled(Card)(({ theme }) => ({
   height: "100%",
   display: "flex",
@@ -103,8 +103,8 @@ const SecondaryActionButton = styled(ActionButton)(({ theme }) => ({
 import { useTranslation } from "react-i18next";
 
 export function Lista() {
-
- const { t } = useTranslation("lista");
+  const { addItem } = useCart();
+  const { t } = useTranslation("lista");
 
   const theme = useTheme();
   const [productos, setProductos] = useState([]);
@@ -113,7 +113,7 @@ export function Lista() {
   const [success, setSuccess] = useState(null);
   const [favorites, setFavorites] = useState({});
   const BASE_URL =
-    import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
+  import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
 
   const formatPrecio = (precio) => {
     if (precio === null || precio === undefined) return "₡0.00";
@@ -397,7 +397,8 @@ export function Lista() {
                           producto.precio -
                             (producto.precio * producto.promocion.Descuento) /
                               100
-                        )}
+                        )}{" "}
+                        (IVA incluido)
                       </Typography>
                     </>
                   ) : (
@@ -406,7 +407,7 @@ export function Lista() {
                       fontWeight="bold"
                       sx={{ lineHeight: 1.1 }}
                     >
-                      {formatPrecio(producto.precio)}
+                      {formatPrecio(producto.precio)} (IVA incluido)
                     </Typography>
                   )}
                 </Box>
@@ -430,7 +431,7 @@ export function Lista() {
                 <PrimaryActionButton
                   variant="contained"
                   startIcon={<ShoppingCart />}
-                  onClick={() => handleAddToCart(producto)}
+                  onClick={() => addItem(producto)}
                 >
                   {t("lista.comprar")}
                 </PrimaryActionButton>

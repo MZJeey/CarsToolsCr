@@ -40,6 +40,9 @@ import i18n from "../src/i18n/i18n"; // Ajusta la ruta según tu proyecto
 import Promociones from "./components/Productos/promociones";
 import { patch } from "@mui/material";
 import { EditarProducto } from "./components/Productos/updateProducto";
+import ProductosSimilares from "./components/Productos/productoSimilares";
+import { Cart } from "./components/Carrito/carrito";
+
 // Asegúrate que la ruta sea correcta
 // Importa la configuración de i18n
 const rutas = createBrowserRouter([
@@ -103,6 +106,14 @@ const rutas = createBrowserRouter([
       {
         path: "/editar/:id",
         element: <EditarProducto />,
+      },
+      {
+        path: "/productos-similares",
+        element: <ProductosSimilares />,
+      },
+      {
+        path: "/carrito",
+        element: <Cart />,
       },
       {
         //Grupo 1S

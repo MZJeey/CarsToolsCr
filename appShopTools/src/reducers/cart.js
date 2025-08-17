@@ -1,80 +1,106 @@
+// Estado inicial del carrito (desde localStorage o vacío)
+export const cartInitialState = JSON.parse(localStorage.getItem("cart")) || [];
 
-export const cartInitialState = JSON.parse(localStorage.getItem('cart')) || [];
+// Acciones del carrito
 export const CART_ACTION = {
-  ADD_ITEM: 'ADD_ITEM',
-  REMOVE_ITEM: 'REMOVE_ITEM',
-  CLEAN_CART: 'CLEAN_CART',
+  ADD_ITEM: "ADD_ITEM",
+  REMOVE_ITEM: "REMOVE_ITEM",
+  CLEAN_CART: "CLEAN_CART",
+  UPDATE_QUANTITY: "UPDATE_QUANTITY",
 };
-//Actualizar localstorage
-export const updateLocalStorage = (state) => {
-  localStorage.setItem('cart', JSON.stringify(state));
-};
-// Función para calcular el subtotal de cada ítem
-const calculateSubtotal = (item) => item.price * item.days;
 
-// Función para calcular el total del carrito
+// Actualiza el localStorage con el estado del carrito
+export const updateLocalStorage = (state) => {
+  localStorage.setItem("cart", JSON.stringify(state));
+};
+
+// Calcula el subtotal de un ítem (precio con impuesto * cantidad)
+const calculateSubtotal = (item) => {
+  const precioConImpuesto = item.precio * (1 + (item.impuesto || 0));
+  return precioConImpuesto * item.cantidad;
+};
+
+// Calcula el total del carrito sumando los subtotales
 const calculateTotal = (cart) =>
   cart.reduce((acc, item) => acc + item.subtotal, 0);
 
-
-//Reducer carrito de compras
-//state: estado previo
-//retorna un nuevo estado
+// Reducer del carrito
 export const cartReducer = (state, action) => {
-  //type: acción a realizar para cambiar el estado
-  //payload: datos que necesita la acción
   const { type: actionType, payload: actionPayload } = action;
+
   switch (actionType) {
-    //Agregar un item a la compra
+    // Agregar un ítem al carrito
     case CART_ACTION.ADD_ITEM: {
       const { id } = actionPayload;
-      //Verificar sí existe
-      const movieInCart = state.findIndex((item) => item.id === id);
-      //Actualizar alquiler de pelicula existente
-      if (movieInCart >= 0) {
-        //structuredClone: copia a profundidad
+      const productIndex = state.findIndex((item) => item.id === id);
+
+      if (productIndex >= 0) {
+        // Si el producto ya existe, aumentamos la cantidad
         const newState = structuredClone(state);
-        //Aumentar días de alquiler
-        newState[movieInCart].days += 1;
-        // Calcula y actualiza el subtotal
-        newState[movieInCart].subtotal = calculateSubtotal(
-          newState[movieInCart],
+        newState[productIndex].cantidad += 1;
+        newState[productIndex].subtotal = calculateSubtotal(
+          newState[productIndex]
         );
-        updateLocalStorage(state);
+        updateLocalStorage(newState);
         return newState;
       }
-      //Nueva pelicula en la compra
+
+      // Si no existe, lo agregamos con cantidad 1
       const newState = [
         ...state,
         {
           ...actionPayload,
-          days: 1,
-          subtotal: calculateSubtotal({ ...actionPayload, days: 1 }),
+          cantidad: 1,
+          subtotal: calculateSubtotal({ ...actionPayload, cantidad: 1 }),
         },
       ];
       updateLocalStorage(newState);
-      
       return newState;
     }
-    //Eliminar item de la compra
+
+    // Eliminar un ítem del carrito
     case CART_ACTION.REMOVE_ITEM: {
       const { id } = actionPayload;
       const newState = state.filter((item) => item.id !== id);
-      updateLocalStorage(state);
+      updateLocalStorage(newState);
       return newState;
     }
-    //Eliminar el carrito completo
+
+    // Limpiar el carrito completo
     case CART_ACTION.CLEAN_CART: {
       updateLocalStorage([]);
       return [];
     }
+
+    // Actualizar cantidad de un ítem
+    case CART_ACTION.UPDATE_QUANTITY: {
+      const { id, cantidad } = actionPayload;
+      const newState = structuredClone(state);
+      const productIndex = newState.findIndex((item) => item.id === id);
+
+      if (productIndex >= 0) {
+        // Asegurar que la cantidad sea al menos 1
+        newState[productIndex].cantidad = Math.max(1, cantidad);
+        newState[productIndex].subtotal = calculateSubtotal(
+          newState[productIndex]
+        );
+        updateLocalStorage(newState);
+        return newState;
+      }
+
+      return state; // Si no encuentra el producto, no hace cambios
+    }
+
     default:
       return state;
   }
 };
+// Función para obtener el total del carrito
 export const getTotal = (state) => {
   return calculateTotal(state);
 };
+
+// Función para contar la cantidad total de ítems en el carrito
 export const getCountItems = (state) => {
-  return state.reduce((acc) => acc + 1, 0);
+  return state.reduce((acc, item) => acc + item.cantidad, 0);
 };

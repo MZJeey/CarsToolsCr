@@ -42,13 +42,56 @@
       },
       "errors": {
         "loadInitialData": "Error al cargar datos iniciales",
-        "createError": "Error al crear el producto"
+        "createError": "Error al crear el producto",
+        "errorMessage": "No se recibió respuesta del servidor"
       },
       "toasts": {
         "maxImages": "Solo puedes subir hasta 3 imágenes por producto",
         "invalidImage": "Por favor selecciona un archivo de imagen válido",
         "imageTooLarge": "La imagen no debe exceder los 2MB",
         "success": "Producto creado exitosamente!"
+      },
+      "validations": {
+        "nombre": {
+          "required": "Por favor ingrese un nombre para el producto",
+          "max": "El nombre no puede exceder los 100 caracteres"
+        },
+        "descripcion": {
+          "max": "La descripción es demasiado larga"
+        },
+        "precio": {
+          "typeError": "Debe ser un valor numérico",
+          "required": "El precio es obligatorio",
+          "positive": "El precio debe ser positivo"
+        },
+        "categoria_id": {
+          "typeError": "Seleccione una categoría válida",
+          "required": "La categoría es obligatoria"
+        },
+        "stock": {
+          "typeError": "Debe ser un número entero",
+          "required": "El stock es obligatorio",
+          "integer": "El stock debe ser un número entero",
+          "min": "El stock no puede ser negativo"
+        },
+        "ano_compatible": {
+          "typeError": "Ingrese un año válido",
+          "min": "El año debe ser posterior a 1900",
+          "max": "El año no puede ser en el futuro"
+        },
+        "marca_compatible": {
+          "max": "Máximo 50 caracteres"
+        },
+        "modelo_compatible": {
+          "max": "Máximo 50 caracteres"
+        },
+        "motor_compatible": {
+          "max": "Máximo 50 caracteres"
+        },
+        "idImpuesto": {
+          "typeError": "Seleccione un impuesto válido"
+         
+        }
         
       }
     }

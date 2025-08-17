@@ -43,7 +43,8 @@
       },
       "errors": {
         "loadInitialData": "Error loading initial data",
-        "createError": "Error creating product"
+        "createError": "Error creating product",
+        "errorMessage": "No response received from server"
       },
       "toasts": {
         "maxImages": "You can upload up to 3 images per product",
@@ -51,6 +52,48 @@
         "imageTooLarge": "Image must not exceed 2MB",
         "success": "Product created successfully!"
       }
+      ,
+      "validations": {
+      "nombre": {
+        "required": "Please enter a product name",
+        "max": "Name cannot exceed 100 characters"
+      },
+      "descripcion": {
+        "max": "Description is too long"
+      },
+      "precio": {
+        "typeError": "Must be a numeric value",
+        "required": "Price is required",
+        "positive": "Price must be positive"
+      },
+      "categoria_id": {
+        "typeError": "Select a valid category",
+        "required": "Category is required"
+      },
+      "stock": {
+        "typeError": "Must be an integer",
+        "required": "Stock is required",
+        "integer": "Stock must be a whole number",
+        "min": "Stock cannot be negative"
+      },
+      "ano_compatible": {
+        "typeError": "Enter a valid year",
+        "min": "Year must be after 1900",
+        "max": "Year cannot be in the future"
+      },
+      "marca_compatible": {
+        "max": "Maximum 50 characters"
+      },
+      "modelo_compatible": {
+        "max": "Maximum 50 characters"
+      },
+      "motor_compatible": {
+        "max": "Maximum 50 characters"
+      }
+    },
+    "idImpuesto": {
+      "typeError": "Insert a valid tax option"
+      
     }
   }
-}
+}}

@@ -5,6 +5,10 @@ class ImpuestoService {
   getImpuesto() {
     return axios.get(BASE_URL);
   }
+
+  getImpuestoById(id) {
+    return axios.get(`${BASE_URL}/${id}`);
+  }
 }
 
 export default new ImpuestoService();

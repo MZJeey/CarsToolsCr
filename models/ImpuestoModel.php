@@ -27,4 +27,16 @@ class ImpuestoModel
             handleException($e);
         }
     }
+    public function find($id)
+    {
+        try {
+            // Consulta SQL
+            $vSQL = "SELECT * FROM Impuesto WHERE IdImpuesto = $id";
+            // Ejecutar la consulta
+            $vResultado = $this->enlace->ExecuteSQL($vSQL);
+            return $vResultado;
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
 }

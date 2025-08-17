@@ -40,6 +40,7 @@ require_once "models/PedidoModel.php";
 require_once "models/CategoriaModel.php";
 require_once "models/ProductoPersonalizadoModel.php";
 require_once "models/ImpuestoModel.php";
+require_once "models/ProductosSimilaresModel.php";
 /***--- Agregar todos los controladores*/
 require_once "controllers/UserController.php";
 require_once "controllers/DirectorController.php";
@@ -77,6 +78,8 @@ require_once "controllers/CategoriaController.php";
 //Controller de producto personalizado
 require_once "controllers/ProductoPersonalizadoController.php";
 
+//Controller de producto similar
+require_once "controllers/ProductoSimilarController.php";
 //Enrutador
 require_once "routes/RoutesController.php";
 $index = new RoutesController();

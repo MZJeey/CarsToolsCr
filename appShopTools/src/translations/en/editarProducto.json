@@ -1,0 +1,128 @@
+{
+  "editProduct": {
+    "title": "Edit Product ",
+    "sections": {
+      "basicInfo": {
+        "title": "Basic Information",
+        "fields": {
+          "name": {
+            "label": "Product Name *",
+            "helperText": "Descriptive product name"
+          },
+          "category": {
+            "label": "Category *",
+            "helperText": "Select the main product category"
+          },
+          "tax": {
+            "label": "Applicable Tax *",
+            "noneOption": "None"
+          },
+          "description": {
+            "label": "Description",
+            "helperText": "Detailed product description"
+          }
+        }
+      },
+      "ratings": {
+        "title": "Product Rating",
+        "noRatings": "No ratings yet",
+        "basedOn": "Based on {count} {count, plural, one {review} other {reviews}}",
+        "noReviews": "No reviews yet"
+      },
+      "priceInventory": {
+        "title": "Price & Inventory",
+        "fields": {
+          "price": {
+            "label": "Price (₡) *",
+            "helperText": "Public sale price in colones"
+          },
+          "stock": {
+            "label": "Available Stock *",
+            "helperText": "Current inventory quantity"
+          },
+          "status": {
+            "label": "Product Status",
+            "active": "Active (visible in store)",
+            "inactive": "Inactive (not visible)"
+          }
+        }
+      },
+      "compatibility": {
+        "title": "Compatibility",
+        "fields": {
+          "year": {
+            "label": "Year",
+            "helperText": "Compatible vehicle year (optional)"
+          },
+          "brand": {
+            "label": "Brand",
+            "helperText": "Compatible vehicle brand (optional)"
+          },
+          "model": {
+            "label": "Model",
+            "helperText": "Compatible vehicle model (optional)"
+          },
+          "engine": {
+            "label": "Engine",
+            "helperText": "Compatible engine (optional)"
+          },
+          "certifications": {
+            "label": "Certifications",
+            "helperText": "Product certifications or standards"
+          }
+        }
+      },
+      "tags": {
+        "title": "Tags",
+        "placeholder": "Select tags...",
+        "helperText": "Select tags that describe your product"
+      },
+      "images": {
+        "title": "Product Images",
+        "mainImages": {
+          "title": "Main Images",
+          "add": "Add image",
+          "existing": "Existing",
+          "deleteTooltip": "Delete image"
+        },
+        "additionalImages": {
+          "title": "Additional Images",
+          "description": "You can upload extra images (JPEG, PNG, max 2MB each)",
+          "uploadButton": "Upload Images",
+          "addButton": "Add Image"
+        }
+      }
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "saving": "Updating...",
+      "deleteConfirm": {
+        "title": "Confirm deletion",
+        "message": "Are you sure you want to delete this image? It will be removed when you save changes.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      }
+    },
+    "validation": {
+      "required": "This field is required",
+      "maxChars": "Maximum {max} characters",
+      "invalidNumber": "Must be a valid number",
+      "positive": "Must be a positive number",
+      "integer": "Must be an integer",
+      "minValue": "Minimum value is {min}",
+      "maxValue": "Maximum value is {max}",
+      "yearRange": "Year must be between 1900 and {currentYear}"
+    },
+    "notifications": {
+      "loadingError": "Error loading product data",
+      "updateSuccess": "Product updated successfully",
+      "updateError": "Error updating product",
+      "imageError": "Only image files are allowed (JPEG, PNG, etc.)",
+      "imageSizeError": "Image must not exceed 2MB",
+      "maxImagesError": "Maximum {max} images per product",
+      "additionalImagesSuccess": "Additional images uploaded successfully",
+      "additionalImagesError": "Error uploading additional images"
+    }
+  }
+}

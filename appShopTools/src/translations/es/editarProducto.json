@@ -1,0 +1,129 @@
+{
+  "editProduct": {
+    "title": "Editar Producto ",
+    "sections": {
+      "basicInfo": {
+        "title": "Información Básica",
+        "fields": {
+          "name": {
+            "label": "Nombre del Producto *",
+            "helperText": "Nombre descriptivo del producto"
+          },
+          "category": {
+            "label": "Categoría *",
+            "helperText": "Selecciona la categoría principal del producto"
+          },
+          "tax": {
+            "label": "Impuesto aplicable *",
+            "noneOption": "Ninguno"
+          },
+          "description": {
+            "label": "Descripción",
+            "helperText": "Descripción detallada del producto"
+          }
+        }
+      },
+      "ratings": {
+        "title": "Valoración del Producto",
+        "noRatings": "Sin valoraciones",
+        "basedOn": "Basado en {count} {count, plural, one {reseña} other {reseñas}}",
+        "noReviews": "Aún no hay reseñas"
+      },
+      "priceInventory": {
+        "title": "Precio e Inventario",
+        "fields": {
+          "price": {
+            "label": "Precio (₡) *",
+            "helperText": "Precio de venta al público en colones"
+          },
+          "stock": {
+            "label": "Stock Disponible *",
+            "helperText": "Cantidad disponible en inventario"
+          },
+          "status": {
+            "label": "Estado del Producto",
+            "active": "Activo (visible en la tienda)",
+            "inactive": "Inactivo (no visible)"
+          }
+        }
+      },
+      "compatibility": {
+        "title": "Compatibilidad",
+        "fields": {
+          "year": {
+            "label": "Año",
+            "helperText": "Año del vehículo compatible (opcional)"
+          },
+          "brand": {
+            "label": "Marca",
+            "helperText": "Marca del vehículo compatible (opcional)"
+          },
+          "model": {
+            "label": "Modelo",
+            "helperText": "Modelo del vehículo compatible (opcional)"
+          },
+          "engine": {
+            "label": "Motor",
+            "helperText": "Motor compatible (opcional)"
+          },
+          "certifications": {
+            "label": "Certificaciones",
+            "helperText": "Certificaciones o estándares que cumple el producto"
+          }
+        }
+      },
+      "tags": {
+        "title": "Etiquetas",
+        "placeholder": "Seleccione etiquetas...",
+        "helperText": "Selecciona las etiquetas que describan tu producto"
+      },
+      "images": {
+        "title": "Imágenes del Producto",
+        "mainImages": {
+          "title": "Imágenes Principales",
+          "add": "Agregar imagen",
+          "existing": "Existente",
+          "deleteTooltip": "Eliminar imagen"
+        },
+        "additionalImages": {
+          "title": "Imágenes Adicionales",
+          "description": "Puedes subir imágenes extra (JPEG, PNG, máximo 2MB cada una)",
+          "uploadButton": "Subir Imágenes",
+          "addButton": "Agregar Imagen"
+        }
+      }
+    },
+    "actions": {
+      "cancel": "Cancelar",
+      "save": "Guardar Cambios",
+      "saving": "Actualizando...",
+      "deleteConfirm": {
+        "title": "Confirmar eliminación",
+        "message": "¿Estás seguro que deseas eliminar esta imagen? Se eliminará cuando guardes los cambios.",
+        "cancel": "Cancelar",
+        "confirm": "Eliminar"
+      }
+    },
+    "validation": {
+      "complete": "Complete todos los campos requeridos correctamente",
+      "required": "Este campo es obligatorio",
+      "maxChars": "Máximo {max} caracteres",
+      "invalidNumber": "Debe ser un número válido",
+      "positive": "Debe ser un número positivo",
+      "integer": "Debe ser un número entero",
+      "minValue": "El valor mínimo es {min}",
+      "maxValue": "El valor máximo es {max}",
+      "yearRange": "El año debe estar entre 1900 y {currentYear}"
+    },
+    "notifications": {
+      "loadingError": "Error al cargar datos del producto",
+      "updateSuccess": "Producto actualizado",
+      "updateError": "Error al actualizar el producto",
+      "imageError": "Solo se permiten archivos de imagen (JPEG, PNG, etc.)",
+      "imageSizeError": "La imagen no debe exceder los 2MB",
+      "maxImagesError": "Máximo {max} imágenes por producto",
+      "additionalImagesSuccess": "Imágenes adicionales subidas correctamente",
+      "additionalImagesError": "Error al subir imágenes adicionales"
+    }
+  }
+}

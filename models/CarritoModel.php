@@ -15,30 +15,59 @@ class CarritoModel
         return $this->enlace->executeSQL($sql);
     }
 
-    public function agregarProducto($usuario_id, $session_token, $producto_id, $cantidad)
+    public function agregarProducto($data)
     {
-        $sql = "INSERT INTO carrito (usuario_id, session_token, producto_id, cantidad, guardado_en)
-                VALUES ($usuario_id, '$session_token', $producto_id, $cantidad, NOW())
-                ON DUPLICATE KEY UPDATE cantidad = cantidad + $cantidad, guardado_en = NOW()";
+        try {
+            $sql = "INSERT INTO carrito (usuario_id, producto_id, cantidad, guardado_en)
+                VALUES ('$data->usuario_id', '$data->producto_id', '$data->cantidad', NOW())";
+
+            $carrito_id = $this->enlace->executeSQL_DML_last($sql);
+            $sqlUpdate = "UPDATE producto 
+                      SET stock = stock - $data->cantidad 
+                      WHERE id = '$data->producto_id' AND stock >= $data->cantidad";
+
+            $affectedRows = $this->enlace->executeSQL_DML($sqlUpdate);
+
+
+            return $this->get($carrito_id);
+        } catch (Exception $e) {
+            // Manejo de errores: puedes registrar el error y relanzarlo
+            error_log("Error en agregarProducto: " . $e->getMessage());
+            throw $e; // Relanza la excepción para que el controlador también pueda manejarla
+        }
+    }
+
+
+    public function actualizarCantidad($data)
+    {
+        $sql = "UPDATE carrito SET cantidad = {$data->cantidad}, guardado_en = NOW()
+                WHERE usuario_id = {$data->usuario_id} AND producto_id = {$data->producto_id}";
         return $this->enlace->executeSQL_DML($sql);
     }
 
-    public function actualizarCantidad($usuario_id, $producto_id, $cantidad)
+    public function eliminarProducto($data)
     {
-        $sql = "UPDATE carrito SET cantidad = $cantidad, guardado_en = NOW()
-                WHERE usuario_id = $usuario_id AND producto_id = $producto_id";
+        $sql = "DELETE FROM carrito WHERE usuario_id = {$data->usuario_id} AND producto_id = {$data->producto_id}";
         return $this->enlace->executeSQL_DML($sql);
     }
 
-    public function eliminarProducto($usuario_id, $producto_id)
+    public function vaciarCarrito($data)
     {
-        $sql = "DELETE FROM carrito WHERE usuario_id = $usuario_id AND producto_id = $producto_id";
+        $sql = "DELETE FROM carrito WHERE usuario_id = {$data->usuario_id}";
         return $this->enlace->executeSQL_DML($sql);
     }
-
-    public function vaciarCarrito($usuario_id)
+    public function get($id)
     {
-        $sql = "DELETE FROM carrito WHERE usuario_id = $usuario_id";
-        return $this->enlace->executeSQL_DML($sql);
+        try {
+            $sql = "SELECT * FROM carrito WHERE id = $id";
+            $result = $this->enlace->executeSQL($sql);
+            if (empty($result)) {
+                throw new Exception("Carrito no encontrado");
+            }
+            return $result[0];
+        } catch (Exception $e) {
+            error_log("Error en modelo CarritoModel::get - " . $e->getMessage());
+            return false;
+        }
     }
 }

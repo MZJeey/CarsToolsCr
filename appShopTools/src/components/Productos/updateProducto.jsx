@@ -49,6 +49,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import toast from "react-hot-toast";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { useTranslation } from "react-i18next";
 // Servicios
 import ProductoService from "../../services/ProductoService";
 import CategoriaService from "../../services/CategoriaService";
@@ -58,6 +59,7 @@ import ImpuestoService from "../../services/ImpuestoService";
 import ImageService from "../../services/ImageService";
 
 export function EditarProducto() {
+  const { t } = useTranslation("editarProducto");
   const navigate = useNavigate();
   const routeParams = useParams();
   const id = routeParams.id || null;
@@ -80,6 +82,9 @@ export function EditarProducto() {
   const [additionalImages, setAdditionalImages] = useState([]);
 
   // para las imagenes, se pone la coma para que sea como un array, existia algo pero con la coma lo opmití
+
+  //Refrescar las imagenes
+  const [imagenCargada, setImagenCargada] = useState(0);
 
   const [imagenesExistentes, setImagenesExistentes] = useState([]);
 
@@ -250,7 +255,7 @@ export function EditarProducto() {
           setPreviewURLs(existingImages.map((img) => img.url));
         }
       } catch (err) {
-        toast.error("Error al cargar datos del producto");
+        toast.error(t("editProducto.notifications.loadingError"));
         console.error(err);
       } finally {
         setLoading(false);
@@ -258,7 +263,7 @@ export function EditarProducto() {
     };
 
     fetchInitialData();
-  }, [id, reset]);
+  }, [id, reset, imagenCargada]);
 
   // Manejadores de eventos
   const handleEtiquetasChange = (event) => {
@@ -311,7 +316,7 @@ export function EditarProducto() {
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      toast.error("La imagen no debe exceder los 2MB");
+      toast.error(t("editProduct.notifications.imageSizeError"));
       return;
     }
 
@@ -330,9 +335,7 @@ export function EditarProducto() {
 
   const handleCancel = () => {
     if (isDirty) {
-      if (
-        window.confirm("¿Estás seguro de que deseas descartar los cambios?")
-      ) {
+      if (window.confirm(t("editProduct.actions.deleteConfirm.message"))) {
         navigate("/productos");
       }
     } else {
@@ -345,7 +348,7 @@ export function EditarProducto() {
       // Validar el esquema antes de enviar
       const isValid = await productoSchema.isValid(DataForm);
       if (!isValid) {
-        toast.error("Complete todos los campos requeridos correctamente");
+        toast.error(t("editProduct.validation.complete"));
         return;
       }
 
@@ -393,19 +396,21 @@ export function EditarProducto() {
       console.log("Respuesta del servicio de actualización:", response);
 
       if (response?.error) {
-        toast.error(response.message || "Error al actualizar el producto---->");
+        toast.error(
+          response.message || t("editProduct.notifications.updateError")
+        );
         return;
       }
 
       console.log("Producto actualizado correctamente:", response);
-      toast.success("Producto actualizado");
+      toast.success(t("editProduct.notifications.updateSuccess"));
 
       setTimeout(() => {
         navigate("/productos");
       }, 1000);
     } catch (error) {
       console.error("Error:", error.response?.data || error.message || error);
-      toast.error("Error al actualizar el producto Producto Model");
+      toast.error(t("editProduct.notifications.updateError"));
     }
   };
 
@@ -415,12 +420,12 @@ export function EditarProducto() {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Solo se permiten archivos de imagen (JPEG, PNG, etc.)");
+      toast.error(t("editProduct.notifications.imageError"));
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      toast.error("La imagen no debe exceder los 2MB");
+      toast.error(t("editProduct.notifications.imageSizeError"));
       return;
     }
 
@@ -437,6 +442,7 @@ export function EditarProducto() {
 
   const handleUploadAdditionalImages = async () => {
     try {
+      setImagenCargada(1);
       if (additionalImages.length === 0) return;
 
       // Mostrar loading mientras se suben
@@ -454,7 +460,7 @@ export function EditarProducto() {
         })
       );
 
-      toast.success("Imágenes adicionales subidas correctamente");
+      toast.success(t("editProduct.notifications.additionalImagesSuccess"));
       setAdditionalImages([]); // Limpiar el estado después de subir
 
     
@@ -465,7 +471,7 @@ export function EditarProducto() {
       nuevasImagenes; // Actualiza la vista sin recargar
     } catch (error) {
       console.error("Error al subir imágenes adicionales:", error);
-      toast.error("Error al subir imágenes adicionales");
+      toast.error(t("editProduct.notifications.additionalImagesError"));
     } finally {
       setLoading(false);
     }
@@ -484,23 +490,24 @@ export function EditarProducto() {
         open={deleteDialog.open}
         onClose={() => setDeleteDialog({ open: false, index: null })}
       >
-        <DialogTitle>Confirmar eliminación</DialogTitle>
+        <DialogTitle>
+          {t("editProduct.actions.deleteConfirm.title")}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro que deseas eliminar esta imagen? Se eliminará cuando
-            guardes los cambios.
+            {t("editProduct.actions.deleteConfirm.message")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialog({ open: false, index: null })}>
-            Cancelar
+            {t("editProduct.actions.deleteConfirm.cancel")}
           </Button>
           <Button
             onClick={() => handleRemoveImageClick(deleteDialog.index)}
             color="error"
             autoFocus
           >
-            Eliminar
+            {t("editProduct.actions.deleteConfirm.confirm")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -520,7 +527,7 @@ export function EditarProducto() {
           </IconButton>
         </Tooltip>
         <Typography variant="h4" fontWeight="bold" color="primary">
-          Editar Producto #{id}
+          {t("editProduct.title", { id })}
         </Typography>
       </Box>
 
@@ -533,7 +540,7 @@ export function EditarProducto() {
         }}
       >
         <CardHeader
-          title="Editar Producto"
+          title={t("editProduct.title")}
           titleTypographyProps={{ variant: "h5", fontWeight: 600 }}
           sx={{
             backgroundColor: "background.paper",
@@ -557,7 +564,7 @@ export function EditarProducto() {
                     gutterBottom
                     sx={{ mb: 3, fontWeight: 600, color: "text.primary" }}
                   >
-                    Información Básica
+                    {t("editProduct.sections.basicInfo.title")}
                   </Typography>
 
                   <Grid container spacing={2}>
@@ -569,12 +576,16 @@ export function EditarProducto() {
                           <TextField
                             {...field}
                             fullWidth
-                            label="Nombre del Producto *"
+                            label={t(
+                              "editProduct.sections.basicInfo.fields.name.label"
+                            )}
                             variant="outlined"
                             error={!!errors.nombre}
                             helperText={
                               errors.nombre?.message ||
-                              "Nombre descriptivo del producto"
+                              t(
+                                "editProduct.sections.basicInfo.fields.name.helperText"
+                              )
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -593,10 +604,16 @@ export function EditarProducto() {
                             error={!!errors.categoria_id}
                             size="small"
                           >
-                            <InputLabel>Categoría *</InputLabel>
+                            <InputLabel>
+                              {t(
+                                "editProduct.sections.basicInfo.fields.category.label"
+                              )}
+                            </InputLabel>
                             <Select
                               {...field}
-                              label="Categoría *"
+                              label={t(
+                                "editProduct.sections.basicInfo.fields.category.label"
+                              )}
                               MenuProps={{
                                 PaperProps: { style: { maxHeight: 300 } },
                               }}
@@ -609,7 +626,9 @@ export function EditarProducto() {
                             </Select>
                             <FormHelperText>
                               {errors.categoria_id?.message ||
-                                "Selecciona la categoría principal del producto"}
+                                t(
+                                  "editProduct.sections.basicInfo.fields.category.helperText"
+                                )}
                             </FormHelperText>
                           </FormControl>
                         )}
@@ -626,10 +645,16 @@ export function EditarProducto() {
                             size="medium"
                             error={!!errors.IdImpuesto}
                           >
-                            <InputLabel>Impuesto aplicable *</InputLabel>
+                            <InputLabel>
+                              {t(
+                                "editProduct.sections.basicInfo.fields.tax.label"
+                              )}
+                            </InputLabel>
                             <Select
                               {...field}
-                              label="Impuesto aplicable *"
+                              label={t(
+                                "editProduct.sections.basicInfo.fields.tax.label"
+                              )}
                               value={field.value || ""}
                               MenuProps={{
                                 PaperProps: {
@@ -640,7 +665,11 @@ export function EditarProducto() {
                               }}
                             >
                               <MenuItem value="">
-                                <em>Ninguno</em>
+                                <em>
+                                  {t(
+                                    "editProduct.sections.basicInfo.fields.tax.noneOption"
+                                  )}
+                                </em>
                               </MenuItem>
                               {impuestos.map((impuesto) => (
                                 <MenuItem
@@ -671,12 +700,14 @@ export function EditarProducto() {
                           <TextField
                             {...field}
                             fullWidth
-                            label="Descripción"
+                            label={t(
+                              "editProduct.sections.basicInfo.fields.description.label"
+                            )}
                             multiline
                             rows={4}
                             variant="outlined"
                             error={!!errors.descripcion}
-                            helperText={`${field.value?.length || 0}/500 - Descripción detallada del producto`}
+                            helperText={`${field.value?.length || 0}/500 - ${t("editProduct.sections.basicInfo.fields.description.helperText")}`}
                             inputProps={{ maxLength: 500 }}
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -688,7 +719,7 @@ export function EditarProducto() {
 
                   <Grid item xs={12}>
                     <Typography variant="subtitle1" gutterBottom>
-                      Valoración del Producto
+                      {t("editProduct.sections.ratings.title")}
                     </Typography>
                     <Box display="flex" alignItems="center">
                       <Rating
@@ -700,13 +731,15 @@ export function EditarProducto() {
                       <Typography variant="body1">
                         {promedioValoraciones
                           ? `${promedioValoraciones.toFixed(1)}/5`
-                          : "Sin valoraciones"}
+                          : t("editProduct.sections.ratings.noRatings")}
                       </Typography>
                     </Box>
                     <Typography variant="caption" color="textSecondary">
                       {valoraciones.length > 0
-                        ? `Basado en ${valoraciones.length} ${valoraciones.length === 1 ? "reseña" : "reseñas"}`
-                        : "Aún no hay reseñas"}
+                        ? t("editProduct.sections.ratings.basedOn", {
+                            count: valoraciones.length,
+                          })
+                        : t("editProduct.sections.ratings.noReviews")}
                     </Typography>
                   </Grid>
                 </Paper>
@@ -722,7 +755,7 @@ export function EditarProducto() {
                     gutterBottom
                     sx={{ mb: 3, fontWeight: 600, color: "text.primary" }}
                   >
-                    Precio e Inventario
+                    {t("editProduct.sections.priceInventory.title")}
                   </Typography>
 
                   <Grid container spacing={2}>
@@ -734,7 +767,9 @@ export function EditarProducto() {
                           <TextField
                             {...field}
                             fullWidth
-                            label="Precio (₡) *"
+                            label={t(
+                              "editProduct.sections.priceInventory.fields.price.label"
+                            )}
                             type="number"
                             variant="outlined"
                             inputProps={{ step: "0.01", min: "0" }}
@@ -748,7 +783,9 @@ export function EditarProducto() {
                             error={!!errors.precio}
                             helperText={
                               errors.precio?.message ||
-                              "Precio de venta al público en colones"
+                              t(
+                                "editProduct.sections.priceInventory.fields.price.helperText"
+                              )
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -765,14 +802,18 @@ export function EditarProducto() {
                           <TextField
                             {...field}
                             fullWidth
-                            label="Stock Disponible *"
+                            label={t(
+                              "editProduct.sections.priceInventory.fields.stock.label"
+                            )}
                             type="number"
                             variant="outlined"
                             inputProps={{ min: "0" }}
                             error={!!errors.stock}
                             helperText={
                               errors.stock?.message ||
-                              "Cantidad disponible en inventario"
+                              t(
+                                "editProduct.sections.priceInventory.fields.stock.helperText"
+                              )
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -800,11 +841,19 @@ export function EditarProducto() {
                         }
                         label={
                           <Box>
-                            <Typography>Estado del Producto</Typography>
+                            <Typography>
+                              {t(
+                                "editProduct.sections.priceInventory.fields.status.label"
+                              )}
+                            </Typography>
                             <Typography variant="caption" color="textSecondary">
                               {watch("estado")
-                                ? "Activo (visible en la tienda)"
-                                : "Inactivo (no visible)"}
+                                ? t(
+                                    "editProduct.sections.priceInventory.fields.status.active"
+                                  )
+                                : t(
+                                    "editProduct.sections.priceInventory.fields.status.inactive"
+                                  )}
                             </Typography>
                           </Box>
                         }
@@ -830,7 +879,7 @@ export function EditarProducto() {
                     gutterBottom
                     sx={{ mb: 3, fontWeight: 600, color: "text.primary" }}
                   >
-                    Compatibilidad
+                    {t("editProduct.sections.compatibility.title")}
                   </Typography>
 
                   <Grid container spacing={2}>
@@ -842,13 +891,17 @@ export function EditarProducto() {
                           <TextField
                             {...field}
                             fullWidth
-                            label="Año"
+                            label={t(
+                              "editProduct.sections.compatibility.fields.year.label"
+                            )}
                             type="number"
                             variant="outlined"
                             error={!!errors.ano_compatible}
                             helperText={
                               errors.ano_compatible?.message ||
-                              "Año del vehículo compatible (opcional)"
+                              t(
+                                "editProduct.sections.compatibility.fields.year.helperText"
+                              )
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -864,12 +917,16 @@ export function EditarProducto() {
                           <TextField
                             {...field}
                             fullWidth
-                            label="Marca"
+                            label={t(
+                              "editProduct.sections.compatibility.fields.brand.label"
+                            )}
                             variant="outlined"
                             error={!!errors.marca_compatible}
                             helperText={
                               errors.marca_compatible?.message ||
-                              "Marca del vehículo compatible (opcional)"
+                              t(
+                                "editProduct.sections.compatibility.fields.brand.helperText"
+                              )
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -885,12 +942,16 @@ export function EditarProducto() {
                           <TextField
                             {...field}
                             fullWidth
-                            label="Modelo"
+                            label={t(
+                              "editProduct.sections.compatibility.fields.model.label"
+                            )}
                             variant="outlined"
                             error={!!errors.modelo_compatible}
                             helperText={
                               errors.modelo_compatible?.message ||
-                              "Modelo del vehículo compatible (opcional)"
+                              t(
+                                "editProduct.sections.compatibility.fields.model.helperText"
+                              )
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -906,12 +967,16 @@ export function EditarProducto() {
                           <TextField
                             {...field}
                             fullWidth
-                            label="Motor"
+                            label={t(
+                              "editProduct.sections.compatibility.fields.engine.label"
+                            )}
                             variant="outlined"
                             error={!!errors.motor_compatible}
                             helperText={
                               errors.motor_compatible?.message ||
-                              "Motor compatible (opcional)"
+                              t(
+                                "editProduct.sections.compatibility.fields.engine.helperText"
+                              )
                             }
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -927,12 +992,14 @@ export function EditarProducto() {
                           <TextField
                             {...field}
                             fullWidth
-                            label="Certificaciones"
+                            label={t(
+                              "editProduct.sections.compatibility.fields.certifications.label"
+                            )}
                             variant="outlined"
                             multiline
                             rows={2}
                             error={!!errors.certificaciones}
-                            helperText={`${field.value?.length || 0}/200 - Certificaciones o estándares que cumple el producto`}
+                            helperText={`${field.value?.length || 0}/200 - ${t("editProduct.sections.compatibility.fields.certificaciones.helperText")}`}
                             inputProps={{ maxLength: 200 }}
                             FormHelperTextProps={{ sx: { ml: 0 } }}
                             size="small"
@@ -959,11 +1026,13 @@ export function EditarProducto() {
                     gutterBottom
                     sx={{ mb: 3, fontWeight: 600, color: "text.primary" }}
                   >
-                    Etiquetas
+                    {t("editProduct.sections.tags.title")}
                   </Typography>
 
                   <FormControl fullWidth size="small">
-                    <InputLabel>Etiquetas del producto</InputLabel>
+                    <InputLabel>
+                      {t("editProduct.sections.tags.placeholder")}
+                    </InputLabel>
                     <Select
                       multiple
                       value={selectedEtiquetas}
@@ -974,7 +1043,7 @@ export function EditarProducto() {
                         >
                           {selected.length === 0 ? (
                             <Typography variant="caption" color="textSecondary">
-                              Seleccione etiquetas...
+                              {t("editProduct.sections.tags.helperText")}
                             </Typography>
                           ) : (
                             selected.map((id) => {
@@ -1011,7 +1080,7 @@ export function EditarProducto() {
                       ))}
                     </Select>
                     <FormHelperText>
-                      Selecciona las etiquetas que describan tu producto
+                      {t("editProduct.sections.tags.helperText")}
                     </FormHelperText>
                   </FormControl>
                 </Paper>
@@ -1027,7 +1096,7 @@ export function EditarProducto() {
                     gutterBottom
                     sx={{ mb: 3, fontWeight: 600, color: "text.primary" }}
                   >
-                    Imágenes del Producto
+                    {t("editProduct.sections.images.title")}
                   </Typography>
 
                   <Typography
@@ -1083,7 +1152,11 @@ export function EditarProducto() {
                                   e.target.src = "/placeholder-image.jpg";
                                 }}
                               />
-                              <Tooltip title="Eliminar imagen">
+                              <Tooltip
+                                title={t(
+                                  "editProduct.sections.images.mainImages.deleteTooltip"
+                                )}
+                              >
                                 <IconButton
                                   size="small"
                                   onClick={() =>
@@ -1131,7 +1204,9 @@ export function EditarProducto() {
                                   variant="caption"
                                   textAlign="center"
                                 >
-                                  Agregar imagen
+                                  {t(
+                                    "editProduct.sections.images.mainImages.add"
+                                  )}
                                 </Typography>
                               </Box>
                             </>
@@ -1189,7 +1264,7 @@ export function EditarProducto() {
                     gutterBottom
                     sx={{ mb: 3, fontWeight: 600, color: "text.primary" }}
                   >
-                    Imágenes Adicionales
+                    {t("editProduct.sections.images.additionalImages.title")}
                   </Typography>
 
                   <Typography
@@ -1197,7 +1272,9 @@ export function EditarProducto() {
                     color="textSecondary"
                     sx={{ mb: 2 }}
                   >
-                    Puedes subir imágenes extra (JPEG, PNG, máximo 2MB cada una)
+                    {t(
+                      "editProduct.sections.images.additionalImages.description"
+                    )}
                   </Typography>
 
                   <Stack
@@ -1234,7 +1311,11 @@ export function EditarProducto() {
                             objectFit: "cover",
                           }}
                         />
-                        <Tooltip title="Eliminar imagen">
+                        <Tooltip
+                          title={t(
+                            "editProduct.sections.images.mainImages.deleteTooltip"
+                          )}
+                        >
                           <IconButton
                             size="small"
                             onClick={() => handleRemoveAdditionalImage(index)}
@@ -1255,7 +1336,11 @@ export function EditarProducto() {
                       </Box>
                     ))}
 
-                    <Tooltip title="Agregar imagen adicional">
+                    <Tooltip
+                      title={t(
+                        "editProduct.sections.images.additionalImage.uploadButton"
+                      )}
+                    >
                       <Button
                         variant="outlined"
                         component="label"
@@ -1272,7 +1357,7 @@ export function EditarProducto() {
                       >
                         <AddPhotoIcon color="action" sx={{ mb: 1 }} />
                         <Typography variant="caption">
-                          Agregar Imagen
+                          {t("editProduct.sections.images.mainImages.add")}
                         </Typography>
                         <input
                           type="file"
@@ -1293,7 +1378,9 @@ export function EditarProducto() {
                       disabled={additionalImages.length === 0}
                       startIcon={<CloudUploadIcon />}
                     >
-                      Subir Imágenes
+                      {t(
+                        "editProduct.sections.images.additionalImages.uploadButton"
+                      )}
                     </Button>
                   </Box>
                 </Paper>
@@ -1322,7 +1409,7 @@ export function EditarProducto() {
                       minWidth: 150,
                     }}
                   >
-                    Cancelar
+                    {t("editProduct.actions.cancel")}
                   </Button>
 
                   <Button
@@ -1345,10 +1432,10 @@ export function EditarProducto() {
                           color="inherit"
                           sx={{ mr: 1 }}
                         />
-                        Actualizando...
+                        {t("editProduct.actions.saving.saving")}
                       </>
                     ) : (
-                      "Guardar Cambios"
+                      t("editProduct.actions.save")
                     )}
                   </Button>
                 </Box>
