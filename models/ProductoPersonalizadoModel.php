@@ -163,7 +163,7 @@ public function crear($pedido_id, $productosPersonalizados)
 
 
 
-
+// ========== NUEVO ==========
 public function listarProductosBase()
 {
     $sql = "
