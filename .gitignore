@@ -1,4 +1,8 @@
 #Composer
+# Logs
+debug_input.log
+/Log/debug_input.log
+
 /vendor/
 composer.lock
 /Log/debug_input.log
