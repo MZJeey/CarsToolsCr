@@ -19,9 +19,8 @@ import PedidoService from "../../services/PedidoService";
 import ProductoService from "../../services/ProductoService";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
 
-const CrearPedidoModal = ({ open, refreshPedidos, onClose }) => {
+const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
   const [userInfo, setUserInfo] = useState(null);
   const { t } = useTranslation("crearPedido");
   const [productos, setProductos] = useState([]);
@@ -34,38 +33,38 @@ const CrearPedidoModal = ({ open, refreshPedidos, onClose }) => {
 
   useEffect(() => {
     const fetchProductos = async () => {
-      try {
-        const res = await ProductoService.getProductos();
-        setProductos(res.data);
-      } catch (error) {
-        console.error("Error al obtener productos:", error);
-        toast.error("Error al cargar los productos");
-      }
+      const res = await ProductoService.getProductos();
+      setProductos(res.data);
     };
     fetchProductos();
   }, []);
 
+  // Reiniciar el pedido cada vez que se abre el modal y obtener usuario
   useEffect(() => {
-    const loadUserData = () => {
+    if (open) {
       const userFromStorage = localStorage.getItem("userData");
       if (!userFromStorage) {
         toast.error("Debes iniciar sesión para continuar");
+        handleClose();
         return;
       }
+
       try {
         const userData = JSON.parse(userFromStorage);
         setUserInfo(userData);
-        setPedido((prev) => ({
-          ...prev,
-          usuario_id: userData.id,
-        }));
+        setPedido({
+          usuario_id: userData.id, // Asegúrate de que el objeto userData tenga el id
+          direccion_envio: "",
+          estado: "en_proceso",
+          detalles: [{ producto_id: "", cantidad: 1 }],
+        });
       } catch (error) {
         console.error("Error parsing user data", error);
         toast.error("Error al cargar la información del usuario");
+        handleClose();
       }
-    };
-    loadUserData();
-  }, []);
+    }
+  }, [open, handleClose]);
 
   const handleDetalleChange = (index, field, value) => {
     const updatedDetalles = [...pedido.detalles];
@@ -81,69 +80,53 @@ const CrearPedidoModal = ({ open, refreshPedidos, onClose }) => {
   };
 
   const eliminarProducto = (index) => {
-    if (pedido.detalles.length <= 1) {
-      toast.error("Debe haber al menos un producto en el pedido");
-      return;
-    }
     const detallesFiltrados = pedido.detalles.filter((_, i) => i !== index);
     setPedido({ ...pedido, detalles: detallesFiltrados });
   };
 
-  const reiniciarFormulario = () => {
-    setPedido({
-      usuario_id: userInfo?.id || "",
-      direccion_envio: "",
-      estado: "en_proceso",
-      detalles: [{ producto_id: "", cantidad: 1 }],
-    });
-  };
-
-  const handleCancelar = () => {
-    reiniciarFormulario();
-    onClose(); // Esto asegura que el modal se cierre
-  };
-
   const handleGuardar = async () => {
     try {
-      if (!pedido.direccion_envio.trim()) {
-        toast.error("Debe ingresar una dirección de envío válida");
+      // Validar que todos los campos estén completos
+      if (!pedido.direccion_envio) {
+        toast.error("Debe ingresar una dirección de envío");
         return;
       }
 
+      // Validar que todos los productos tengan un producto seleccionado
       const hasEmptyProducts = pedido.detalles.some(
-        (detalle) => !detalle.producto_id || detalle.cantidad <= 0
+        (detalle) => !detalle.producto_id
       );
       if (hasEmptyProducts) {
-        toast.error(
-          "Todos los productos deben estar seleccionados con cantidades válidas"
-        );
+        toast.error("Todos los productos deben estar seleccionados");
         return;
       }
 
+      // Preparar los datos para enviar al backend
       const pedidoData = {
         usuario_id: pedido.usuario_id,
-        direccion_envio: pedido.direccion_envio.trim(),
+        direccion_envio: pedido.direccion_envio,
         estado: pedido.estado,
         productos: pedido.detalles.map((detalle) => ({
           producto_id: detalle.producto_id,
-          cantidad: parseInt(detalle.cantidad),
+          cantidad: detalle.cantidad,
         })),
       };
-      await PedidoService.crearPedido(pedidoData);
 
+      const response = await PedidoService.crearPedido(pedidoData);
+      
+      localStorage.setItem("ultimoPedidoId", response.data.id);
+      console.log("Último pedido creado:", response.data.id);
       toast.success("Pedido creado con éxito");
       refreshPedidos();
-
-      reiniciarFormulario();
-      onClose();
+      handleClose();
     } catch (error) {
-      console.error("Error al guardar el pedido:", error);
-      toast.error(error.response?.data?.message || "Error al crear el pedido");
+      console.error("Error al guardar el pedido", error);
+      toast.error("Error al crear el pedido");
     }
   };
 
   return (
-    <Dialog open={open} maxWidth="md" fullWidth onClose={handleCancelar}>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle sx={{ backgroundColor: "#438892", color: "white" }}>
         {t("crearPedidoModal.titulo")}
       </DialogTitle>
@@ -178,13 +161,7 @@ const CrearPedidoModal = ({ open, refreshPedidos, onClose }) => {
           </Typography>
 
           {pedido.detalles.map((detalle, index) => (
-            <Grid
-              container
-              spacing={2}
-              key={index}
-              alignItems="center"
-              sx={{ mb: 2 }}
-            >
+            <Grid container spacing={2} key={index} alignItems="center">
               <Grid item xs={6}>
                 <TextField
                   select
@@ -201,7 +178,7 @@ const CrearPedidoModal = ({ open, refreshPedidos, onClose }) => {
                   </MenuItem>
                   {productos.map((p) => (
                     <MenuItem key={p.id} value={p.id}>
-                      {p.nombre} - ${p.precio}
+                      {p.nombre}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -213,19 +190,20 @@ const CrearPedidoModal = ({ open, refreshPedidos, onClose }) => {
                   label="Cantidad"
                   value={detalle.cantidad}
                   onChange={(e) =>
-                    handleDetalleChange(
-                      index,
-                      "cantidad",
-                      Math.max(1, parseInt(e.target.value) || 1)
-                    )
+                    handleDetalleChange(index, "cantidad", e.target.value)
                   }
                   inputProps={{ min: 1 }}
                   required
                 />
               </Grid>
               <Grid item xs={2}>
-                <IconButton onClick={() => eliminarProducto(index)}>
-                  <DeleteIcon color="error" />
+                <IconButton
+                  onClick={() => eliminarProducto(index)}
+                  disabled={pedido.detalles.length === 1}
+                >
+                  <DeleteIcon
+                    color={pedido.detalles.length === 1 ? "disabled" : "error"}
+                  />
                 </IconButton>
               </Grid>
             </Grid>
@@ -235,45 +213,21 @@ const CrearPedidoModal = ({ open, refreshPedidos, onClose }) => {
             startIcon={<AddCircleIcon />}
             sx={{ mt: 2 }}
             onClick={agregarProducto}
-            variant="outlined"
           >
             {t("crearPedidoModal.botones.anadirProducto.texto")}
           </Button>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={reiniciarFormulario} color="secondary">
-          Reiniciar
-        </Button>
-        <Button onClick={handleCancelar}>
+        <Button onClick={handleClose}>
           {t("crearPedidoModal.botones.cancelar")}
         </Button>
-        <Button
-          onClick={handleGuardar}
-          variant="contained"
-          color="primary"
-          disabled={!pedido.direccion_envio.trim()}
-        >
+        <Button onClick={handleGuardar} variant="contained" color="primary">
           {t("crearPedidoModal.botones.crearPedido")}
-        </Button>
-        <Button
-          component={Link}
-          to={`/productos-personalizados/${pedido.id}`}
-          variant="outlined"
-          color="primary"
-          sx={{ ml: 1 }}
-        >
-          Agregar Producto Personalizado
         </Button>
       </DialogActions>
     </Dialog>
   );
-};
-
-CrearPedidoModal.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  refreshPedidos: PropTypes.func.isRequired,
 };
 
 export default CrearPedidoModal;

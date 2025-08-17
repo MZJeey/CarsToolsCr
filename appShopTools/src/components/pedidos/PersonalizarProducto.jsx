@@ -73,7 +73,6 @@ const PersonalizarProductoModal = ({
   productosBase = [], // opcional: si ya te vienen por props
   onConfirm,
   iva = 0.13,
-  pedidoId,
 }) => {
   // Listas de opciones (puedes moverlas a props si lo prefieres)
   const opcionesColor = [
@@ -225,6 +224,10 @@ const PersonalizarProductoModal = ({
     try {
       if (!productoBase) return;
 
+      const pedidoId = localStorage.getItem("ultimoPedidoId");
+      if (!pedidoId) {
+        throw new Error("No se encontró un pedido activo");
+      }
       // 1) Construir opciones
       const opciones = [
         {
@@ -272,7 +275,7 @@ const PersonalizarProductoModal = ({
       // 4) Línea final (nota: subtotal ya va con IVA)
       const linea = {
         producto_id: Number(productoBase.id),
-        pedidoId: Number(pedidoId),
+        pedido_id: Number(pedidoId),
         nombre_personalizado: `${productoBase.nombre} - Personalizado`.slice(
           0,
           100

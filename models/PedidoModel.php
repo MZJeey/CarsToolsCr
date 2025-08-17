@@ -63,7 +63,10 @@ class PedidoModel
             }
 
 
-            return $this->obtenerDetalles($pedidoId);
+            return [
+                "id" => $pedidoId,
+                "detalles" => $this->obtenerDetalles($pedidoId)
+            ];
         } catch (Exception $e) {
             handleException($e);
             return false;

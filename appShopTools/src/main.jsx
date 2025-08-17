@@ -101,7 +101,7 @@ const rutas = createBrowserRouter([
       },
 
       {
-        path: "/productos-personalizados/:id",
+        path: "/productos-personalizados",
         element: <TodosProductosPersonalizados />,
       },
       {

@@ -130,11 +130,15 @@ const TodosProductosPersonalizados = () => {
   // 👉 Recibe la "línea" desde el modal y guarda
   const handleConfirmPersonalizado = async (linea) => {
     try {
-      await ProductoPersonalizadoService.crearProductosPersonalizados(id, [
-        linea,
-      ]);
+      const ultimoPedidoId = localStorage.getItem("ultimoPedidoId");
+      console.log("ID recuperado:", ultimoPedidoId);
 
-      console.log("Personalizado guardado", id, linea);
+      await ProductoPersonalizadoService.crearProductosPersonalizados(
+        ultimoPedidoId,
+        [linea]
+      );
+
+      console.log("Personalizado guardado", ultimoPedidoId, linea);
       handleClosePersonalizar();
       cargarLista();
     } catch (e) {
