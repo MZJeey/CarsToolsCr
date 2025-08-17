@@ -40,6 +40,25 @@ obtenerTodos() {
   return axios.post(`${BASE_URL}/getAll`);
 }
 
+/**
+ * Lista de productos base para el modal (id, nombre, precio_base, %IVA, primera imagen)
+ * @returns {Promise}
+ */
+obtenerProductosBase() {
+  return axios.post(`${BASE_URL}/productos_base`);
+}
+
+/**
+ * Detalle de un producto base (todas las imágenes, precio_base, %IVA)
+ * @param {number} productoId
+ * @returns {Promise}
+ */
+obtenerDetalleProductoBase(productoId) {
+  return axios.post(`${BASE_URL}/producto_base_detalle`, {
+    producto_id: productoId,
+  });
+}
+
 
 
 }
