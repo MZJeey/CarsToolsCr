@@ -32,7 +32,7 @@ import { Lista } from "./components/Productos/lista";
 import ListaResenas from "./components/Productos/listaResena";
 import DetalleProducto from "./components/Productos/listaDetalles";
 import DetalleResenas from "./components/Productos/detallesResena";
-import PedidoComponent from "./components/pedidos/pedido";
+
 import TodosProductosPersonalizados from "./components/pedidos/TodosProductosPersonalizados";
 
 import { I18nextProvider } from "react-i18next";
@@ -42,6 +42,7 @@ import { patch } from "@mui/material";
 import { EditarProducto } from "./components/Productos/updateProducto";
 import ProductosSimilares from "./components/Productos/productoSimilares";
 import { Cart } from "./components/Carrito/carrito";
+import PedidoComponent from "./components/pedidos/pedido";
 
 // Asegúrate que la ruta sea correcta
 // Importa la configuración de i18n
@@ -100,7 +101,7 @@ const rutas = createBrowserRouter([
       },
 
       {
-        path: "/productos-personalizados",
+        path: "/productos-personalizados/:id",
         element: <TodosProductosPersonalizados />,
       },
       {

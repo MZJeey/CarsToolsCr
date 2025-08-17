@@ -1,223 +1,3 @@
-// import React from "react";
-// import {
-//   Dialog,
-//   DialogTitle,
-//   DialogContent,
-//   DialogActions,
-//   Button,
-//   Grid,
-//   Divider,
-//   Typography,
-//   Box,
-//   List,
-//   ListItem,
-//   ListItemText,
-//   Chip,
-//   Paper,
-//   Stack,
-// } from "@mui/material";
-// import { styled } from "@mui/material/styles";
-
-// // Componentes estilizados
-// const SummaryItem = styled(Box)(({ theme }) => ({
-//   display: "flex",
-//   justifyContent: "space-between",
-//   padding: theme.spacing(1, 0),
-// }));
-
-// const PriceText = styled(Typography)(({ theme }) => ({
-//   fontWeight: 600,
-//   color: theme.palette.text.primary,
-// }));
-
-// const SectionTitle = styled(Typography)(({ theme }) => ({
-//   fontWeight: 600,
-//   marginBottom: theme.spacing(1),
-//   color: theme.palette.primary.main,
-// }));
-
-// const CustomPaper = styled(Paper)(({ theme }) => ({
-//   padding: theme.spacing(2),
-//   marginBottom: theme.spacing(2),
-//   backgroundColor: theme.palette.background.paper,
-// }));
-
-// const PersonalizarProductoModal = ({
-//   open,
-//   onClose,
-//   productoPersonalizado,
-// }) => {
-//   // Función segura para parsear las opciones
-//   const getOpcionesPersonalizacion = () => {
-//     try {
-//       if (!productoPersonalizado?.opciones_personalizacion) return [];
-
-//       const parsed = JSON.parse(productoPersonalizado.opciones_personalizacion);
-
-//       if (Array.isArray(parsed)) return parsed;
-
-//       return Object.entries(parsed || {}).map(([key, value]) => ({
-//         criterio: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize
-//         ...value,
-//       }));
-//     } catch (error) {
-//       console.error("Error parsing opciones_personalizacion:", error);
-//       return [];
-//     }
-//   };
-
-//   const opcionesArray = getOpcionesPersonalizacion();
-
-//   // Cálculos
-//   const costoBase = parseFloat(productoPersonalizado?.costo_base || 0);
-//   const costoAdicional = parseFloat(
-//     productoPersonalizado?.costo_adicional || 0
-//   );
-//   const cantidad = parseInt(productoPersonalizado?.cantidad || 1);
-//   const precioUnitario = productoPersonalizado?.precio_unitario
-//     ? parseFloat(productoPersonalizado.precio_unitario)
-//     : costoBase + costoAdicional;
-//   const subtotal = productoPersonalizado?.subtotal
-//     ? parseFloat(productoPersonalizado.subtotal)
-//     : precioUnitario * cantidad;
-
-//   return (
-//     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-//       <DialogTitle
-//         sx={{
-//           fontWeight: "bold",
-//           fontSize: "1.5rem",
-//           bgcolor: "primary.main",
-//           color: "primary.contrastText",
-//           py: 2,
-//         }}
-//       >
-//         Detalles del Producto Personalizado
-//       </DialogTitle>
-
-//       <DialogContent dividers sx={{ py: 3 }}>
-//         <Stack spacing={3}>
-//           {/* Encabezado */}
-//           <CustomPaper elevation={0}>
-//             <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-//               {productoPersonalizado?.nombre_personalizado ||
-//                 "Producto Personalizado"}
-//             </Typography>
-//             <Typography variant="body1" color="text.secondary">
-//               Producto base: {productoPersonalizado?.nombre_producto_base}
-//             </Typography>
-//           </CustomPaper>
-
-//           {/* Opciones de personalización */}
-//           {opcionesArray.length > 0 && (
-//             <CustomPaper elevation={0}>
-//               <SectionTitle variant="subtitle1">
-//                 Opciones de Personalización
-//               </SectionTitle>
-//               <List dense disablePadding>
-//                 {opcionesArray.map((opcion, index) => (
-//                   <ListItem key={index} disableGutters>
-//                     <ListItemText
-//                       primary={`${opcion.criterio}: ${opcion.opcion}`}
-//                       primaryTypographyProps={{ fontWeight: 500 }}
-//                       secondary={`+ ₡${parseFloat(opcion.costo || 0).toLocaleString("es-CR")}`}
-//                     />
-//                   </ListItem>
-//                 ))}
-//               </List>
-//             </CustomPaper>
-//           )}
-
-//           {/* Costos */}
-//           <CustomPaper elevation={0}>
-//             <Grid container spacing={2}>
-//               <Grid item xs={6}>
-//                 <SummaryItem>
-//                   <Typography>Costo base:</Typography>
-//                   <PriceText>₡{costoBase.toLocaleString("es-CR")}</PriceText>
-//                 </SummaryItem>
-//               </Grid>
-//               <Grid item xs={6}>
-//                 <SummaryItem>
-//                   <Typography>Adicionales:</Typography>
-//                   <PriceText>
-//                     ₡{costoAdicional.toLocaleString("es-CR")}
-//                   </PriceText>
-//                 </SummaryItem>
-//               </Grid>
-//               <Grid item xs={12}>
-//                 <Divider sx={{ my: 1 }} />
-//               </Grid>
-//               <Grid item xs={12}>
-//                 <SummaryItem>
-//                   <Typography>Cantidad:</Typography>
-//                   <Chip
-//                     label={cantidad}
-//                     size="small"
-//                     sx={{ fontWeight: 600 }}
-//                   />
-//                 </SummaryItem>
-//               </Grid>
-//             </Grid>
-//           </CustomPaper>
-
-//           {/* Resumen financiero */}
-//           <CustomPaper elevation={0}>
-//             <SectionTitle variant="subtitle1">Resumen Financiero</SectionTitle>
-
-//             <Stack spacing={1}>
-//               <SummaryItem>
-//                 <Typography>Precio unitario:</Typography>
-//                 <PriceText>₡{precioUnitario.toLocaleString("es-CR")}</PriceText>
-//               </SummaryItem>
-
-//               <SummaryItem sx={{ pt: 2 }}>
-//                 <Typography variant="subtitle2">
-//                   Subtotal ({cantidad} {cantidad > 1 ? "unidades" : "unidad"}):
-//                 </Typography>
-//                 <PriceText variant="subtitle1">
-//                   ₡{subtotal.toLocaleString("es-CR")}
-//                 </PriceText>
-//               </SummaryItem>
-
-//               <Divider sx={{ my: 1 }} />
-
-//               <SummaryItem>
-//                 <Typography variant="h6">Total:</Typography>
-//                 <PriceText variant="h6" sx={{ color: "primary.main" }}>
-//                   ₡{subtotal.toLocaleString("es-CR")}
-//                 </PriceText>
-//               </SummaryItem>
-//             </Stack>
-//           </CustomPaper>
-//         </Stack>
-//       </DialogContent>
-
-//       <DialogActions sx={{ px: 3, py: 2 }}>
-//         <Button onClick={onClose} variant="outlined" sx={{ mr: 2 }}>
-//           Cerrar
-//         </Button>
-//         <Button
-//           variant="contained"
-//           color="primary"
-//           onClick={() => {
-//             // Lógica para guardar/confirmar
-//             onClose();
-//           }}
-//         >
-//           Confirmar Pedido
-//         </Button>
-//       </DialogActions>
-//     </Dialog>
-//   );
-// };
-
-// export default PersonalizarProductoModal;
-
-
-
-
-
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
@@ -252,8 +32,7 @@ import ProductoPersonalizadoService from "../../services/ProductoPersonalizadoSe
 
 // ---------- ENV para imágenes ----------
 const UPLOADS_URL =
-  import.meta.env.VITE_UPLOADS_URL ||
-  `${import.meta.env.VITE_BASE_URL}uploads`;
+  import.meta.env.VITE_UPLOADS_URL || `${import.meta.env.VITE_BASE_URL}uploads`;
 
 // ---------- estilos ----------
 const SummaryItem = styled(Box)(({ theme }) => ({
@@ -294,6 +73,7 @@ const PersonalizarProductoModal = ({
   productosBase = [], // opcional: si ya te vienen por props
   onConfirm,
   iva = 0.13,
+  pedidoId,
 }) => {
   // Listas de opciones (puedes moverlas a props si lo prefieres)
   const opcionesColor = [
@@ -365,12 +145,12 @@ const PersonalizarProductoModal = ({
   const precioBase = Number(productoBase?.precio_base || 0);
 
   const costoColor = useMemo(
-    () => (opcionesColor.find((o) => o.id === color)?.costo ?? 0),
+    () => opcionesColor.find((o) => o.id === color)?.costo ?? 0,
     [color]
   );
 
   const costoMaterial = useMemo(
-    () => (opcionesMaterial.find((o) => o.id === material)?.costo ?? 0),
+    () => opcionesMaterial.find((o) => o.id === material)?.costo ?? 0,
     [material]
   );
 
@@ -383,7 +163,7 @@ const PersonalizarProductoModal = ({
   );
 
   const costoGrabado = useMemo(
-    () => (opcionesGrabado.find((g) => g.id === grabado)?.costo ?? 0),
+    () => opcionesGrabado.find((g) => g.id === grabado)?.costo ?? 0,
     [grabado]
   );
 
@@ -441,107 +221,84 @@ const PersonalizarProductoModal = ({
     );
   };
 
-  // const confirmar = () => {
-  //   if (!productoBase) return;
+  const confirmar = () => {
+    try {
+      if (!productoBase) return;
 
-  //   const payload = {
-  //     producto_base: {
-  //       id: productoBase.id,
-  //       nombre: productoBase.nombre,
-  //       codigo: productoBase.codigo ?? null,
-  //       precio_base: precioBase,
-  //       imagen: productoBase.imagen || null,
-  //     },
-  //     opciones_personalizacion: opcionesSeleccionadas,
-  //     costos: {
-  //       costo_base: precioBase,
-  //       costo_adicional: costoAdicional,
-  //       precio_unitario: precioUnitario,
-  //       subtotal,
-  //       iva: iva,
-  //       total_con_iva: totalConIVA,
-  //     },
-  //     cantidad,
-  //     nombre_personalizado: `${productoBase.nombre} - Personalizado`.slice(
-  //       0,
-  //       120
-  //     ),
-  //     raw: {
-  //       color,
-  //       material,
-  //       accesorios,
-  //       grabado,
-  //       grabadoTexto,
-  //     },
-  //   };
+      // 1) Construir opciones
+      const opciones = [
+        {
+          grupo: "color",
+          id: color,
+          label: opcionesColor.find((o) => o.id === color)?.label,
+          costo: Number(costoColor || 0),
+        },
+        {
+          grupo: "material",
+          id: material,
+          label: opcionesMaterial.find((o) => o.id === material)?.label,
+          costo: Number(costoMaterial || 0),
+        },
+        ...accesorios.map((id) => {
+          const a = opcionesAccesorios.find((x) => x.id === id);
+          return {
+            grupo: "accesorio",
+            id,
+            label: a?.label,
+            costo: Number(a?.costo || 0),
+          };
+        }),
+        {
+          grupo: "grabado",
+          id: grabado,
+          label: opcionesGrabado.find((g) => g.id === grabado)?.label,
+          costo: Number(costoGrabado || 0),
+          texto: grabado === "texto" && grabadoTexto ? grabadoTexto : null,
+        },
+      ];
 
-  //   onConfirm?.(payload);
-  //   onClose?.();
-  // };
+      // 2) Totales crudos
+      const costo_base = Number(precioBase);
+      const costo_adicional = Number(costoAdicional);
+      const precio_unit = Number(precioUnitario);
+      const subtotal_sin_iva = Number(subtotal);
+      const cant = Number(cantidad);
 
-const confirmar = () => {
-  try {
-    if (!productoBase) return;
+      // 3) IVA ► se manda y además se aplica al subtotal
+      const iva_porcentaje = Number.isFinite(iva) ? Number(iva) : 0.13;
+      const iva_monto = Number((subtotal_sin_iva * iva_porcentaje).toFixed(2));
+      const total_con_iva = Number((subtotal_sin_iva + iva_monto).toFixed(2));
 
-    // 1) Construir opciones
-    const opciones = [
-      { grupo: "color",    id: color,
-        label: opcionesColor.find(o => o.id === color)?.label,
-        costo: Number(costoColor || 0) },
-      { grupo: "material", id: material,
-        label: opcionesMaterial.find(o => o.id === material)?.label,
-        costo: Number(costoMaterial || 0) },
-      ...accesorios.map(id => {
-        const a = opcionesAccesorios.find(x => x.id === id);
-        return { grupo: "accesorio", id, label: a?.label, costo: Number(a?.costo || 0) };
-      }),
-      { grupo: "grabado",  id: grabado,
-        label: opcionesGrabado.find(g => g.id === grabado)?.label,
-        costo: Number(costoGrabado || 0),
-        texto: grabado === "texto" && grabadoTexto ? grabadoTexto : null },
-    ];
+      // 4) Línea final (nota: subtotal ya va con IVA)
+      const linea = {
+        producto_id: Number(productoBase.id),
+        pedidoId: Number(pedidoId),
+        nombre_personalizado: `${productoBase.nombre} - Personalizado`.slice(
+          0,
+          100
+        ),
 
-    // 2) Totales crudos
-    const costo_base     = Number(precioBase);
-    const costo_adicional= Number(costoAdicional);
-    const precio_unit    = Number(precioUnitario);
-    const subtotal_sin_iva = Number(subtotal);
-    const cant           = Number(cantidad);
+        costo_base,
+        costo_adicional,
+        precio_unitario: precio_unit,
+        subtotal: total_con_iva, // ⬅️ guardaremos el total con IVA
+        cantidad: cant,
 
-    // 3) IVA ► se manda y además se aplica al subtotal
-    const iva_porcentaje = Number.isFinite(iva) ? Number(iva) : 0.13;
-    const iva_monto      = Number((subtotal_sin_iva * iva_porcentaje).toFixed(2));
-    const total_con_iva  = Number((subtotal_sin_iva + iva_monto).toFixed(2));
+        iva_porcentaje,
+        iva_monto,
+        total_con_iva,
 
-    // 4) Línea final (nota: subtotal ya va con IVA)
-    const linea = {
-      producto_id: Number(productoBase.id),
-      nombre_personalizado: `${productoBase.nombre} - Personalizado`.slice(0, 100),
+        opciones_personalizacion: opciones,
+        opciones_personalizacion_json: JSON.stringify(opciones),
+      };
 
-      costo_base,
-      costo_adicional,
-      precio_unitario: precio_unit,
-      subtotal: total_con_iva,        // ⬅️ guardaremos el total con IVA
-      cantidad: cant,
-
-      iva_porcentaje,
-      iva_monto,
-      total_con_iva,
-
-      opciones_personalizacion: opciones,
-      opciones_personalizacion_json: JSON.stringify(opciones),
-    };
-
-    console.log("Enviando personalizado:", linea);
-    onConfirm?.(linea);
-    onClose?.();
-  } catch (err) {
-    console.error("Error al confirmar personalizado:", err);
-  }
-};
-
-
-
+      console.log("Enviando personalizado:", linea);
+      onConfirm?.(linea);
+      onClose?.();
+    } catch (err) {
+      console.error("Error al confirmar personalizado:", err);
+    }
+  };
 
   // construir URL de imagen segura
   const buildImg = (file) =>
@@ -805,7 +562,8 @@ const confirmar = () => {
               <Grid item xs={12}>
                 <SummaryItem sx={{ pt: 1 }}>
                   <Typography variant="subtitle2">
-                    Subtotal ({cantidad} {cantidad > 1 ? "unidades" : "unidad"}):
+                    Subtotal ({cantidad} {cantidad > 1 ? "unidades" : "unidad"}
+                    ):
                   </Typography>
                   <PriceText variant="subtitle1">
                     {formatCRC(subtotal)}
@@ -853,4 +611,3 @@ const confirmar = () => {
 };
 
 export default PersonalizarProductoModal;
-

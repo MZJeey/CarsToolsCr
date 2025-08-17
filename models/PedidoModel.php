@@ -9,7 +9,7 @@ class PedidoModel
         $this->db = new MySqlConnect();
     }
 
-    public function all()
+    public function all($usuario_id)
     {
         try {
             $sql = "SELECT 
@@ -17,11 +17,11 @@ class PedidoModel
             Usuario.nombre_usuario,
             Pedido.fecha_pedido,
             Pedido.direccion_envio,
-            Pedido.estado,
-            MetodoPago.Nombre AS metodo_pago
+            Pedido.estado
         FROM Pedido
         JOIN Usuario ON Pedido.usuario_id = Usuario.id
-        JOIN MetodoPago ON Pedido.idMetodoPago = MetodoPago.idMetodoPago";
+        WHERE Usuario.id = $usuario_id
+        ";
 
             $pedidos = $this->db->executeSQL($sql);
 
@@ -39,18 +39,18 @@ class PedidoModel
         }
     }
 
-    public function crearPedido($usuario_id, $direccion_envio, $productos)
+    public function crearPedido($data)
     {
         try {
             // Insertar el pedido
             $sqlPedido = "INSERT INTO pedido (usuario_id, fecha_pedido, direccion_envio, estado) 
-                          VALUES ($usuario_id, NOW(), '$direccion_envio', 'en_proceso')";
+                          VALUES ($data->usuario_id, NOW(), '$data->direccion_envio', 'en_proceso')";
             $pedidoId = $this->db->executeSQL_DML_last($sqlPedido);
 
             if (!$pedidoId) return false;
 
             // Insertar productos en pedido
-            foreach ($productos as $producto) {
+            foreach ($data->productos as $producto) {
                 // Obtener el precio actual del producto
                 $precioQuery = "SELECT precio FROM producto WHERE id = {$producto->producto_id}";
                 $precioResult = $this->db->executeSQL($precioQuery);
@@ -63,7 +63,7 @@ class PedidoModel
             }
 
 
-            return true;
+            return $this->obtenerDetalles($pedidoId);
         } catch (Exception $e) {
             handleException($e);
             return false;
@@ -76,7 +76,7 @@ class PedidoModel
         $sql = "SELECT * FROM pedido WHERE usuario_id = $usuario_id";
         return $this->db->executeSQL($sql);
     }
-    // Obtiene los detalles de un pedido específico
+    // Se va a utilizar para pasarlo a factura
     public function obtenerDetalles($pedido_id)
     {
         $ProductoPersonalizado = new ProductoPersonalizadoModel();

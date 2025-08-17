@@ -1,4 +1,3 @@
-
 import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BASE_URL + "pedido";
 
@@ -10,7 +9,7 @@ class PedidoService {
    */
   crearPedido(pedidoData) {
     return axios.post(BASE_URL + "/crear", {
-      data: pedidoData
+      data: pedidoData,
     });
   }
 
@@ -21,7 +20,7 @@ class PedidoService {
    */
   listarPedidosPorUsuario(usuarioId) {
     return axios.post(BASE_URL + "/listar", {
-      usuario_id: usuarioId
+      usuario_id: usuarioId,
     });
   }
 
@@ -32,7 +31,7 @@ class PedidoService {
    */
   obtenerDetallesPedido(pedidoId) {
     return axios.post(BASE_URL + "/detalles", {
-      pedido_id: pedidoId
+      pedido_id: pedidoId,
     });
   }
 
@@ -45,7 +44,7 @@ class PedidoService {
   cambiarEstadoPedido(pedidoId, nuevoEstado) {
     return axios.post(BASE_URL + "/cambiarEstado", {
       pedido_id: pedidoId,
-      nuevo_estado: nuevoEstado
+      nuevo_estado: nuevoEstado,
     });
   }
 
@@ -53,11 +52,11 @@ class PedidoService {
    * Lista todos los pedidos (sin filtro por usuario)
    * @returns {Promise} Promesa con todos los pedidos
    */
-listarTodosLosPedidos() {
-  return axios.post(BASE_URL + "/listarTodos");
-}
-
-
+  listarTodosLosPedidos(usuario_id) {
+    return axios.post(BASE_URL + "/listarTodos", {
+      usuario_id,
+    });
+  }
 }
 
 export default new PedidoService();

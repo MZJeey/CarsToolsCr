@@ -11,7 +11,7 @@ class pedido
             $data = $request->getJSON()->data;
 
             $model = new PedidoModel();
-            $exito = $model->crearPedido($data->usuario_id, $data->direccion_envio, $data->productos);
+            $exito = $model->crearPedido($data);
 
             $response->toJSON(['status' => $exito ? 'ok' : 'error']);
         } catch (Exception $e) {
@@ -69,9 +69,11 @@ class pedido
     public function listarTodos()
     {
         try {
+            $request = new Request();
             $response = new Response();
             $model = new PedidoModel();
-            $pedidos = $model->all();
+            $data = $request->getJSON();
+            $pedidos = $model->all($data->usuario_id);
             $response->toJSON($pedidos);
         } catch (Exception $e) {
             handleException($e);

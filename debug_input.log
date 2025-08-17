@@ -1,6 +1,6 @@
 stdClass Object
 (
-    [usuario_id] => 6
-    [producto_id] => 6
+    [usuario_id] => 4
+    [producto_id] => 8
     [cantidad] => 1
 )
