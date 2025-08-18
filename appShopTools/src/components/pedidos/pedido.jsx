@@ -62,7 +62,6 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
       return [];
     }
   };
-
   const calcularTotales = () => {
     let subtotal = 0;
     let impuestos = 0;
@@ -348,26 +347,67 @@ const PedidoComponent = () => {
     setOpenFactura(true);
   };
 
-  const totalToPay = useMemo(() => {
-    if (!selectedPedido?.detalles) return 0;
-    
-    if (selectedPedido.detalles.nombre_producto) {
-      return (
-        Number(selectedPedido.detalles.cantidad || 0) *
-        Number(selectedPedido.detalles.precio_unitario || 0) *
-        (1 + Number(selectedPedido.detalles.porcentaje || 0) / 100)
-      );
+  const transformPedidoForPago = (pedido) => {
+    if (!pedido) return null;
+
+    const detalles = pedido.detalles || {};
+    const productos = [];
+
+    if (detalles.nombre_producto) {
+      productos.push({
+        id: detalles.id_producto || 0,
+        nombre: detalles.nombre_producto,
+        cantidad: detalles.cantidad || 0,
+        precio_unitario: detalles.precio_unitario || 0,
+        porcentaje: detalles.porcentaje || 0,
+        subtotal: (detalles.cantidad || 0) * (detalles.precio_unitario || 0),
+        iva: detalles.porcentaje || 0,
+      });
     }
-    
-    return selectedPedido.detalles.productos?.reduce(
-      (sum, item) =>
-        sum +
-        Number(item.precio_unitario || item.costo_base || 0) *
-          Number(item.cantidad || 0) *
-          (1 + Number(item.porcentaje || 0) / 100),
+
+    if (detalles.productos?.length) {
+      detalles.productos.forEach((prod) => {
+        productos.push({
+          id: prod.id_producto_base || 0,
+          nombre:
+            prod.nombre_personalizado ||
+            prod.nombre_producto_base ||
+            "Producto personalizado",
+          cantidad: prod.cantidad || 0,
+          precio_unitario: prod.precio_unitario || prod.costo_base || 0,
+          porcentaje: prod.porcentaje || 0,
+          subtotal:
+            (prod.cantidad || 0) *
+            (prod.precio_unitario || prod.costo_base || 0),
+          iva: prod.porcentaje || 0,
+          opciones_personalizacion: prod.opciones_personalizacion,
+          es_personalizado: true,
+        });
+      });
+    }
+
+    const subtotal = productos.reduce((sum, p) => sum + (p.subtotal || 0), 0);
+    const impuestos = productos.reduce(
+      (sum, p) => sum + (p.subtotal || 0) * ((p.porcentaje || 0) / 100),
       0
-    ) || 0;
-  }, [selectedPedido]);
+    );
+    const total = subtotal + impuestos;
+
+    return {
+      pedido: {
+        id: pedido.id,
+        fecha_pedido: pedido.fecha_pedido,
+        estado: pedido.estado,
+        metodo_pago: pedido.metodo_pago,
+        nombre_usuario: pedido.nombre_usuario,
+        direccion_envio: pedido.direccion_envio,
+      },
+      detalle: productos,
+      total,
+      subtotal,
+      impuestos,
+    };
+  };
 
   const handlePagoSuccess = (factura) => {
     toast.success(`Factura ${factura?.id ? `#${factura.id} ` : ""}generada`);
@@ -424,8 +464,15 @@ const PedidoComponent = () => {
         open={openPago}
         onClose={() => setOpenPago(false)}
         onSuccess={handlePagoSuccess}
-        pedido={selectedPedido}
-        total={totalToPay}
+        pedido={
+          selectedPedido ? transformPedidoForPago(selectedPedido).pedido : null
+        }
+        detalle={
+          selectedPedido ? transformPedidoForPago(selectedPedido).detalle : null
+        }
+        total={
+          selectedPedido ? transformPedidoForPago(selectedPedido).total : 0
+        }
         userId={userInfo?.id}
       />
 

@@ -1,6 +1,7 @@
 stdClass Object
 (
-    [usuario_id] => 6
-    [producto_id] => 91
-    [cantidad] => 1
+    [usuario_id] => 4
+    [producto_id] => 89
+    [cantidad] => 2
+    [datos_pdf] => {"totals":{"subtotal":"56 500,00","iva":"7 345,00","total":"63 845,00","simboloMoneda":"₡"}}
 )
