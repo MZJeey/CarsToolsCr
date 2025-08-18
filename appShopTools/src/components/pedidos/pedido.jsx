@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
   Container,
   Typography,
@@ -28,12 +28,14 @@ import {
   Add as AddIcon,
   Close as CloseIcon,
   Print as PrintIcon,
+  Payment as PaymentIcon,
 } from "@mui/icons-material";
 import PedidoService from "../../services/PedidoService";
 import CrearPedidoModal from "./crearPedido";
+import FormaPagoModal from "../../components/pedidos/formaPagoPedido";
 import { toast } from "react-hot-toast";
 
-const FacturaDialog = ({ pedido, open, onClose }) => {
+const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
   if (!pedido) return null;
 
   const parseOpcionesPersonalizacion = (opciones) => {
@@ -282,12 +284,13 @@ const FacturaDialog = ({ pedido, open, onClose }) => {
       </DialogContent>
       <DialogActions sx={{ p: 3 }}>
         <Button
+          type="button"
           variant="outlined"
-          startIcon={<PrintIcon />}
-          onClick={() => window.print()}
+          startIcon={<PaymentIcon />}
+          onClick={() => setOpenPago(true)}
           sx={{ mr: 2 }}
         >
-          Imprimir Factura
+          Pagar / Facturar
         </Button>
         <Button variant="contained" onClick={onClose}>
           Cerrar
@@ -304,6 +307,7 @@ const PedidoComponent = () => {
   const [error, setError] = useState(null);
   const [selectedPedido, setSelectedPedido] = useState(null);
   const [openFactura, setOpenFactura] = useState(false);
+  const [openPago, setOpenPago] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
 
   const fetchTodosLosPedidos = useCallback(async () => {
@@ -342,6 +346,33 @@ const PedidoComponent = () => {
   const handleVerFactura = (pedido) => {
     setSelectedPedido(pedido);
     setOpenFactura(true);
+  };
+
+  const totalToPay = useMemo(() => {
+    if (!selectedPedido?.detalles) return 0;
+    
+    if (selectedPedido.detalles.nombre_producto) {
+      return (
+        Number(selectedPedido.detalles.cantidad || 0) *
+        Number(selectedPedido.detalles.precio_unitario || 0) *
+        (1 + Number(selectedPedido.detalles.porcentaje || 0) / 100)
+      );
+    }
+    
+    return selectedPedido.detalles.productos?.reduce(
+      (sum, item) =>
+        sum +
+        Number(item.precio_unitario || item.costo_base || 0) *
+          Number(item.cantidad || 0) *
+          (1 + Number(item.porcentaje || 0) / 100),
+      0
+    ) || 0;
+  }, [selectedPedido]);
+
+  const handlePagoSuccess = (factura) => {
+    toast.success(`Factura ${factura?.id ? `#${factura.id} ` : ""}generada`);
+    setOpenPago(false);
+    fetchTodosLosPedidos();
   };
 
   const estadoOrden = {
@@ -386,6 +417,16 @@ const PedidoComponent = () => {
         pedido={selectedPedido}
         open={openFactura}
         onClose={() => setOpenFactura(false)}
+        setOpenPago={setOpenPago}
+      />
+
+      <FormaPagoModal
+        open={openPago}
+        onClose={() => setOpenPago(false)}
+        onSuccess={handlePagoSuccess}
+        pedido={selectedPedido}
+        total={totalToPay}
+        userId={userInfo?.id}
       />
 
       <Box

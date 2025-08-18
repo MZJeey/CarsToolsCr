@@ -9,7 +9,7 @@ class PedidoModel
         $this->db = new MySqlConnect();
     }
 
-    public function all($usuario_id)
+   public function all($usuario_id)
     {
         try {
             $sql = "SELECT 
@@ -36,9 +36,8 @@ class PedidoModel
         } catch (Exception $e) {
             error_log("Error en PedidoModel::all(): " . $e->getMessage());
             return [];
-        }
-    }
-
+   }
+  }
     public function crearPedido($data)
     {
         try {
