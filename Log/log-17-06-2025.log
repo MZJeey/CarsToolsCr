@@ -1,0 +1,21 @@
+[17-06-2025 02:55:54] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Table 'carstoolscr.movie' doesn't exist
+ [17-06-2025 02:55:54] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Table 'carstoolscr.movie' doesn't exist
+ [17-06-2025 04:19:57] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:19:59] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:20:00] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:20:22] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:20:24] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:20:25] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:22:43] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:22:44] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:22:46] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:22:47] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:23:02] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:26:35] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:26:39] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 04:26:39] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'undefined' in 'where clause'
+ [17-06-2025 05:24:21] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Table 'carstoolscr.movie' doesn't exist
+ [17-06-2025 05:24:22] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Table 'carstoolscr.movie' doesn't exist
+ [17-06-2025 22:54:15] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\EtiquetaController.php - line: 49 - Message: syntax error, unexpected token "<<", expecting "function" or "const"
+ [17-06-2025 22:54:16] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\EtiquetaController.php - line: 49 - Message: syntax error, unexpected token "<<", expecting "function" or "const"
+ 

@@ -1,0 +1,10 @@
+[22-07-2025 01:51:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\index.php - line: 33 - Message: require_once(C:\xampp\htdocs\carstoolscr\models\EtiquetaModel.php): Failed to open stream: No such file or directory
+ [22-07-2025 01:51:40] [jason] error: File: C:\xampp\htdocs\carstoolscr\index.php - line: 33 - Message: require_once(C:\xampp\htdocs\carstoolscr\models\EtiquetaModel.php): Failed to open stream: No such file or directory
+ [22-07-2025 01:53:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\index.php - line: 33 - Message: require_once(models/EtiquetaModel.php): Failed to open stream: No such file or directory
+ [22-07-2025 01:53:15] [jason] error: File: C:\xampp\htdocs\carstoolscr\index.php - line: 33 - Message: require_once(models/EtiquetaModel.php): Failed to open stream: No such file or directory
+ [22-07-2025 01:53:45] [jason] error: File: C:\xampp\htdocs\carstoolscr\index.php - line: 33 - Message: require_once(models/EtiquetaModel.php): Failed to open stream: No such file or directory
+ [22-07-2025 01:53:46] [jason] error: File: C:\xampp\htdocs\carstoolscr\index.php - line: 33 - Message: require_once(models/EtiquetaModel.php): Failed to open stream: No such file or directory
+ [22-07-2025 01:54:56] [jason] error: File: C:\xampp\htdocs\carstoolscr\index.php - line: 33 - Message: require_once(models/EtiquetaModel.php): Failed to open stream: No such file or directory
+ [22-07-2025 01:55:47] [jason] error: File: C:\xampp\htdocs\carstoolscr\index.php - line: 55 - Message: require_once(controllers/EtiquetaController.php): Failed to open stream: No such file or directory
+ [22-07-2025 01:55:52] [jason] error: File: C:\xampp\htdocs\carstoolscr\index.php - line: 55 - Message: require_once(controllers/EtiquetaController.php): Failed to open stream: No such file or directory
+ 

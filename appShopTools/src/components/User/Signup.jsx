@@ -1,5 +1,5 @@
 // Signup.jsx
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Container,
   Typography,
@@ -7,25 +7,28 @@ import {
   Button,
   Grid,
   Paper,
-} from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import UserService from '../../services/UserService';
+} from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import UserService from "../../services/UserService";
 
 export function Signup() {
   const navigate = useNavigate();
 
   const signupSchema = yup.object({
-    nombre_usuario: yup.string().required('El nombre es requerido'),
-    correo: yup.string().required('El correo es requerido').email('Correo inválido'),
-    clave: yup.string().required('La contraseña es requerida'),
+    nombre_usuario: yup.string().required("El nombre es requerido"),
+    correo: yup
+      .string()
+      .required("El correo es requerido")
+      .email("Correo inválido"),
+    clave: yup.string().required("La contraseña es requerida"),
     confirmar_clave: yup
       .string()
-      .oneOf([yup.ref('clave')], 'Las contraseñas no coinciden')
-      .required('Confirma tu contraseña'),
+      .oneOf([yup.ref("clave")], "Las contraseñas no coinciden")
+      .required("Confirma tu contraseña"),
   });
 
   const {
@@ -34,10 +37,10 @@ export function Signup() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      nombre_usuario: '',
-      correo: '',
-      clave: '',
-      confirmar_clave: '',
+      nombre_usuario: "",
+      correo: "",
+      clave: "",
+      confirmar_clave: "",
     },
     resolver: yupResolver(signupSchema),
   });
@@ -49,17 +52,20 @@ export function Signup() {
       nombre_usuario: data.nombre_usuario,
       correo: data.correo,
       clave: data.clave,
-      rol_id: 2, // cliente
+      rol_id: 1, // cliente
     };
 
     UserService.createUser(payload)
       .then(() => {
-        toast.success('Usuario registrado con éxito', { duration: 3000, position: 'top-center' });
-        navigate('/user/login/');
+        toast.success("Usuario registrado con éxito", {
+          duration: 3000,
+          position: "top-center",
+        });
+        navigate("/user/login/");
       })
       .catch((err) => {
         setError(err);
-        toast.error('Error al registrar usuario');
+        toast.error("Error al registrar usuario");
       });
   };
 
@@ -81,7 +87,7 @@ export function Signup() {
                     label="Nombre"
                     fullWidth
                     error={!!errors.nombre_usuario}
-                    helperText={errors.nombre_usuario?.message || ' '}
+                    helperText={errors.nombre_usuario?.message || " "}
                   />
                 )}
               />
@@ -96,7 +102,7 @@ export function Signup() {
                     label="Correo Electrónico"
                     fullWidth
                     error={!!errors.correo}
-                    helperText={errors.correo?.message || ' '}
+                    helperText={errors.correo?.message || " "}
                   />
                 )}
               />
@@ -112,7 +118,7 @@ export function Signup() {
                     type="password"
                     fullWidth
                     error={!!errors.clave}
-                    helperText={errors.clave?.message || ' '}
+                    helperText={errors.clave?.message || " "}
                   />
                 )}
               />
@@ -128,7 +134,7 @@ export function Signup() {
                     type="password"
                     fullWidth
                     error={!!errors.confirmar_clave}
-                    helperText={errors.confirmar_clave?.message || ' '}
+                    helperText={errors.confirmar_clave?.message || " "}
                   />
                 )}
               />

@@ -43,6 +43,7 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
   useEffect(() => {
     if (open) {
       const userFromStorage = localStorage.getItem("userData");
+      console.log(('Userdata'));
       if (!userFromStorage) {
         toast.error("Debes iniciar sesión para continuar");
         handleClose();

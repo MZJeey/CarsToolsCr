@@ -35,6 +35,9 @@ export default function Header() {
   useEffect(() => {
     setUserData(decodeToken());
   }, [user]);
+  //Ultimo recurso quemar datos
+  console.log(" Data:", userData);
+  localStorage.setItem("userData", JSON.stringify(userData));
 
   const { cart, getCountItems } = useCart();
   const navigate = useNavigate();
@@ -46,7 +49,7 @@ export default function Header() {
   // Menú desplegable de Mantenimiento Vehículos
   const [anchorElMantenimiento, setAnchorElMantenimiento] = useState(null);
 
-  // aca se ve el menu de idomas usanso las banderas de cada idioma
+  // Menú de idiomas
   const [anchorElLang, setAnchorElLang] = useState(null);
   const { i18n } = useTranslation();
   const languages = [
@@ -94,10 +97,17 @@ export default function Header() {
 
   const navItems = [
     { name: t("header.menu.repuestos"), link: "/lista", roles: null },
-    // { name: "Promociones", link: "/catalog-movies/", roles: null },
-    { name: t("header.menu.marcas"), link: "/catalog-movies/", roles: null },
-    { name: t("header.menu.servicios"), link: "/movie/filter", roles: null },
-    { name: t("header.menu.mantenimientos"), link: null, roles: [] },
+    { name: t("header.menu.marcas"), link: "/pedidos", roles: null },
+    {
+      name: t("header.menu.servicios"),
+      link: "/movie/filter",
+      roles: null,
+    },
+    {
+      name: t("header.menu.administracion"),
+      link: "/crear",
+      roles: ["administrador"],
+    },
   ];
 
   const mantenimientoOpciones = [
@@ -116,62 +126,85 @@ export default function Header() {
     },
   ];
 
+  // Menú principal en desktop
   const menuPrincipal = (
     <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
-      {navItems.map((item, idx) => {
-        if (item.name === t("header.menu.mantenimientos")) {
-          // Menú desplegable para mantenimiento vehículos
-          return (
-            <Box key={idx}>
-              <Button
-                sx={{ color: "white" }}
-                aria-controls={
-                  Boolean(anchorElMantenimiento)
-                    ? "mantenimiento-menu"
-                    : undefined
-                }
-                aria-haspopup="true"
-                aria-expanded={
-                  Boolean(anchorElMantenimiento) ? "true" : undefined
-                }
-                onClick={handleMantenimientoOpen}
-              >
-                <Typography textAlign="center">{item.name}</Typography>
-              </Button>
-              <Menu
-                id="mantenimiento-menu"
-                anchorEl={anchorElMantenimiento}
-                open={Boolean(anchorElMantenimiento)}
-                onClose={handleMantenimientoClose}
-                MenuListProps={{
-                  "aria-labelledby": "mantenimiento-button",
-                }}
-                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                transformOrigin={{ vertical: "top", horizontal: "left" }}
-              >
-                {mantenimientoOpciones.map((opt, idxOpt) => (
-                  <MenuItem
-                    key={idxOpt}
-                    component={Link}
-                    to={opt.link}
-                    onClick={() => {
-                      handleMantenimientoClose();
-                      handleClosePrincipalMenu();
-                    }}
+      {navItems &&
+        navItems.map((item, idx) => {
+          // console.log('Nombre del menu->',item.name);
+          // console.log('Nombre de etiqueta',t("header.menu.administracion"));
+          if (item.name === t("header.menu.administracion")) {
+            // console.log("roles", item.roles);
+            // console.log("Datos", userData);
+            // console.log("Usuario", user);
+            if (userData.id && item.roles) {
+              console.log("Entro con el rol");
+              return (
+                <Box key={idx}>
+                  <Button
+                    sx={{ color: "white" }}
+                    // aria-controls={
+                    //   Boolean(anchorElMantenimiento)
+                    //     ? "mantenimiento-menu"
+                    //     : undefined
+                    // }
+                    aria-haspopup="true"
+                    // aria-expanded={
+                    //   Boolean(anchorElMantenimiento) ? "true" : undefined
+                    // }
+                    onClick={handleMantenimientoOpen}
                   >
-                    {opt.name}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
-          );
-        }
+                    <Typography textAlign="center">{item.name}</Typography>
+                  </Button>
+                  <Menu
+                    id="mantenimiento-menu"
+                    anchorEl={anchorElMantenimiento}
+                    open={Boolean(anchorElMantenimiento)}
+                    onClose={handleMantenimientoClose}
+                    MenuListProps={{
+                      "aria-labelledby": "mantenimiento-button",
+                    }}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                    transformOrigin={{ vertical: "top", horizontal: "left" }}
+                  >
+                    {mantenimientoOpciones.map((opt, idxOpt) => (
+                      <MenuItem
+                        key={idxOpt}
+                        component={Link}
+                        to={opt.link}
+                        onClick={() => {
+                          handleMantenimientoClose();
+                          handleClosePrincipalMenu();
+                        }}
+                      >
+                        {opt.name}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </Box>
+              );
+            }
+            return null;
+          }
 
-        if (Array.isArray(item.roles)) {
-          if (
-            userData &&
-            (item.roles.length === 0 || autorize({ requiredRoles: item.roles }))
-          ) {
+          if (Array.isArray(item.roles)) {
+            if (
+              userData &&
+              (item.roles?.length === 0 ||
+                autorize({ requiredRoles: item.roles }))
+            ) {
+              return (
+                <Button
+                  key={idx}
+                  component={Link}
+                  to={item.link}
+                  sx={{ color: "white" }}
+                >
+                  <Typography textAlign="center">{item.name}</Typography>
+                </Button>
+              );
+            }
+          } else if (item.roles === null) {
             return (
               <Button
                 key={idx}
@@ -183,58 +216,54 @@ export default function Header() {
               </Button>
             );
           }
-        } else if (item.roles === null) {
-          return (
-            <Button
-              key={idx}
-              component={Link}
-              to={item.link}
-              sx={{ color: "white" }}
-            >
-              <Typography textAlign="center">{item.name}</Typography>
-            </Button>
-          );
-        }
-        return null;
-      })}
+          return null;
+        })}
     </Box>
   );
 
-  // Menú móvil (sin submenú anidado)
+  //Menú principal en mobile
   const menuPrincipalMobile = (
     <Box>
       {navItems.map((item, idx) => {
-        if (item.name === "Mantenimientos") {
-          return (
-            <Box key={idx}>
-              <MenuItem onClick={handleMantenimientoOpen}>
-                <Typography textAlign="center">{item.name}</Typography>
-              </MenuItem>
-              <Menu
-                id="mantenimiento-menu-mobile"
-                anchorEl={anchorElMantenimiento}
-                open={Boolean(anchorElMantenimiento)}
-                onClose={handleMantenimientoClose}
-                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                transformOrigin={{ vertical: "top", horizontal: "left" }}
-              >
-                {mantenimientoOpciones.map((opt, idxOpt) => (
-                  <MenuItem
-                    key={idxOpt}
-                    component={Link}
-                    to={opt.link}
-                    onClick={() => {
-                      handleMantenimientoClose();
-                      handleClosePrincipalMenu();
-                    }}
-                  >
-                    {opt.name}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
-          );
+        if (item.name === t("header.menu.administracion")) {
+          if (
+            userData &&
+            (item.roles?.length === 0 ||
+              autorize({ requiredRoles: item.roles }))
+          ) {
+            return (
+              <Box key={idx}>
+                <MenuItem onClick={handleMantenimientoOpen}>
+                  <Typography textAlign="center">{item.name}</Typography>
+                </MenuItem>
+                <Menu
+                  id="mantenimiento-menu-mobile"
+                  anchorEl={anchorElMantenimiento}
+                  open={Boolean(anchorElMantenimiento)}
+                  onClose={handleMantenimientoClose}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                  transformOrigin={{ vertical: "top", horizontal: "left" }}
+                >
+                  {mantenimientoOpciones.map((opt, idxOpt) => (
+                    <MenuItem
+                      key={idxOpt}
+                      component={Link}
+                      to={opt.link}
+                      onClick={() => {
+                        handleMantenimientoClose();
+                        handleClosePrincipalMenu();
+                      }}
+                    >
+                      {opt.name}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+            );
+          }
+          return null;
         }
+
         return (
           <MenuItem
             key={idx}
@@ -492,7 +521,8 @@ export default function Header() {
                 </MenuItem>
               ))}
             </Menu>
-            {/*Icono donde va a carrito  */}
+
+            {/*Icono Carrito */}
             <IconButton
               size="large"
               aria-label="ver carrito"

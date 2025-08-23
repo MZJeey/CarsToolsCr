@@ -1,0 +1,8 @@
+[03-07-2025 04:39:10] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 42 - Message: Attempt to read property "pedido_id" on null
+ [03-07-2025 04:39:32] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 42 - Message: Attempt to read property "pedido_id" on null
+ [03-07-2025 05:47:47] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'Usuario.nombre' in 'field list'
+ [03-07-2025 06:10:48] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\PedidoModel.php - line: 30 - Message: Undefined property: stdClass::$id
+ [03-07-2025 06:13:00] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\PedidoModel.php - line: 30 - Message: Undefined property: stdClass::$id
+ [03-07-2025 07:06:10] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 14 - Message: Undefined property: stdClass::$usuario_id
+ [03-07-2025 07:06:17] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 14 - Message: Undefined property: stdClass::$usuario_id
+ 

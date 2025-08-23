@@ -1,0 +1,17 @@
+[02-08-2025 03:29:18] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [02-08-2025 03:29:19] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [02-08-2025 03:43:21] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [02-08-2025 03:43:22] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [02-08-2025 04:07:18] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 90 - Message: Incorrect integer value: '' for column 'ano_compatible' at row 1
+ [02-08-2025 04:07:34] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 90 - Message: Incorrect integer value: '' for column 'ano_compatible' at row 1
+ [02-08-2025 04:08:12] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 90 - Message: Incorrect integer value: '' for column 'ano_compatible' at row 1
+ [02-08-2025 04:16:06] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [02-08-2025 04:16:06] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [02-08-2025 04:17:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [02-08-2025 04:17:30] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [02-08-2025 04:18:12] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [02-08-2025 04:18:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [02-08-2025 04:38:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 183 - Message: Undefined variable $result
+ [02-08-2025 04:39:41] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 183 - Message: Undefined variable $result
+ [02-08-2025 04:40:22] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 183 - Message: Undefined variable $result
+ 

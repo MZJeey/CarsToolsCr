@@ -1,0 +1,29 @@
+[20-07-2025 01:34:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 01:35:58] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 01:51:46] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 01:56:03] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 01:57:45] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 01:59:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 02:20:20] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 02:23:48] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 02:25:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 04:26:15] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Data truncated for column 'ano_compatible' at row 1
+ [20-07-2025 04:28:43] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Data truncated for column 'ano_compatible' at row 1
+ [20-07-2025 04:28:56] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Data truncated for column 'ano_compatible' at row 1
+ [20-07-2025 04:29:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Incorrect integer value: 'activo' for column 'estado' at row 1
+ [20-07-2025 04:44:50] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 71 - Message: Attempt to read property "nombre" on null
+ [20-07-2025 04:48:57] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 57 - Message: No se recibió JSON válido
+ [20-07-2025 04:54:44] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 71 - Message: Undefined property: stdClass::$promedio_valoraciones
+ [20-07-2025 04:56:54] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 05:00:15] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 05:13:41] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 05:38:21] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 05:46:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 21:22:24] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 17 - Message: Undefined array key "id"
+ [20-07-2025 21:46:44] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 21 - Message: Undefined array key "name"
+ [20-07-2025 21:47:52] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 21 - Message: Undefined array key "name"
+ [20-07-2025 22:48:02] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Data truncated for column 'ano_compatible' at row 1
+ [20-07-2025 22:48:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: Incorrect integer value: 'Activo' for column 'estado' at row 1
+ [20-07-2025 23:06:57] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 16 - Message: Undefined array key "producto_id"
+ [20-07-2025 23:08:20] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ImageModel.php - line: 16 - Message: Undefined array key "producto_id"
+ 

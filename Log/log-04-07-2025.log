@@ -1,0 +1,16 @@
+[04-07-2025 05:01:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\PedidoModel.php - line: 95 - Message: Trying to access array offset on value of type null
+ [04-07-2025 05:01:54] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\PedidoModel.php - line: 95 - Message: Trying to access array offset on value of type null
+ [04-07-2025 05:02:10] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\PedidoModel.php - line: 95 - Message: Trying to access array offset on value of type null
+ [04-07-2025 05:56:18] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'MetodoPago.id' in 'on clause'
+ [04-07-2025 05:57:31] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'MetodoPago.id' in 'on clause'
+ [04-07-2025 05:57:37] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'MetodoPago.id' in 'on clause'
+ [04-07-2025 05:58:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'MetodoPago.id' in 'on clause'
+ [04-07-2025 05:58:24] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'MetodoPago.id' in 'on clause'
+ [04-07-2025 05:58:42] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'MetodoPago.id' in 'on clause'
+ [04-07-2025 06:03:38] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'JOIN  Impuesto i ON p.id = i.IdImpuesto
+WHERE dp.pedido_id = 3' at line 9
+ [04-07-2025 06:04:21] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'p.Porcentaje' in 'field list'
+ [04-07-2025 06:05:24] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'p.Porcentaje' in 'field list'
+ [04-07-2025 06:05:42] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'p.Porcentaje' in 'field list'
+ [04-07-2025 06:07:26] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'dp.IdImpuesto' in 'on clause'
+ 

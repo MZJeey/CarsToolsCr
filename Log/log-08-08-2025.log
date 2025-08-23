@@ -1,0 +1,5 @@
+[08-08-2025 03:43:23] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [08-08-2025 03:43:24] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Unknown column 'shop_id' in 'where clause'
+ [08-08-2025 21:19:30] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 33 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ [08-08-2025 21:19:30] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 33 - Message: Access denied for user 'root'@'localhost' (using password: YES)
+ 

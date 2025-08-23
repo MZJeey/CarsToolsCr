@@ -1,0 +1,8 @@
+[10-06-2025 04:46:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 46 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'get=1' at line 4
+ [10-06-2025 21:51:42] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 41 - Message: Trying to access array offset on value of type null
+ [10-06-2025 22:23:11] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 116 - Message: Undefined array key "estado"
+ [10-06-2025 22:38:25] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 159 - Message: Undefined array key "promedio_valoraciones"
+ [10-06-2025 22:40:01] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 87 - Message: Unknown column '0A' in 'where clause'
+ [10-06-2025 22:43:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 87 - Message: Unknown column '0A' in 'where clause'
+ [10-06-2025 22:44:30] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 87 - Message: Unknown column '0A' in 'where clause'
+ 

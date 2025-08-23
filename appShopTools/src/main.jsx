@@ -7,7 +7,7 @@ import { Home } from "./components/Home/Home";
 import { RouterProvider } from "react-router";
 import { PageNotFound } from "./components/Home/PageNotFound";
 import { ListMovies } from "./components/Movie/ListMovies";
-import { DetailMovie } from "./components/Movie/DetailMovie";
+// import { DetailMovie } from "./components/Movie/DetailMovie";
 import ListRentals from "./components/Rental/ListRentals";
 import DetailRental from "./components/Rental/DetailRental";
 import TableMovies from "./components/Movie/TableMovies";
@@ -26,7 +26,7 @@ import { Auth } from "./components/User/Auth";
 
 import { CrearProducto } from "./components/Productos/crearProducto";
 
-import DashboardLayoutBasic from "./components/Layout/dasboard";
+// import DashboardLayoutBasic from "./components/Layout/dasboard";
 import { ListaProductos } from "./components/Productos/listaProductos";
 import { Lista } from "./components/Productos/lista";
 import ListaResenas from "./components/Productos/listaResena";
@@ -37,12 +37,14 @@ import TodosProductosPersonalizados from "./components/pedidos/TodosProductosPer
 
 import { I18nextProvider } from "react-i18next";
 import i18n from "../src/i18n/i18n"; // Ajusta la ruta según tu proyecto
-import Promociones from "./components/Productos/promociones";
+// import Promociones from "./components/Productos/promociones";
 import { patch } from "@mui/material";
 import { EditarProducto } from "./components/Productos/updateProducto";
 import ProductosSimilares from "./components/Productos/productoSimilares";
 import { Cart } from "./components/Carrito/carrito";
+import DashboardLayoutBasic from "./components/Layout/dasboard";
 import PedidoComponent from "./components/pedidos/pedido";
+import Promociones from "./components/Productos/promociones";
 
 // Asegúrate que la ruta sea correcta
 // Importa la configuración de i18n
@@ -67,12 +69,12 @@ const rutas = createBrowserRouter([
         path: "/productos",
         element: <ListaProductos />,
       },
+      // {
+      //   path: "/crear",
+      //   element: <CrearProducto />,
+      // },
       {
-        path: "/crear",
-        element: <CrearProducto />,
-      },
-      {
-        path: "/dasboard",
+        path: "/dashboard",
         element: <DashboardLayoutBasic />,
       },
       {
@@ -119,11 +121,11 @@ const rutas = createBrowserRouter([
       {
         //Grupo 1S
         path: "/",
-        element: <Auth requiredRoles={["Administrador"]} />,
+        element: <Auth requiredRoles = {['administrador']} />,
         children: [
           {
-            path: "/movie-table",
-            element: <TableMovies />,
+            path: "/crear",
+            element: <CrearProducto />,
           },
           {
             path: "/movie/crear/",

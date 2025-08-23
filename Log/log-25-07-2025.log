@@ -1,0 +1,21 @@
+[25-07-2025 00:04:12] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:04:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:04:27] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:04:28] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:05:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:05:24] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:05:25] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:05:36] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:05:37] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:08:57] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:08:57] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:12:28] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 00:12:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: Column 'id' in where clause is ambiguous
+ [25-07-2025 01:08:56] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 73 - Message: Undefined property: stdClass::$IdImpuesto
+ [25-07-2025 01:14:59] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 73 - Message: Undefined property: stdClass::$IdImpuesto
+ [25-07-2025 01:16:05] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 73 - Message: Undefined property: stdClass::$IdImpuesto
+ [25-07-2025 01:16:18] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 73 - Message: Undefined property: stdClass::$IdImpuesto
+ [25-07-2025 17:54:05] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 90 - Message: Cannot add or update a child row: a foreign key constraint fails (`carstoolscr`.`producto`, CONSTRAINT `Impuesto` FOREIGN KEY (`IdImpuesto`) REFERENCES `impuesto` (`IdImpuesto`))
+ [25-07-2025 17:54:20] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 90 - Message: Table 'carstoolscr.imagenes' doesn't exist
+ [25-07-2025 17:55:05] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 181 - Message: Undefined property: stdClass::$file
+ 

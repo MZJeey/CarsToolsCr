@@ -314,11 +314,18 @@ const PedidoComponent = () => {
     setError(null);
     try {
       const userFromStorage = localStorage.getItem("userData");
+   
       if (!userFromStorage) {
         toast.error("Debes iniciar sesión para continuar");
         return;
       }
+      
+
       const parsedUser = JSON.parse(userFromStorage);
+       console.log("Datos del usuario---->", parsedUser);
+
+
+
       setUserInfo(parsedUser);
       const response = await PedidoService.listarTodosLosPedidos(parsedUser.id);
 

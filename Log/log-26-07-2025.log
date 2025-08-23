@@ -1,0 +1,30 @@
+[26-07-2025 01:56:52] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 92 - Message: No se recibió JSON válido
+ [26-07-2025 01:57:37] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 92 - Message: No se recibió JSON válido
+ [26-07-2025 06:11:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 135 - Message: Undefined array key "nombre"
+ [26-07-2025 06:12:43] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 135 - Message: Undefined array key "nombre"
+ [26-07-2025 07:23:55] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductosController.php - line: 76 - Message: No se recibieron datos válidos
+ [26-07-2025 17:25:14] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 132 - Message: syntax error, unexpected token "public"
+ [26-07-2025 17:25:15] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 132 - Message: syntax error, unexpected token "public"
+ [26-07-2025 17:25:18] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 132 - Message: syntax error, unexpected token "public"
+ [26-07-2025 17:25:20] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 132 - Message: syntax error, unexpected token "public"
+ [26-07-2025 17:25:42] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 132 - Message: syntax error, unexpected token "public"
+ [26-07-2025 17:25:43] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 132 - Message: syntax error, unexpected token "public"
+ [26-07-2025 17:26:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 132 - Message: syntax error, unexpected token "public"
+ [26-07-2025 17:26:15] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 132 - Message: syntax error, unexpected token "public"
+ [26-07-2025 17:26:28] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 132 - Message: syntax error, unexpected token "public"
+ [26-07-2025 17:26:33] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 132 - Message: syntax error, unexpected token "public"
+ [26-07-2025 20:22:10] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 220 - Message: Attempt to read property "nombre" on null
+ [26-07-2025 20:25:12] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 220 - Message: Attempt to read property "nombre" on null
+ [26-07-2025 20:33:00] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 90 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,
+                descripcion = ?,
+                precio = ?,
+                ' at line 2
+ [26-07-2025 22:26:39] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'get%2075' at line 4
+ [26-07-2025 22:26:47] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '%2075' at line 4
+ [26-07-2025 22:33:57] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 221 - Message: Attempt to read property "nombre" on string
+ [26-07-2025 22:34:11] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 221 - Message: Attempt to read property "nombre" on string
+ [26-07-2025 22:38:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 221 - Message: Attempt to read property "nombre" on string
+ [26-07-2025 22:45:40] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 218 - Message: Attempt to read property "nombre" on null
+ [26-07-2025 22:45:56] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 218 - Message: Attempt to read property "nombre" on null
+ [26-07-2025 22:57:16] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 218 - Message: Attempt to read property "nombre" on null
+ 
