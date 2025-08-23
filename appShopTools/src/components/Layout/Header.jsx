@@ -137,7 +137,7 @@ export default function Header() {
             // console.log("roles", item.roles);
             // console.log("Datos", userData);
             // console.log("Usuario", user);
-            if (userData.id && item.roles) {
+            if (userData.id && autorize({ requiredRoles: item.roles })) {
               console.log("Entro con el rol");
               return (
                 <Box key={idx}>
