@@ -1,0 +1,9 @@
+[22-08-2025 23:05:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\UserModel.php - line: 66 - Message: Attempt to read property "correo" on null
+ [22-08-2025 23:05:50] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\UserModel.php - line: 66 - Message: Attempt to read property "correo" on null
+ [22-08-2025 23:08:18] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\UserModel.php - line: 66 - Message: Undefined property: stdClass::$correo
+ [22-08-2025 23:08:44] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\UserModel.php - line: 66 - Message: Undefined property: stdClass::$correo
+ [22-08-2025 23:10:02] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\UserModel.php - line: 72 - Message: Undefined property: stdClass::$clave
+ [22-08-2025 23:21:15] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\UserModel.php - line: 66 - Message: Undefined property: stdClass::$email
+ [22-08-2025 23:21:23] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\UserModel.php - line: 66 - Message: Undefined property: stdClass::$email
+ [22-08-2025 23:21:42] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\UserModel.php - line: 66 - Message: Undefined property: stdClass::$email
+ 

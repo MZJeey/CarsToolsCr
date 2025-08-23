@@ -15,7 +15,7 @@ import { Toaster } from "react-hot-toast";
 import toast from "react-hot-toast";
 import UserService from "../../services/UserService";
 import { UserContext } from "../../context/UserContext";
-
+import { jwtDecode } from "jwt-decode";
 export function Login() {
   const navigate = useNavigate();
   const { saveUser } = useContext(UserContext);
@@ -41,49 +41,57 @@ export function Login() {
   });
 
   const [error, setError] = useState(null);
-
-  const onSubmit = async (data) => {
+  const onSubmit = (DataForm) => {
     try {
-      const response = await UserService.loginUser(data);
-      const token = response.data?.token || response.data;
+      UserService.loginUser(DataForm)
+        .then((response) => {
+          console.log(response);
+          //Validar la respuesta
+          if (
+            response.data != null &&
+            response.data != "undefined" &&
+            response.data != "Usuario no valido"
+          ) {
+            //Usuario válido o identificado
+            //Guardar el token
+            saveUser(response.data);
 
-      if (token === "Usuario no valido") {
-        toast.error("Usuario no válido", { duration: 4000 });
-        return;
-      }
+            const decodedToken = jwtDecode(response.data);
+            const userRole = decodedToken.rol.nombre;
 
-      if (typeof token === "string" && token.includes(".")) {
-        try {
-          const payload = JSON.parse(atob(token.split(".")[1]));
+            localStorage.setItem("userRole", userRole);
           
-          // Guardamos el token en el contexto
-          saveUser(token);
-          
-          // Guardamos los datos del usuario en localStorage
-          localStorage.setItem('userData', JSON.stringify({
-            id: payload.id,
-            nombre_usuario: payload.nombre_usuario,
-            correo: payload.correo
-          }));
-
-          const nombre = payload.nombre_usuario || payload.correo;
-          toast.success(`¡Bienvenido, ${nombre}!`, { duration: 4000 });
-          navigate("/");
-        } catch (decodeError) {
-          console.error("Error decodificando token:", decodeError);
-          saveUser(token);
-          toast.success("¡Bienvenido!", { duration: 4000 });
-          navigate("/");
-        }
-      } else {
-        toast.error("Respuesta inesperada del servidor", { duration: 4000 });
-      }
-    } catch (err) {
-      setError(err);
-      console.error("Error:", err);
-      toast.error("Error de red o del servidor", { duration: 4000 });
+            // console.log("data:", decodedToken);
+            // console.log("User Role:", userRole);
+            const welcomeMessage =
+              userRole === "administrador"
+                ? "¡Welcome Admin!"
+                : "¡Welcome Client!";
+            toast.success(welcomeMessage, {
+              duration: 4000,
+            });
+            return navigate("/");
+          } else {
+            //Usuario No válido
+            toast.error("Usuario No válido", {
+              duration: 4000,
+            });
+          }
+        })
+        .catch((error) => {
+          if (error instanceof SyntaxError) {
+            console.log(error);
+            setError(error);
+            throw new Error("Respuesta no válida del servidor");
+          }
+        });
+    } catch (e) {
+      console.error("Error:", e);
     }
   };
+
+  // Si ocurre error al realizar el submit
+  const onError = (errors, e) => console.log(errors, e);
 
   return (
     <Container maxWidth="sm">

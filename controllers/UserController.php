@@ -21,9 +21,9 @@ class user
     public function get($param)
     {
         $response = new Response();
-        $usuario = new UserModel();
-        $result = $usuario->get($param);
-        //Dar respuesta
+        $user = new UserModel();
+        $result = $user->get($param);
+        // Dar respuesta en formato JSON
         $response->toJSON($result);
     }
     public function allCustomer()
@@ -44,23 +44,23 @@ class user
         //Dar respuesta
         $response->toJSON($result);
     }
-public function login()
-{
-    $response = new Response();
-    $request = new Request();
-    // Obtener json enviado
-    $inputJSON = $request->getJSON();
-    $usuario = new UserModel();
-    $result = $usuario->login($inputJSON);
+    public function login()
+    {
+        $response = new Response();
+        $request = new Request();
+        // Obtener json enviado
+        $inputJSON = $request->getJSON();
+        $usuario = new UserModel();
+        $result = $usuario->login($inputJSON);
 
-    if ($result) {
-        // Enviar token JWT si login fue exitoso
-        $response->toJSON($result);
-    } else {
-        // Enviar mensaje claro como string, NO un objeto como antes
-        $response->toJSON("Usuario no valido");
+        if ($result) {
+            // Enviar token JWT si login fue exitoso
+            $response->toJSON($result);
+        } else {
+            // Enviar mensaje claro como string, NO un objeto como antes
+            $response->toJSON("Usuario no valido");
+        }
     }
-}
 
     public function create()
     {
