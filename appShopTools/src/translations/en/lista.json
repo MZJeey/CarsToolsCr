@@ -12,6 +12,8 @@
     "errorCarga": "Error loading products",
     "productoSinImagen": "Product without image",
     "placeholderDescripcion": "...",
-    "sinValoraciones": "No reviews"
+    "sinValoraciones": "No reviews",
+    "Favoritos":"favorites",
+    "Volver":"Back"
   }
 }

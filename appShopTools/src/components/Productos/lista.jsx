@@ -113,7 +113,7 @@ export function Lista() {
   const [success, setSuccess] = useState(null);
   const [favorites, setFavorites] = useState({});
   const BASE_URL =
-  import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
+    import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
 
   const formatPrecio = (precio) => {
     if (precio === null || precio === undefined) return "₡0.00";
@@ -125,7 +125,10 @@ export function Lista() {
   };
 
   const toggleFavorite = (id) => {
-    setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
+    const newFavorites = { ...favorites, [id]: !favorites[id] };
+    setFavorites(newFavorites);
+    // Guardar en localStorage
+    localStorage.setItem("favorites", JSON.stringify(newFavorites));
     setSuccess(
       `Producto ${favorites[id] ? "removido de" : "agregado a"} favoritos`
     );

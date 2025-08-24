@@ -45,6 +45,8 @@ import { Cart } from "./components/Carrito/carrito";
 import DashboardLayoutBasic from "./components/Layout/dasboard";
 import PedidoComponent from "./components/pedidos/pedido";
 import Promociones from "./components/Productos/promociones";
+import ProductosPorCategoria from "./components/Productos/ProductosCategorias";
+import Favoritos from "./components/Productos/Favoritos";
 
 // Asegúrate que la ruta sea correcta
 // Importa la configuración de i18n
@@ -69,10 +71,14 @@ const rutas = createBrowserRouter([
         path: "/productos",
         element: <ListaProductos />,
       },
-      // {
-      //   path: "/crear",
-      //   element: <CrearProducto />,
-      // },
+      {
+        path: "/Favoritos",
+        element: <Favoritos />,
+      },
+      {
+        path: "/ProductoCategoria/:id",
+        element: <ProductosPorCategoria />,
+      },
       {
         path: "/dashboard",
         element: <DashboardLayoutBasic />,
@@ -121,7 +127,7 @@ const rutas = createBrowserRouter([
       {
         //Grupo 1S
         path: "/",
-        element: <Auth requiredRoles = {['administrador']} />,
+        element: <Auth requiredRoles={["administrador"]} />,
         children: [
           {
             path: "/crear",

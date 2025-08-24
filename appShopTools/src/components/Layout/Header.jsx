@@ -17,7 +17,8 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { TireRepair } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
@@ -31,10 +32,46 @@ export default function Header() {
   const { t } = useTranslation("header");
   const { user, decodeToken, autorize } = useContext(UserContext);
   const [userData, setUserData] = useState(decodeToken());
+  const [favoritesCount, setFavoritesCount] = useState(0);
 
   useEffect(() => {
     setUserData(decodeToken());
   }, [user]);
+  useEffect(() => {
+    const savedFavorites = localStorage.getItem("favorites");
+    if (savedFavorites) {
+      const favorites = JSON.parse(savedFavorites);
+      const count = Object.values(favorites).filter(Boolean).length;
+      setFavoritesCount(count);
+    }
+  }, []);
+
+  // Escuchar cambios en el localStorage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedFavorites = localStorage.getItem("favorites");
+      if (savedFavorites) {
+        const favorites = JSON.parse(savedFavorites);
+        const count = Object.values(favorites).filter(Boolean).length;
+        setFavoritesCount(count);
+      } else {
+        setFavoritesCount(0);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    const interval = setInterval(handleStorageChange, 1000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    setUserData(decodeToken());
+  }, [user]);
+
   //Ultimo recurso quemar datos
   console.log(" Data:", userData);
   localStorage.setItem("userData", JSON.stringify(userData));
@@ -357,11 +394,16 @@ export default function Header() {
         </IconButton>
         <Typography>{t("header.icons.compras")}</Typography>
       </MenuItem>
-
+      {/*aquie poner el link a favoritos*/}
       <MenuItem>
-        <IconButton size="large" color="inherit">
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
+        <IconButton
+          size="large"
+          color="inherit"
+          component={Link}
+          to="/Favoritos"
+        >
+          <Badge badgeContent={favoritesCount} color="error">
+            <FavoriteIcon />
           </Badge>
         </IconButton>
         <Typography>{t("header.icons.notificaciones")}</Typography>
@@ -535,9 +577,14 @@ export default function Header() {
               </Badge>
             </IconButton>
 
-            <IconButton size="large" color="inherit">
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
+            <IconButton
+              size="large"
+              color="inherit"
+              component={Link}
+              to="/Favoritos"
+            >
+              <Badge badgeContent={favoritesCount} color="error">
+                <FavoriteIcon />
               </Badge>
             </IconButton>
 
