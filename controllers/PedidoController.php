@@ -79,4 +79,33 @@ class pedido
             handleException($e);
         }
     }
+
+
+    // Eliminar los pedidos de con su productoPersoanlizado completo
+
+public function eliminar()
+{
+    try {
+        $request = new Request();
+        $response = new Response();
+        $data = $request->getJSON();
+
+        if (!isset($data->pedido_id)) {
+            return $response->toJSON(['ok' => false, 'msg' => 'pedido_id requerido'], 400);
+        }
+
+        $model = new PedidoModel();
+        $ok = $model->eliminarPedidoCompleto((int)$data->pedido_id);
+
+        if ($ok) {
+            return $response->toJSON(['ok' => true, 'msg' => 'Pedido eliminado']);
+        } else {
+            return $response->toJSON(['ok' => false, 'msg' => 'No se pudo eliminar (quizá no existe)'], 404);
+        }
+    } catch (Exception $e) {
+        handleException($e);
+    }
+}
+
+
 }

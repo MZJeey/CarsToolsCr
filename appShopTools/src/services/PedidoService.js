@@ -57,6 +57,25 @@ class PedidoService {
       usuario_id,
     });
   }
+
+
+
+/**
+ * Elimina un pedido completo (pedido + personalizados + detalles)
+ * @param {number|string} pedidoId - ID del pedido
+ * @returns {Promise}
+ */
+eliminarPedido(pedidoId) {
+  return axios.post(BASE_URL + "/eliminar", {
+    pedido_id: pedidoId,
+  });
 }
+
+
+
+
+}
+
+
 
 export default new PedidoService();

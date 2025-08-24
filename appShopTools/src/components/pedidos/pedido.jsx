@@ -301,6 +301,9 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
 
 const PedidoComponent = () => {
   const [pedidos, setPedidos] = useState([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pedidoToDelete, setPedidoToDelete] = useState(null);
+    const [deletingId, setDeletingId] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -353,6 +356,31 @@ const PedidoComponent = () => {
     setSelectedPedido(pedido);
     setOpenFactura(true);
   };
+
+
+const handleOpenConfirm = (pedidoId) => {
+  setPedidoToDelete(pedidoId);
+  setConfirmOpen(true);
+};
+
+const handleConfirmDelete = async () => {
+  try {
+    setDeletingId(pedidoToDelete);
+    await PedidoService.eliminarPedido(pedidoToDelete);
+    toast.success("Pedido eliminado");
+    await fetchTodosLosPedidos();
+  } catch (e) {
+    toast.error("No se pudo eliminar el pedido");
+  } finally {
+    setDeletingId(null);
+    setConfirmOpen(false);
+    setPedidoToDelete(null);
+  }
+};
+
+
+
+
 
   const transformPedidoForPago = (pedido) => {
     if (!pedido) return null;
@@ -483,6 +511,33 @@ const PedidoComponent = () => {
         userId={userInfo?.id}
       />
 
+<Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+  <DialogTitle>¿Eliminar pedido?</DialogTitle>
+  <DialogContent>
+    <Typography>
+      ¿Seguro que deseas eliminar este pedido y todos sus productos personalizados?
+    </Typography>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setConfirmOpen(false)} color="inherit">
+      Cancelar
+    </Button>
+    <Button
+      onClick={handleConfirmDelete}
+      color="error"
+      variant="contained"
+      disabled={deletingId === pedidoToDelete}
+    >
+      {deletingId === pedidoToDelete ? <CircularProgress size={20} /> : "Eliminar"}
+    </Button>
+  </DialogActions>
+</Dialog>
+
+
+
+
+
+
       <Box
         sx={{
           display: "flex",
@@ -584,18 +639,21 @@ const PedidoComponent = () => {
                           <Edit fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Eliminar pedido">
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Lógica para eliminar
-                          }}
-                          color="error"
-                          size="small"
-                        >
-                          <Delete fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
+<Tooltip title="Eliminar pedido">
+  <IconButton
+    onClick={(e) => {
+      e.stopPropagation();
+      handleOpenConfirm(pedido.id);
+    }}
+    color="error"
+    size="small"
+    disabled={deletingId === pedido.id}
+  >
+    <Delete fontSize="small" />
+  </IconButton>
+</Tooltip>
+
+
                     </TableCell>
                   </TableRow>
                 );
