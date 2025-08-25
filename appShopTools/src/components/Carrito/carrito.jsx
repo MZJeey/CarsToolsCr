@@ -21,8 +21,6 @@
 // import { useState } from "react";
 // import { ProcesarPago } from "../Carrito/Pagar";
 
-
-
 // CartItem.propTypes = {
 //   item: PropTypes.object,
 //   removeItem: PropTypes.func,
@@ -202,8 +200,6 @@
 //   );
 // }
 
-
-
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -265,7 +261,10 @@ function CartItem({ item, removeItem, updateQuantity }) {
   const baseUrl = import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
 
   return (
-    <StyledTableRow key={item.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+    <StyledTableRow
+      key={item.id}
+      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+    >
       <StyledTableCell component="th" scope="row">
         {item.nombre}
       </StyledTableCell>
@@ -390,7 +389,7 @@ export function Cart() {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => setOpenConfirm(true)}   // ← abre el CONFIRM primero
+          onClick={() => setOpenConfirm(true)} // ← abre el CONFIRM primero
           disabled={cart.length === 0}
         >
           Procesar Pago
@@ -403,7 +402,7 @@ export function Cart() {
         onClose={() => setOpenConfirm(false)}
         onSuccess={() => {
           setOpenConfirm(false);
-          setOpenFormaPago(true);  // ← abre FormaPagoModal al terminar OK
+          setOpenFormaPago(true); // ← abre FormaPagoModal al terminar OK
         }}
       />
 
@@ -412,7 +411,7 @@ export function Cart() {
         open={openFormaPago}
         onClose={() => setOpenFormaPago(false)}
         total={total}
-        pedidoId={pedidoId}    // si es 0, el botón de pagar del modal queda deshabilitado
+        pedidoId={pedidoId} // si es 0, el botón de pagar del modal queda deshabilitado
         onSuccess={() => {
           cleanCart();
           localStorage.removeItem("pedidoId");

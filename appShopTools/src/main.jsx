@@ -10,7 +10,7 @@ import { ListMovies } from "./components/Movie/ListMovies";
 // import { DetailMovie } from "./components/Movie/DetailMovie";
 import ListRentals from "./components/Rental/ListRentals";
 import DetailRental from "./components/Rental/DetailRental";
-import TableMovies from "./components/Movie/TableMovies";
+
 import { CreateMovie } from "./components/Movie/CreateMovie";
 import { UpdateMovie } from "./components/Movie/UpdateMovie";
 import { CatalogMovies } from "./components/Movie/CatalogMovies";
@@ -23,7 +23,7 @@ import { Login } from "./components/User/Login";
 import { Logout } from "./components/User/Logout";
 import { Signup } from "./components/User/Signup";
 import { Auth } from "./components/User/Auth";
-
+import "./index.css";
 import { CrearProducto } from "./components/Productos/crearProducto";
 
 // import DashboardLayoutBasic from "./components/Layout/dasboard";
@@ -47,6 +47,7 @@ import PedidoComponent from "./components/pedidos/pedido";
 import Promociones from "./components/Productos/promociones";
 import ProductosPorCategoria from "./components/Productos/ProductosCategorias";
 import Favoritos from "./components/Productos/Favoritos";
+import ListaPromo from "./components/Productos/ListPromociones";
 
 // Asegúrate que la ruta sea correcta
 // Importa la configuración de i18n
@@ -70,6 +71,10 @@ const rutas = createBrowserRouter([
       {
         path: "/productos",
         element: <ListaProductos />,
+      },
+      {
+        path: "/ListaPromo",
+        element: <ListaPromo />,
       },
       {
         path: "/Favoritos",

@@ -5,33 +5,38 @@ class ProductoSimilarController
 {
 
 
-    public function index()
+    public function create()
     {
         try {
             $request = new Request();
+            $response = new Response();
             $inputJSON = $request->getJSON();
 
             if (!$inputJSON) {
                 throw new Exception("No se recibió JSON válido");
             }
 
-            $productoId = $inputJSON['producto_id'] ?? null;
-            $similarId = $inputJSON['producto_similar_id'] ?? null;
-            $tipo = $inputJSON['tipo_relacion'] ?? 'similar';
-
-            if (!$productoId || !$similarId) {
-                throw new Exception("Faltan datos requeridos");
-            }
-
             $producto = new ProductosSimilaresModel();
-            $result = $producto->agregarProductoSimilares($productoId, $similarId, $tipo);
+            $result = $producto->agregarProductoSimilares($inputJSON);
 
-            (new Response())->toJSON($result);
+            $response->toJSON($result);
         } catch (Exception $e) {
-            (new Response())->toJSON([
-                'error' => true,
-                'message' => $e->getMessage()
-            ]);
+            handleException($e);
+        }
+    }
+
+    public function get($id)
+    {
+        try {
+            $response = new Response();
+            //Instancia del modelo
+            $producto = new ProductosSimilaresModel();
+            //Acción del modelo a ejecutar
+            $result = $producto->obtenerProductosSimilares($id);
+            //Dar respuesta
+            return $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
         }
     }
 }

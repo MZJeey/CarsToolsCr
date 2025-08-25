@@ -17,6 +17,7 @@ import {
   IconButton,
   useTheme,
   CircularProgress,
+  Rating,
 } from "@mui/material";
 import {
   LocalShipping,
@@ -33,16 +34,28 @@ import toast from "react-hot-toast";
 import ProductoService from "../../services/ProductoService";
 import CategoriaService from "../../services/CategoriaService";
 import { useCart } from "../../hooks/useCart";
-// Componentes estilizados
-const HeroSection = styled(Paper)(({ theme }) => ({
+
+// Componentes estilizados - HeroSection SIN MÁRGENES
+const HeroSection = styled(Box)(({ theme }) => ({
   backgroundImage:
     "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(https://images.unsplash.com/photo-1493238792000-8113da705763?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80)",
   backgroundSize: "cover",
   backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
   color: "white",
-  padding: theme.spacing(8, 0),
-  marginBottom: theme.spacing(4),
+  padding: theme.spacing(10, 0),
   textAlign: "center",
+  width: "100%",
+  margin: 0,
+}));
+
+const HeroContainer = styled(Container)(({ theme }) => ({
+  maxWidth: "md",
+  padding: theme.spacing(0, 2),
+  margin: "0 auto",
+  [theme.breakpoints.up("sm")]: {
+    padding: theme.spacing(0, 3),
+  },
 }));
 
 const FeatureCard = styled(Card)(({ theme }) => ({
@@ -85,7 +98,7 @@ export function Home() {
   const [productos, setProductos] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [favorites, setFavorites] = useState({});
+  const [favorites, setFavorites] = useState([]);
   const BASE_URL =
     import.meta.env.VITE_BASE_URL?.replace(/\/$/, "") + "/uploads" || "";
 
@@ -110,6 +123,33 @@ export function Home() {
 
         setCategorias(categoriasRes.data || []);
         setProductos(productoRes.data || []);
+
+        const savedFavorites = localStorage.getItem("favorites");
+        if (savedFavorites) {
+          try {
+            const parsedFavorites = JSON.parse(savedFavorites);
+
+            if (Array.isArray(parsedFavorites)) {
+              setFavorites(parsedFavorites);
+            } else if (
+              typeof parsedFavorites === "object" &&
+              parsedFavorites !== null
+            ) {
+              const favoritesArray = Object.keys(parsedFavorites).filter(
+                (key) => parsedFavorites[key] === true
+              );
+              setFavorites(favoritesArray);
+              localStorage.setItem("favorites", JSON.stringify(favoritesArray));
+            } else {
+              setFavorites([]);
+              localStorage.setItem("favorites", JSON.stringify([]));
+            }
+          } catch (e) {
+            console.error("Error parsing favorites:", e);
+            setFavorites([]);
+            localStorage.setItem("favorites", JSON.stringify([]));
+          }
+        }
       } catch (err) {
         console.error("Error al cargar datos:", err);
         toast.error("Error al cargar los datos");
@@ -121,27 +161,20 @@ export function Home() {
     fetchInitialData();
   }, []);
 
-  const toggleFavorite = (productId) => {
-    setFavorites((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
+  const toggleFavorite = (id) => {
+    const idString = id.toString();
+    const newFavorites = favorites.includes(idString)
+      ? favorites.filter((favId) => favId !== idString)
+      : [...favorites, idString];
+
+    setFavorites(newFavorites);
+    localStorage.setItem("favorites", JSON.stringify(newFavorites));
   };
 
-  // const addItem = (producto) => {
-  //   try {
-  //     addToCart({
-  //       id: producto.id,
-  //       nombre: producto.nombre,
-  //       precio: producto.precio,
-  //       imagen: producto.imagen?.[0]?.imagen || "",
-  //       cantidad: 1,
-  //     });
-  //     setSuccess("Producto añadido al carrito");
-  //   } catch (err) {
-  //     setError("Error al añadir al carrito");
-  //   }
-  // };
+  const handleAddToCart = (producto) => {
+    addItem(producto);
+    setSuccess(`"${producto.nombre}" agregado al carrito`);
+  };
 
   const handleCloseSnackbar = () => {
     setError("");
@@ -158,50 +191,84 @@ export function Home() {
           height: "50vh",
         }}
       >
-        <CircularProgress />;
+        <CircularProgress />
       </Container>
     );
   }
 
   return (
-    <Box>
-      {/* Sección Hero */}
-      <HeroSection elevation={0}>
-        <Container maxWidth="md">
-          <Typography
-            variant="h2"
-            component="h1"
-            gutterBottom
-            fontWeight="bold"
-          >
-            CarsToolsCr
-          </Typography>
-          <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-            Todo lo que tu vehículo necesita hasta la puerta de tu garaje
-          </Typography>
-          <Button
-            variant="contained"
-            size="large"
-            color="primary"
-            sx={{ mr: 2 }}
-            component={Link}
-            to="/lista"
-          >
-            Ver Catálogo
-          </Button>
-          <Button
-            variant="outlined"
-            size="large"
-            sx={{ color: "white", borderColor: "white" }}
-            component={Link}
-            to="/ofertas"
-          >
-            Ofertas Especiales
-          </Button>
-        </Container>
-      </HeroSection>
+    <Box sx={{ width: "100%", overflow: "hidden" }}>
+      {/* Sección Hero - SIN ESPACIOS EN BLANCO ALREDEDOR */}
+      <Box
+        sx={{
+          width: "100vw",
+          marginLeft: "calc(-50vw + 50%)",
+          marginRight: "calc(-50vw + 50%)",
+        }}
+      >
+        <HeroSection>
+          <HeroContainer>
+            <Typography
+              variant="h2"
+              component="h1"
+              gutterBottom
+              fontWeight="bold"
+              sx={{ fontSize: { xs: "2rem", sm: "3rem", md: "4rem" } }}
+            >
+              CarsToolsCr
+            </Typography>
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{
+                mb: 3,
+                fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
+              }}
+            >
+              Todo lo que tu vehículo necesita hasta la puerta de tu garaje
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                variant="contained"
+                size="large"
+                color="primary"
+                component={Link}
+                to="/lista"
+                sx={{ minWidth: { xs: "200px", sm: "auto" } }}
+              >
+                Ver Catálogo
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                sx={{
+                  color: "white",
+                  borderColor: "white",
+                  minWidth: { xs: "200px", sm: "auto" },
+                  "&:hover": {
+                    borderColor: "white",
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                  },
+                }}
+                component={Link}
+                to="/ListaPromo"
+              >
+                Ofertas Especiales
+              </Button>
+            </Box>
+          </HeroContainer>
+        </HeroSection>
+      </Box>
 
-      <Container maxWidth="lg">
+      {/* Contenido principal */}
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, mt: 4 }}>
         {/* Categorías */}
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Typography variant="h4" component="h2" gutterBottom>
@@ -231,6 +298,7 @@ export function Home() {
           </Box>
         </Box>
 
+        {/* Resto del contenido... */}
         {/* Productos Destacados */}
         <Box sx={{ mb: 6 }}>
           <Typography
@@ -259,7 +327,7 @@ export function Home() {
                     }}
                     onClick={() => toggleFavorite(producto.id)}
                   >
-                    {favorites[producto.id] ? (
+                    {favorites.includes(producto.id.toString()) ? (
                       <Favorite color="error" />
                     ) : (
                       <FavoriteBorder />
@@ -284,6 +352,27 @@ export function Home() {
                       size="small"
                       sx={{ mb: 1 }}
                     />
+
+                    <Rating
+                      name={`product-rating-${producto.id}`}
+                      value={
+                        producto.promedio_valoraciones &&
+                        parseFloat(producto.promedio_valoraciones) > 0
+                          ? parseFloat(producto.promedio_valoraciones)
+                          : producto.resena && producto.resena.length > 0
+                            ? producto.resena.reduce(
+                                (sum, resena) =>
+                                  sum + parseFloat(resena.valoracion),
+                                0
+                              ) / producto.resena.length
+                            : 0
+                      }
+                      precision={0.5}
+                      readOnly
+                      size="small"
+                      sx={{ mb: 1 }}
+                    />
+
                     <Typography
                       variant="h6"
                       fontWeight="bold"
@@ -306,7 +395,7 @@ export function Home() {
                     <Button
                       variant="contained"
                       startIcon={<ShoppingCart />}
-                      onClick={() => addItem(producto)}
+                      onClick={() => handleAddToCart(producto)}
                       size="small"
                       fullWidth
                       sx={{ mb: 1 }}
@@ -395,6 +484,7 @@ export function Home() {
             textAlign: "center",
             bgcolor: "primary.main",
             color: "white",
+            borderRadius: 2,
           }}
         >
           <Typography variant="h4" component="h2" gutterBottom>

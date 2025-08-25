@@ -18,13 +18,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { TireRepair } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { UserContext } from "../../context/UserContext";
-
 import { useTranslation } from "react-i18next";
 import ReactCountryFlag from "react-country-flag";
 
@@ -119,10 +117,12 @@ export default function Header() {
     setAnchorElMantenimiento(e.currentTarget);
   const handleMantenimientoClose = () => setAnchorElMantenimiento(null);
 
+  //Buscador para filtrar productos
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+      navigate(`/lista?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery(""); // Limpiar el campo después de buscar
     }
   };
 
@@ -168,27 +168,14 @@ export default function Header() {
     <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
       {navItems &&
         navItems.map((item, idx) => {
-          // console.log('Nombre del menu->',item.name);
-          // console.log('Nombre de etiqueta',t("header.menu.administracion"));
           if (item.name === t("header.menu.administracion")) {
-            // console.log("roles", item.roles);
-            // console.log("Datos", userData);
-            // console.log("Usuario", user);
             if (userData.id && autorize({ requiredRoles: item.roles })) {
               console.log("Entro con el rol");
               return (
                 <Box key={idx}>
                   <Button
                     sx={{ color: "white" }}
-                    // aria-controls={
-                    //   Boolean(anchorElMantenimiento)
-                    //     ? "mantenimiento-menu"
-                    //     : undefined
-                    // }
                     aria-haspopup="true"
-                    // aria-expanded={
-                    //   Boolean(anchorElMantenimiento) ? "true" : undefined
-                    // }
                     onClick={handleMantenimientoOpen}
                   >
                     <Typography textAlign="center">{item.name}</Typography>

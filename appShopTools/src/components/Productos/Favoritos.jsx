@@ -16,8 +16,6 @@ import {
   IconButton,
   Rating,
   Container,
-  AppBar,
-  Toolbar,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -114,7 +112,7 @@ export function Favoritos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [favorites, setFavorites] = useState({});
+  const [favorites, setFavorites] = useState([]); // Cambiado a array
   const BASE_URL =
     import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
 
@@ -122,7 +120,30 @@ export function Favoritos() {
   useEffect(() => {
     const savedFavorites = localStorage.getItem("favorites");
     if (savedFavorites) {
-      setFavorites(JSON.parse(savedFavorites));
+      try {
+        const parsedFavorites = JSON.parse(savedFavorites);
+
+        // Verificar y corregir la estructura como en Lista
+        if (Array.isArray(parsedFavorites)) {
+          setFavorites(parsedFavorites);
+        } else if (
+          typeof parsedFavorites === "object" &&
+          parsedFavorites !== null
+        ) {
+          // Si es un objeto, convertirlo a array de claves
+          const favoritesArray = Object.keys(parsedFavorites).filter(
+            (key) => parsedFavorites[key] === true
+          );
+          setFavorites(favoritesArray);
+          // Guardar la versión corregida
+          localStorage.setItem("favorites", JSON.stringify(favoritesArray));
+        } else {
+          setFavorites([]);
+        }
+      } catch (e) {
+        console.error("Error parsing favorites:", e);
+        setFavorites([]);
+      }
     }
   }, []);
 
@@ -137,11 +158,8 @@ export function Favoritos() {
 
       if (response.data && Array.isArray(response.data)) {
         // Filtrar solo los productos marcados como favoritos
-        const favoritosIds = Object.keys(favorites).filter(
-          (id) => favorites[id]
-        );
         const productosFav = response.data.filter((producto) =>
-          favoritosIds.includes(producto.id.toString())
+          favorites.includes(producto.id.toString())
         );
 
         setProductosFavoritos(productosFav);
@@ -157,26 +175,31 @@ export function Favoritos() {
   };
 
   useEffect(() => {
-    if (Object.keys(favorites).length > 0) {
+    if (favorites.length > 0) {
       fetchProductosFavoritos();
     } else {
+      setProductosFavoritos([]);
       setLoading(false);
     }
   }, [favorites]);
 
   const toggleFavorite = (id) => {
-    const newFavorites = { ...favorites, [id]: !favorites[id] };
+    const idString = id.toString();
+    const newFavorites = favorites.includes(idString)
+      ? favorites.filter((favId) => favId !== idString)
+      : [...favorites, idString];
+
     setFavorites(newFavorites);
     // Guardar en localStorage
     localStorage.setItem("favorites", JSON.stringify(newFavorites));
 
     // Actualizar la lista de favoritos
     setProductosFavoritos((prev) =>
-      prev.filter((producto) => producto.id !== id)
+      prev.filter((producto) => producto.id.toString() !== idString)
     );
 
     setSuccess(
-      `Producto ${favorites[id] ? "removido de" : "agregado a"} favoritos`
+      `Producto ${favorites.includes(idString) ? "removido de" : "agregado a"} favoritos`
     );
   };
 
@@ -199,7 +222,7 @@ export function Favoritos() {
     setSuccess(null);
   };
 
-  // Función para determinar las promociones aplicables (igual que en Lista)
+  // Función para determinar las promociones aplicables
   const fechaActual = new Date();
   const productosConPromocionValida = productosFavoritos.map((producto) => {
     const promocionProducto = producto.promociones?.find((promo) => {
@@ -209,7 +232,7 @@ export function Favoritos() {
         fechaActual >= fechaInicio &&
         fechaActual <= fechaFin &&
         promo.IdProducto &&
-        promo.IdProducto.toString() === producto.id
+        promo.IdProducto.toString() === producto.id.toString()
       );
     });
 
@@ -221,7 +244,7 @@ export function Favoritos() {
             fechaActual >= fechaInicio &&
             fechaActual <= fechaFin &&
             promo.IdCategoria &&
-            promo.IdCategoria.toString() === producto.categoria_id
+            promo.IdCategoria.toString() === producto.categoria_id.toString()
           );
         })
       : null;
@@ -247,10 +270,9 @@ export function Favoritos() {
 
   return (
     <Box>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 4, p: 3 }}>
         <IconButton
-          component={Link}
-          to="/productos"
+          onClick={() => navigate(-1)}
           sx={{
             mr: 2,
             color: "primary.main",
@@ -260,8 +282,7 @@ export function Favoritos() {
           <ArrowBackIcon fontSize="large" />
         </IconButton>
         <Typography variant="h3" fontWeight="bold" color="primary">
-          {/*Asi debe ponerse para que agarre la traducción*/}
-          {t("lista.Volver")}
+          Mis Favoritos
         </Typography>
       </Box>
 
@@ -272,17 +293,17 @@ export function Favoritos() {
               sx={{ fontSize: 60, color: "text.disabled", mb: 2 }}
             />
             <Typography variant="h6" color="text.secondary" gutterBottom>
-              {t("lista.sinFavoritos")}
+              No tienes productos favoritos
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              {t("lista.Favoritos")}
+              Agrega productos a tus favoritos para verlos aquí
             </Typography>
             <Button
               variant="contained"
               color="primary"
-              onClick={() => navigate("/productos")}
+              onClick={() => navigate("/lista")}
             >
-              {t("lista.verProductos")}
+              Ver todos los productos
             </Button>
           </Box>
         ) : (
