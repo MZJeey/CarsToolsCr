@@ -15,17 +15,33 @@ import {
   useTheme,
   IconButton,
   Rating,
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   ShoppingCart,
   FavoriteBorder,
   Favorite,
   Straighten,
+  Clear,
+  Close,
+  Info,
 } from "@mui/icons-material";
 import ProductoService from "../../services/ProductoService";
+import ProductosSimilaresService from "../../services/ProductoSimilarService";
 import Carousel from "react-material-ui-carousel";
 import { useCart } from "../../hooks/useCart";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+// Hook para obtener los parámetros de la URL
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 const ProductCard = styled(Card)(({ theme }) => ({
   height: "100%",
   display: "flex",
@@ -78,7 +94,6 @@ const PrimaryActionButton = styled(ActionButton)(({ theme }) => ({
     color: "#fff",
     boxShadow: `0 2px 12px ${theme.palette.success.main}`,
     borderColor: theme.palette.success.dark,
-    // No scale ni transform
   },
 }));
 
@@ -96,24 +111,42 @@ const SecondaryActionButton = styled(ActionButton)(({ theme }) => ({
     color: "#fff",
     boxShadow: `0 2px 12px ${theme.palette.secondary.main}`,
     borderColor: theme.palette.secondary.dark,
-    // No scale ni transform
   },
 }));
 
-import { useTranslation } from "react-i18next";
+const SuggestionCard = styled(Card)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  borderRadius: theme.shape.borderRadius * 2,
+  overflow: "hidden",
+  boxShadow: theme.shadows[4],
+  transition: "all 0.3s ease",
+  "&:hover": {
+    transform: "translateY(-3px)",
+    boxShadow: theme.shadows[8],
+  },
+}));
 
 export function Lista() {
   const { addItem } = useCart();
   const { t } = useTranslation("lista");
-
+  const navigate = useNavigate();
   const theme = useTheme();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [favorites, setFavorites] = useState({});
+  const [favorites, setFavorites] = useState([]);
+  const [suggestionOpen, setSuggestionOpen] = useState(false);
+  const [suggestedProduct, setSuggestedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null); // Producto seleccionado para comprar
+  const [loadingSuggestion, setLoadingSuggestion] = useState(false);
   const BASE_URL =
-  import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
+    import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
+
+  // Obtener parámetro de búsqueda de la URL
+  const query = useQuery();
+  const searchTerm = query.get("search") || "";
 
   const formatPrecio = (precio) => {
     if (precio === null || precio === undefined) return "₡0.00";
@@ -125,15 +158,140 @@ export function Lista() {
   };
 
   const toggleFavorite = (id) => {
-    setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
-    setSuccess(
-      `Producto ${favorites[id] ? "removido de" : "agregado a"} favoritos`
-    );
+    const idString = id.toString();
+    const newFavorites = favorites.includes(idString)
+      ? favorites.filter((favId) => favId !== idString)
+      : [...favorites, idString];
+
+    setFavorites(newFavorites);
+    localStorage.setItem("favorites", JSON.stringify(newFavorites));
   };
 
-  const handleAddToCart = (producto) => {
-    setSuccess(`"${producto.nombre}" agregado al carrito`);
-    // agregar al carrito
+  // Función para obtener producto sugerido desde el servicio
+  const getSuggestedProduct = async (productoId) => {
+    try {
+      setLoadingSuggestion(true);
+      const response = await ProductosSimilaresService.sugerencias(productoId);
+
+      // Verificar si hay producto sugerido
+      let suggestedProductData = null;
+
+      if (
+        response.data &&
+        Array.isArray(response.data) &&
+        response.data.length > 0
+      ) {
+        suggestedProductData = response.data[0];
+      } else if (response.data && response.data.producto) {
+        suggestedProductData = response.data.producto;
+      } else if (response.data && response.data.id) {
+        suggestedProductData = response.data;
+      }
+
+      if (suggestedProductData) {
+        // Mostrar modal de sugerencia
+        setSuggestedProduct(suggestedProductData);
+        setSuggestionOpen(true);
+      } else {
+        // No hay producto sugerido → agregar directamente al carrito
+        if (selectedProduct) {
+          addItem(selectedProduct);
+          setSuccess(`"${selectedProduct.nombre}" agregado al carrito`);
+        }
+        setSelectedProduct(null);
+        setSuggestionOpen(false);
+      }
+    } catch (err) {
+      console.error("Error al obtener producto sugerido:", err);
+
+      // En caso de error también agregar directamente al carrito
+      if (selectedProduct) {
+        addItem(selectedProduct);
+        setSuccess(`"${selectedProduct.nombre}" agregado al carrito`);
+      }
+      setSelectedProduct(null);
+      setSuggestionOpen(false);
+    } finally {
+      setLoadingSuggestion(false);
+    }
+  };
+
+  const handleAddToCart = async (producto) => {
+    // Guardar el producto seleccionado pero no agregarlo aún al carrito
+    setSelectedProduct(producto);
+
+    // Obtener y mostrar producto sugerido desde el servicio
+    await getSuggestedProduct(producto.id);
+  };
+
+  const handleAddToCart = async (producto) => {
+    setSelectedProduct(producto); // opcional, solo si necesitas el modal
+    await getSuggestedProduct(producto); // PASAMOS el producto completo
+  };
+
+  const getSuggestedProduct = async (producto) => {
+    try {
+      setLoadingSuggestion(true);
+      const response = await ProductosSimilaresService.sugerencias(producto.id);
+
+      let suggestedProductData = null;
+      if (
+        response.data &&
+        Array.isArray(response.data) &&
+        response.data.length > 0
+      ) {
+        suggestedProductData = response.data[0];
+      }
+
+      if (suggestedProductData) {
+        setSuggestedProduct(suggestedProductData);
+        setSuggestionOpen(true);
+      } else {
+        // No hay sugerencia → agregamos directamente
+        addItem(producto); // <-- Usamos el producto directamente
+        setSuccess(`"${producto.nombre}" agregado al carrito`);
+      }
+    } catch (err) {
+      console.error(err);
+      addItem(producto); // mismo caso si falla
+      setSuccess(`"${producto.nombre}" agregado al carrito`);
+    } finally {
+      setLoadingSuggestion(false);
+    }
+  };
+
+  const handleContinueWithoutSuggestion = () => {
+    // Solo agregar el producto original
+    addItem(selectedProduct);
+    setSuccess(`"${selectedProduct.nombre}" agregado al carrito`);
+    setSuggestionOpen(false);
+    setSelectedProduct(null);
+    setSuggestedProduct(null);
+  };
+
+  const handleViewSuggestionDetails = () => {
+    // Cerrar el modal y navegar a la página de detalles del producto sugerido
+    setSuggestionOpen(false);
+    // Aquí podrías navegar a la página de detalles del producto sugerido
+    // window.open(`/detalles/${suggestedProduct.id}`, "_blank");
+    navigate(`/detalles/${suggestedProduct.id}`);
+  };
+
+  // Función para filtrar productos según el término de búsqueda
+  const filtrarProductos = (productos) => {
+    if (!searchTerm) return productos;
+
+    const term = searchTerm.toLowerCase();
+    return productos.filter(
+      (producto) =>
+        producto.nombre.toLowerCase().includes(term) ||
+        (producto.descripcion &&
+          producto.descripcion.toLowerCase().includes(term)) ||
+        (producto.categoria_nombre &&
+          producto.categoria_nombre.toLowerCase().includes(term)) ||
+        (producto.marca_nombre &&
+          producto.marca_nombre.toLowerCase().includes(term))
+    );
   };
 
   const fetchProductos = async () => {
@@ -144,6 +302,40 @@ export function Lista() {
 
       if (response.data && Array.isArray(response.data)) {
         setProductos(response.data);
+
+        // Cargar favoritos desde localStorage con verificación
+        const savedFavorites = localStorage.getItem("favorites");
+        if (savedFavorites) {
+          try {
+            const parsedFavorites = JSON.parse(savedFavorites);
+
+            // Verificar si es un array, si no, convertirlo
+            if (Array.isArray(parsedFavorites)) {
+              setFavorites(parsedFavorites);
+            } else if (
+              typeof parsedFavorites === "object" &&
+              parsedFavorites !== null
+            ) {
+              // Si es un objeto, convertirlo a array de claves
+              const favoritesArray = Object.keys(parsedFavorites).filter(
+                (key) => parsedFavorites[key] === true
+              );
+              setFavorites(favoritesArray);
+              // Guardar la versión corregida
+              localStorage.setItem("favorites", JSON.stringify(favoritesArray));
+            } else {
+              // Si no es ni array ni objeto, inicializar como array vacío
+              setFavorites([]);
+              localStorage.setItem("favorites", JSON.stringify([]));
+            }
+          } catch (e) {
+            console.error("Error parsing favorites:", e);
+            setFavorites([]);
+            localStorage.setItem("favorites", JSON.stringify([]));
+          }
+        } else {
+          setFavorites([]);
+        }
       } else {
         throw new Error("Formato de respuesta inesperado");
       }
@@ -157,11 +349,17 @@ export function Lista() {
 
   useEffect(() => {
     fetchProductos();
-  }, []);
+  }, [searchTerm]); // Volver a cargar cuando cambie el término de búsqueda
 
   const handleCloseSnackbar = () => {
     setError(null);
     setSuccess(null);
+  };
+
+  const handleCloseSuggestion = () => {
+    setSuggestionOpen(false);
+    setSuggestedProduct(null);
+    setSelectedProduct(null);
   };
 
   const fechaActual = new Date();
@@ -169,27 +367,27 @@ export function Lista() {
   // Función para determinar las promociones aplicables
   const productosConPromocionValida = productos.map((producto) => {
     // Buscar promoción específica para este producto
-    const promocionProducto = producto.promociones.find((promo) => {
+    const promocionProducto = producto.promociones?.find((promo) => {
       const fechaInicio = new Date(promo.FechaInicio);
       const fechaFin = new Date(promo.FechaFin);
       return (
         fechaActual >= fechaInicio &&
         fechaActual <= fechaFin &&
         promo.IdProducto &&
-        promo.IdProducto.toString() === producto.id
+        promo.IdProducto.toString() === producto.id.toString()
       );
     });
 
     // Si no hay promoción por producto, buscar por categoría
     const promocionCategoria = !promocionProducto
-      ? producto.promociones.find((promo) => {
+      ? producto.promociones?.find((promo) => {
           const fechaInicio = new Date(promo.FechaInicio);
           const fechaFin = new Date(promo.FechaFin);
           return (
             fechaActual >= fechaInicio &&
             fechaActual <= fechaFin &&
             promo.IdCategoria &&
-            promo.IdCategoria.toString() === producto.categoria_id
+            promo.IdCategoria.toString() === producto.categoria_id.toString()
           );
         })
       : null;
@@ -204,6 +402,9 @@ export function Lista() {
           : null,
     };
   });
+
+  // Filtrar productos según el término de búsqueda
+  const productosFiltrados = filtrarProductos(productosConPromocionValida);
 
   if (loading) {
     return (
@@ -223,8 +424,56 @@ export function Lista() {
 
   return (
     <Box sx={{ p: { xs: 1, sm: 3 } }}>
+      {/* Mostrar información de búsqueda si hay un término de búsqueda */}
+      {searchTerm && (
+        <Box
+          sx={{
+            mb: 3,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography variant="h3" fontWeight="bold" color="primary">
+            Resultados de búsqueda para: {searchTerm}
+          </Typography>
+
+          <Chip
+            icon={<Clear />}
+            label="Limpiar búsqueda"
+            onClick={() => (window.location.href = "/lista")}
+            variant="outlined"
+            color="primary"
+            clickable
+          />
+        </Box>
+      )}
+
+      {/* Mostrar mensaje si no hay resultados */}
+      {searchTerm && productosFiltrados.length === 0 && (
+        <Box sx={{ textAlign: "center", py: 4 }}>
+          <Typography
+            variant="h3"
+            fontWeight="bold"
+            color="primary"
+            gutterBottom
+          >
+            No se encontraron productos que coincidan con {searchTerm}
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            component={Link}
+            to="/lista"
+            sx={{ mt: 2 }}
+          >
+            Ver todos los productos
+          </Button>
+        </Box>
+      )}
+
       <Grid container spacing={3}>
-        {productosConPromocionValida.map((producto) => (
+        {productosFiltrados.map((producto) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={producto.id}>
             <ProductCard elevation={4}>
               {producto.promocion && producto.promocion.Descuento && (
@@ -279,7 +528,7 @@ export function Lista() {
                 }}
                 onClick={() => toggleFavorite(producto.id)}
               >
-                {favorites[producto.id] ? (
+                {favorites.includes(producto.id.toString()) ? (
                   <Favorite color="error" />
                 ) : (
                   <FavoriteBorder />
@@ -431,7 +680,7 @@ export function Lista() {
                 <PrimaryActionButton
                   variant="contained"
                   startIcon={<ShoppingCart />}
-                  onClick={() => addItem(producto)}
+                  onClick={() => handleAddToCart(producto)}
                 >
                   {t("lista.comprar")}
                 </PrimaryActionButton>
@@ -449,6 +698,148 @@ export function Lista() {
           </Grid>
         ))}
       </Grid>
+
+      {/* Modal de producto sugerido */}
+      <Dialog
+        open={suggestionOpen}
+        onClose={handleCloseSuggestion}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Typography variant="h6" fontWeight="bold">
+              Producto Sugerido
+            </Typography>
+            <IconButton onClick={handleCloseSuggestion}>
+              <Close />
+            </IconButton>
+          </Box>
+          <Typography variant="body2" color="text.secondary">
+            Te podría interesar este producto relacionado
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          {loadingSuggestion ? (
+            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : suggestedProduct ? (
+            <SuggestionCard>
+              <Box sx={{ position: "relative", height: 200 }}>
+                {suggestedProduct.imagen ? (
+                  Array.isArray(suggestedProduct.imagen) ? (
+                    <CardMedia
+                      component="img"
+                      image={`${BASE_URL}/${suggestedProduct.imagen[0].imagen}`}
+                      alt={suggestedProduct.nombre}
+                      sx={{ height: "100%", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <CardMedia
+                      component="img"
+                      image={`${BASE_URL}/${suggestedProduct.imagen}`}
+                      alt={suggestedProduct.nombre}
+                      sx={{ height: "100%", objectFit: "cover" }}
+                    />
+                  )
+                ) : (
+                  <CardMedia
+                    component="img"
+                    image="/placeholder-product.jpg"
+                    alt="Producto sin imagen"
+                    sx={{ height: "100%", objectFit: "cover" }}
+                  />
+                )}
+              </Box>
+              <CardContent>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  {suggestedProduct.nombre}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  {suggestedProduct.descripcion?.substring(0, 100)}...
+                </Typography>
+                <Box sx={{ mt: 2 }}>
+                  {suggestedProduct.promocion?.Descuento ? (
+                    <>
+                      <Typography
+                        variant="body2"
+                        color="text.disabled"
+                        sx={{ textDecoration: "line-through" }}
+                      >
+                        {formatPrecio(suggestedProduct.precio)}
+                      </Typography>
+                      <Typography variant="h5" color="error" fontWeight="bold">
+                        {formatPrecio(
+                          suggestedProduct.precio -
+                            (suggestedProduct.precio *
+                              suggestedProduct.promocion.Descuento) /
+                              100
+                        )}
+                      </Typography>
+                    </>
+                  ) : (
+                    <Typography variant="h5" fontWeight="bold">
+                      {formatPrecio(suggestedProduct.precio)}
+                    </Typography>
+                  )}
+                </Box>
+              </CardContent>
+            </SuggestionCard>
+          ) : (
+            <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
+              No hay productos sugeridos disponibles en este momento.
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 0, flexDirection: "column", gap: 1 }}>
+          {suggestedProduct ? (
+            <>
+              <Button
+                variant="contained"
+                onClick={handleAddSuggestionToCart}
+                startIcon={<ShoppingCart />}
+                sx={{ borderRadius: 2, fontWeight: "bold", width: "100%" }}
+                color="success"
+              >
+                Agregar ambos al carrito
+              </Button>
+
+              <Button
+                variant="outlined"
+                onClick={handleViewSuggestionDetails}
+                startIcon={<Info />}
+                sx={{ borderRadius: 2, fontWeight: "bold", width: "100%" }}
+                color="info"
+              >
+                Ver detalles del producto sugerido
+              </Button>
+
+              <Button
+                onClick={handleContinueWithoutSuggestion}
+                sx={{ borderRadius: 2, fontWeight: "bold", width: "100%" }}
+                variant="outlined"
+              >
+                Solo agregar el producto original
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={handleContinueWithoutSuggestion}
+              startIcon={<ShoppingCart />}
+              sx={{ borderRadius: 2, fontWeight: "bold", width: "100%" }}
+              color="primary"
+            >
+              Agregar producto al carrito
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={!!error || !!success}
@@ -469,4 +860,5 @@ export function Lista() {
     </Box>
   );
 }
+
 export default Lista;

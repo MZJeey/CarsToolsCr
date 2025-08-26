@@ -122,6 +122,7 @@ export const ProcesarPago = ({ open, onClose, onSuccess }) => {
           })
         )
       );
+      console.log("Datos carrito", cart);
 
       toast.success("Productos registrados en tu carrito");
       onSuccess?.({

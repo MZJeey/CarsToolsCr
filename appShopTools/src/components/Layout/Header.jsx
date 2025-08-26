@@ -17,13 +17,12 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { TireRepair } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { UserContext } from "../../context/UserContext";
-
 import { useTranslation } from "react-i18next";
 import ReactCountryFlag from "react-country-flag";
 
@@ -31,10 +30,46 @@ export default function Header() {
   const { t } = useTranslation("header");
   const { user, decodeToken, autorize } = useContext(UserContext);
   const [userData, setUserData] = useState(decodeToken());
+  const [favoritesCount, setFavoritesCount] = useState(0);
 
   useEffect(() => {
     setUserData(decodeToken());
   }, [user]);
+  useEffect(() => {
+    const savedFavorites = localStorage.getItem("favorites");
+    if (savedFavorites) {
+      const favorites = JSON.parse(savedFavorites);
+      const count = Object.values(favorites).filter(Boolean).length;
+      setFavoritesCount(count);
+    }
+  }, []);
+
+  // Escuchar cambios en el localStorage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedFavorites = localStorage.getItem("favorites");
+      if (savedFavorites) {
+        const favorites = JSON.parse(savedFavorites);
+        const count = Object.values(favorites).filter(Boolean).length;
+        setFavoritesCount(count);
+      } else {
+        setFavoritesCount(0);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    const interval = setInterval(handleStorageChange, 1000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    setUserData(decodeToken());
+  }, [user]);
+
   //Ultimo recurso quemar datos
   console.log(" Data:", userData);
   localStorage.setItem("userData", JSON.stringify(userData));
@@ -82,10 +117,12 @@ export default function Header() {
     setAnchorElMantenimiento(e.currentTarget);
   const handleMantenimientoClose = () => setAnchorElMantenimiento(null);
 
+  //Buscador para filtrar productos
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+      navigate(`/lista?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery(""); // Limpiar el campo después de buscar
     }
   };
 
@@ -131,27 +168,14 @@ export default function Header() {
     <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
       {navItems &&
         navItems.map((item, idx) => {
-          // console.log('Nombre del menu->',item.name);
-          // console.log('Nombre de etiqueta',t("header.menu.administracion"));
           if (item.name === t("header.menu.administracion")) {
-            // console.log("roles", item.roles);
-            // console.log("Datos", userData);
-            // console.log("Usuario", user);
-            if (userData.id && item.roles) {
+            if (userData.id && autorize({ requiredRoles: item.roles })) {
               console.log("Entro con el rol");
               return (
                 <Box key={idx}>
                   <Button
                     sx={{ color: "white" }}
-                    // aria-controls={
-                    //   Boolean(anchorElMantenimiento)
-                    //     ? "mantenimiento-menu"
-                    //     : undefined
-                    // }
                     aria-haspopup="true"
-                    // aria-expanded={
-                    //   Boolean(anchorElMantenimiento) ? "true" : undefined
-                    // }
                     onClick={handleMantenimientoOpen}
                   >
                     <Typography textAlign="center">{item.name}</Typography>
@@ -357,11 +381,16 @@ export default function Header() {
         </IconButton>
         <Typography>{t("header.icons.compras")}</Typography>
       </MenuItem>
-
+      {/*aquie poner el link a favoritos*/}
       <MenuItem>
-        <IconButton size="large" color="inherit">
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
+        <IconButton
+          size="large"
+          color="inherit"
+          component={Link}
+          to="/Favoritos"
+        >
+          <Badge badgeContent={favoritesCount} color="error">
+            <FavoriteIcon />
           </Badge>
         </IconButton>
         <Typography>{t("header.icons.notificaciones")}</Typography>
@@ -535,9 +564,14 @@ export default function Header() {
               </Badge>
             </IconButton>
 
-            <IconButton size="large" color="inherit">
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
+            <IconButton
+              size="large"
+              color="inherit"
+              component={Link}
+              to="/Favoritos"
+            >
+              <Badge badgeContent={favoritesCount} color="error">
+                <FavoriteIcon />
               </Badge>
             </IconButton>
 

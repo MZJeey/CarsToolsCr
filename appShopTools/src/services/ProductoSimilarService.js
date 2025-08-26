@@ -1,11 +1,14 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL + "ProductoSimilares";
+const BASE_URL = import.meta.env.VITE_BASE_URL + "ProductoSimilarController";
 
 class ProductoSimilarService {
   // Crear producto similar
   createProductoSimilar(data) {
     return axios.post(BASE_URL, JSON.stringify(data));
+  }
+  sugerencias(id) {
+    return axios.get(BASE_URL + "/" + id);
   }
 }
 

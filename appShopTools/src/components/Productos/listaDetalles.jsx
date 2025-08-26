@@ -31,7 +31,7 @@ import {
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import MobileStepper from "@mui/material/MobileStepper";
-
+import { useCart } from "../../hooks/useCart";
 import { useTranslation } from "react-i18next";
 
 const DetalleProducto = () => {
@@ -40,7 +40,7 @@ const DetalleProducto = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
-
+  const { addItem } = useCart();
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -101,7 +101,7 @@ const DetalleProducto = () => {
         setImages(productImages);
 
         const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-        setIsFavorite(favorites.includes(response.data.id));
+        setIsFavorite(favorites.includes(response.data.id.toString()));
       } catch (err) {
         setError(err.message || t("listaDetalles.error"));
       } finally {
@@ -116,10 +116,20 @@ const DetalleProducto = () => {
     if (!producto) return;
     const newFavoriteState = !isFavorite;
     setIsFavorite(newFavoriteState);
+
+    // Obtener favoritos como array
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    const updatedFavorites = newFavoriteState
-      ? [...favorites, producto.id]
-      : favorites.filter((favId) => favId !== producto.id);
+
+    // Actualizar array de favoritos
+    let updatedFavorites;
+    if (newFavoriteState) {
+      updatedFavorites = [...favorites, producto.id.toString()]; // Asegurar tipo string
+    } else {
+      updatedFavorites = favorites.filter(
+        (favId) => favId !== producto.id.toString()
+      );
+    }
+
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
@@ -553,7 +563,7 @@ const DetalleProducto = () => {
                 size="large"
                 fullWidth
                 startIcon={<ShoppingCart />}
-                onClick={handleAddToCart}
+                onClick={() => addItem(producto)}
                 disabled={parseInt(producto.stock) <= 0}
               >
                 {parseInt(producto.stock) > 0
