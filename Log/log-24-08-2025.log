@@ -5,4 +5,6 @@
  [24-08-2025 04:17:19] [Berny] error: File: C:\xampp\htdocs\CarsToolsCr\controllers\core\MySqlConnect.php - line: 33 - Message: Access denied for user 'root'@'localhost' (using password: YES)
  [24-08-2025 20:00:49] [Berny] error: File: C:\xampp\htdocs\CarsToolsCr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
  [24-08-2025 20:02:25] [Berny] error: File: C:\xampp\htdocs\CarsToolsCr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [24-08-2025 20:42:26] [Berny] error: File: C:\xampp\htdocs\CarsToolsCr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [24-08-2025 20:42:26] [Berny] error: File: C:\xampp\htdocs\CarsToolsCr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
  
