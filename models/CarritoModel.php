@@ -38,6 +38,73 @@ class CarritoModel
     }
 
 
+
+
+
+
+    // public function agregarProducto($data)
+    // {
+    //     try {
+    //         // Insertar producto en carrito con prepared statement
+    //         $sql = "INSERT INTO carrito (usuario_id, producto_id, cantidad, guardado_en)
+    //             VALUES (:usuario_id, :producto_id, :cantidad, NOW())";
+    //         $params = [
+    //             ':usuario_id' => $data->usuario_id,
+    //             ':producto_id' => $data->producto_id,
+    //             ':cantidad' => $data->cantidad
+    //         ];
+    //         $carrito_id = $this->enlace->executeSQL_DML_last($sql, $params);
+
+    //         // Actualizar stock
+    //         $sqlUpdate = "UPDATE producto 
+    //                   SET stock = stock - :cantidad 
+    //                   WHERE id = :producto_id AND stock >= :cantidad";
+    //         $paramsUpdate = [
+    //             ':cantidad' => $data->cantidad,
+    //             ':producto_id' => $data->producto_id
+    //         ];
+    //         $affectedRows = $this->enlace->executeSQL_DML($sqlUpdate, $paramsUpdate);
+
+    //         // Obtener sugerencias de productos similares más baratos
+
+
+    //         return [
+    //             'success' => true,
+    //             'message' => 'Producto agregado al carrito',
+
+    //         ];
+    //     } catch (Exception $e) {
+    //         error_log("Error en agregarProducto: " . $e->getMessage());
+    //         return [
+    //             'success' => false,
+    //             'message' => $e->getMessage(),
+    //             'sugerencias' => []
+    //         ];
+    //     }
+    // }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function actualizarCantidad($data)
     {
         $sql = "UPDATE carrito SET cantidad = {$data->cantidad}, guardado_en = NOW()

@@ -1,0 +1,28 @@
+[25-08-2025 01:11:18] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 90 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?, ?, ?, NOW()) 
+                ON DUPLICATE KEY UPDATE cantidad = cantidad + ' at line 2
+ [25-08-2025 01:21:41] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 113 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '//             VALUES ('1', '5', '2', NOW())' at line 2
+ [25-08-2025 01:23:12] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\CarritoModel.php - line: 78 - Message: syntax error, unexpected token "private"
+ [25-08-2025 01:24:37] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '? 
+                AND p.precio < orig.precio
+                AND p.stock > 0' at line 13
+ [25-08-2025 01:25:43] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '? 
+                AND p.precio < orig.precio
+                AND p.stock > 0' at line 13
+ [25-08-2025 01:41:20] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Undefined property: stdClass::$producto_similar_id
+ [25-08-2025 01:56:19] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Undefined property: stdClass::$producto_similar_id
+ [25-08-2025 01:56:51] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosSimilaresModel.php - line: 16 - Message: Undefined property: stdClass::$producto_similar_id
+ [25-08-2025 02:19:55] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 90 - Message: Unknown column 'generico' in 'field list'
+ [25-08-2025 02:20:38] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 90 - Message: Unknown column 'generico' in 'field list'
+ [25-08-2025 04:01:39] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\ProductoSimilarController.php - line: 36 - Message: No se recibió JSON válido
+ [25-08-2025 04:08:33] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 50 - Message: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ':producto_id
+              AND p.precio < orig.precio
+              AND p.stoc' at line 13
+ [25-08-2025 05:15:43] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [25-08-2025 05:15:53] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [25-08-2025 05:16:26] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [25-08-2025 05:21:58] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [25-08-2025 05:22:56] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [25-08-2025 05:27:58] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [25-08-2025 05:29:50] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [25-08-2025 05:36:29] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ 

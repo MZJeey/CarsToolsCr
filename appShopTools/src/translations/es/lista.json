@@ -12,6 +12,9 @@
     "errorCarga": "Error al cargar los productos",
     "productoSinImagen": "Producto sin imagen",
     "placeholderDescripcion": "...",
-    "sinValoraciones": "Sin valoraciones"
+    "sinValoraciones": "Sin valoraciones",
+    "Favoritos":"Favoritos",
+    "Volver":"Volver"
+
   }
 }
