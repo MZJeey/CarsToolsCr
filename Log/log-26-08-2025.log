@@ -82,4 +82,17 @@
  [26-08-2025 06:27:35] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
  [26-08-2025 06:34:23] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
  [26-08-2025 06:34:23] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [26-08-2025 21:11:26] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [26-08-2025 22:03:16] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\CarritoController.php - line: 35 - Message: No se recibió JSON válido
+ [26-08-2025 22:03:24] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\CarritoController.php - line: 35 - Message: No se recibió JSON válido
+ [26-08-2025 22:03:54] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\CarritoController.php - line: 35 - Message: No se recibió JSON válido
+ [26-08-2025 22:04:02] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\CarritoController.php - line: 35 - Message: No se recibió JSON válido
+ [26-08-2025 22:08:07] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\CarritoController.php - line: 35 - Message: No se recibió JSON válido
+ [26-08-2025 22:12:15] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [26-08-2025 22:24:11] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [26-08-2025 22:34:40] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [26-08-2025 22:40:01] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [26-08-2025 22:44:36] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [26-08-2025 22:47:24] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [26-08-2025 22:52:53] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
  

@@ -134,7 +134,7 @@ export default function Header() {
 
   const navItems = [
     { name: t("header.menu.repuestos"), link: "/lista", roles: null },
-    { name: t("header.menu.marcas"), link: "/pedidos", roles: null },
+    { name: t("header.menu.pedidos"), link: "/pedidos", roles: null },
     {
       name: t("header.menu.servicios"),
       link: "/movie/filter",

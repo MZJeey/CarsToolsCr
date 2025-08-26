@@ -103,22 +103,13 @@ export const ProcesarPago = ({ open, onClose, onSuccess }) => {
           )
         ),
       };
-
+      // se guarda en el carrito base de datos
       await Promise.all(
         cart.map((item) =>
           CarritoService.crearCarrito({
             usuario_id: userInfo.id,
             producto_id: item.id,
             cantidad: item.cantidad,
-            datos_pdf: JSON.stringify({
-              ...item.pdfData,
-              totals: {
-                subtotal: totals.subtotal.number,
-                iva: totals.iva.number,
-                total: totals.total.number,
-                simboloMoneda: totals.subtotal.symbol,
-              },
-            }),
           })
         )
       );

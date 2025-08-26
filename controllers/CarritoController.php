@@ -21,25 +21,91 @@ class carrito
         }
     }
 
+    // public function create()
+    // {
+    //     try {
+    //         $request = new Request();
+    //         $response = new Response();
+    //         $inputJSON = $request->getJSON();
+
+    //         // DEBUG: Imprimir el input recibido
+    //         file_put_contents("debug_input.log", print_r($inputJSON, true));
+
+    //         if (!$inputJSON) {
+    //             throw new Exception("No se recibió JSON válido");
+    //         }
+
+    //         $carrito = new CarritoModel($inputJSON);
+    //         $result = $carrito->guardarCarrito($inputJSON);
+
+    //         $response->toJSON($result);
+    //     } catch (Exception $e) {
+    //         handleException($e);
+    //     }
+    // }
+
     public function create()
     {
         try {
             $request = new Request();
+            $response = new Response();
+
+            // Obtener JSON del request
             $inputJSON = $request->getJSON();
 
-            // DEBUG: Imprimir el input recibido
+            // DEBUG: Guardar lo recibido en un log
             file_put_contents("debug_input.log", print_r($inputJSON, true));
 
             if (!$inputJSON) {
                 throw new Exception("No se recibió JSON válido");
             }
 
+            // Si lo recibido es un array, convertirlo a objeto
+            if (is_array($inputJSON)) {
+                $inputJSON = json_decode(json_encode($inputJSON));
+            }
+
+            // Validar campos requeridos
+            if (
+                !isset($inputJSON->usuario_id) ||
+                !isset($inputJSON->producto_id) ||
+                !isset($inputJSON->cantidad)
+            ) {
+                throw new Exception("Faltan campos requeridos: usuario_id, producto_id o cantidad");
+            }
+
+            // Crear modelo y guardar carrito
             $carrito = new CarritoModel();
-            $result = $carrito->agregarProducto($inputJSON);
+            $result = $carrito->guardarCarrito($inputJSON);
+
+            // Respuesta en JSON
+            $response->toJSON([
+                "success" => true,
+                "data" => $result
+            ]);
         } catch (Exception $e) {
-            handleException($e);
+            // Loguear el error
+            error_log("Error en CarritoController::create -> " . $e->getMessage());
+            $response = new Response();
+          
+            $response->toJSON([
+                "success" => false,
+                "error" => $e->getMessage()
+            ]);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function actualizar()
     {
