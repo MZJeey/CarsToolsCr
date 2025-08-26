@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
   Container,
   Typography,
@@ -28,12 +28,14 @@ import {
   Add as AddIcon,
   Close as CloseIcon,
   Print as PrintIcon,
+  Payment as PaymentIcon,
 } from "@mui/icons-material";
 import PedidoService from "../../services/PedidoService";
 import CrearPedidoModal from "./crearPedido";
+import FormaPagoModal from "../../components/pedidos/formaPagoPedido";
 import { toast } from "react-hot-toast";
 
-const FacturaDialog = ({ pedido, open, onClose }) => {
+const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
   if (!pedido) return null;
 
   const parseOpcionesPersonalizacion = (opciones) => {
@@ -60,7 +62,6 @@ const FacturaDialog = ({ pedido, open, onClose }) => {
       return [];
     }
   };
-
   const calcularTotales = () => {
     let subtotal = 0;
     let impuestos = 0;
@@ -282,12 +283,13 @@ const FacturaDialog = ({ pedido, open, onClose }) => {
       </DialogContent>
       <DialogActions sx={{ p: 3 }}>
         <Button
+          type="button"
           variant="outlined"
-          startIcon={<PrintIcon />}
-          onClick={() => window.print()}
+          startIcon={<PaymentIcon />}
+          onClick={() => setOpenPago(true)}
           sx={{ mr: 2 }}
         >
-          Imprimir Factura
+          Pagar / Facturar
         </Button>
         <Button variant="contained" onClick={onClose}>
           Cerrar
@@ -299,11 +301,15 @@ const FacturaDialog = ({ pedido, open, onClose }) => {
 
 const PedidoComponent = () => {
   const [pedidos, setPedidos] = useState([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pedidoToDelete, setPedidoToDelete] = useState(null);
+    const [deletingId, setDeletingId] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedPedido, setSelectedPedido] = useState(null);
   const [openFactura, setOpenFactura] = useState(false);
+  const [openPago, setOpenPago] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
 
   const fetchTodosLosPedidos = useCallback(async () => {
@@ -351,6 +357,99 @@ const PedidoComponent = () => {
     setOpenFactura(true);
   };
 
+
+const handleOpenConfirm = (pedidoId) => {
+  setPedidoToDelete(pedidoId);
+  setConfirmOpen(true);
+};
+
+const handleConfirmDelete = async () => {
+  try {
+    setDeletingId(pedidoToDelete);
+    await PedidoService.eliminarPedido(pedidoToDelete);
+    toast.success("Pedido eliminado");
+    await fetchTodosLosPedidos();
+  } catch (e) {
+    toast.error("No se pudo eliminar el pedido");
+  } finally {
+    setDeletingId(null);
+    setConfirmOpen(false);
+    setPedidoToDelete(null);
+  }
+};
+
+
+
+
+
+  const transformPedidoForPago = (pedido) => {
+    if (!pedido) return null;
+
+    const detalles = pedido.detalles || {};
+    const productos = [];
+
+    if (detalles.nombre_producto) {
+      productos.push({
+        id: detalles.id_producto || 0,
+        nombre: detalles.nombre_producto,
+        cantidad: detalles.cantidad || 0,
+        precio_unitario: detalles.precio_unitario || 0,
+        porcentaje: detalles.porcentaje || 0,
+        subtotal: (detalles.cantidad || 0) * (detalles.precio_unitario || 0),
+        iva: detalles.porcentaje || 0,
+      });
+    }
+
+    if (detalles.productos?.length) {
+      detalles.productos.forEach((prod) => {
+        productos.push({
+          id: prod.id_producto_base || 0,
+          nombre:
+            prod.nombre_personalizado ||
+            prod.nombre_producto_base ||
+            "Producto personalizado",
+          cantidad: prod.cantidad || 0,
+          precio_unitario: prod.precio_unitario || prod.costo_base || 0,
+          porcentaje: prod.porcentaje || 0,
+          subtotal:
+            (prod.cantidad || 0) *
+            (prod.precio_unitario || prod.costo_base || 0),
+          iva: prod.porcentaje || 0,
+          opciones_personalizacion: prod.opciones_personalizacion,
+          es_personalizado: true,
+        });
+      });
+    }
+
+    const subtotal = productos.reduce((sum, p) => sum + (p.subtotal || 0), 0);
+    const impuestos = productos.reduce(
+      (sum, p) => sum + (p.subtotal || 0) * ((p.porcentaje || 0) / 100),
+      0
+    );
+    const total = subtotal + impuestos;
+
+    return {
+      pedido: {
+        id: pedido.id,
+        fecha_pedido: pedido.fecha_pedido,
+        estado: pedido.estado,
+        metodo_pago: pedido.metodo_pago,
+        nombre_usuario: pedido.nombre_usuario,
+        direccion_envio: pedido.direccion_envio,
+      },
+      detalle: productos,
+      total,
+      subtotal,
+      impuestos,
+    };
+  };
+
+  const handlePagoSuccess = (factura) => {
+    toast.success(`Factura ${factura?.id ? `#${factura.id} ` : ""}generada`);
+    setOpenPago(false);
+    fetchTodosLosPedidos();
+  };
+
   const estadoOrden = {
     en_proceso: 0,
     pagado: 1,
@@ -393,7 +492,51 @@ const PedidoComponent = () => {
         pedido={selectedPedido}
         open={openFactura}
         onClose={() => setOpenFactura(false)}
+        setOpenPago={setOpenPago}
       />
+
+      <FormaPagoModal
+        open={openPago}
+        onClose={() => setOpenPago(false)}
+        onSuccess={handlePagoSuccess}
+        pedido={
+          selectedPedido ? transformPedidoForPago(selectedPedido).pedido : null
+        }
+        detalle={
+          selectedPedido ? transformPedidoForPago(selectedPedido).detalle : null
+        }
+        total={
+          selectedPedido ? transformPedidoForPago(selectedPedido).total : 0
+        }
+        userId={userInfo?.id}
+      />
+
+<Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+  <DialogTitle>¿Eliminar pedido?</DialogTitle>
+  <DialogContent>
+    <Typography>
+      ¿Seguro que deseas eliminar este pedido y todos sus productos personalizados?
+    </Typography>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setConfirmOpen(false)} color="inherit">
+      Cancelar
+    </Button>
+    <Button
+      onClick={handleConfirmDelete}
+      color="error"
+      variant="contained"
+      disabled={deletingId === pedidoToDelete}
+    >
+      {deletingId === pedidoToDelete ? <CircularProgress size={20} /> : "Eliminar"}
+    </Button>
+  </DialogActions>
+</Dialog>
+
+
+
+
+
 
       <Box
         sx={{
@@ -496,18 +639,21 @@ const PedidoComponent = () => {
                           <Edit fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Eliminar pedido">
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Lógica para eliminar
-                          }}
-                          color="error"
-                          size="small"
-                        >
-                          <Delete fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
+<Tooltip title="Eliminar pedido">
+  <IconButton
+    onClick={(e) => {
+      e.stopPropagation();
+      handleOpenConfirm(pedido.id);
+    }}
+    color="error"
+    size="small"
+    disabled={deletingId === pedido.id}
+  >
+    <Delete fontSize="small" />
+  </IconButton>
+</Tooltip>
+
+
                     </TableCell>
                   </TableRow>
                 );

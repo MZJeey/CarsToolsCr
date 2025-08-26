@@ -80,4 +80,6 @@
  [26-08-2025 06:27:03] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
  [26-08-2025 06:27:35] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
  [26-08-2025 06:27:35] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [26-08-2025 06:34:23] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [26-08-2025 06:34:23] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
  

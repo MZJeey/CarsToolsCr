@@ -9,7 +9,7 @@ class PedidoModel
         $this->db = new MySqlConnect();
     }
 
-    public function all($usuario_id)
+   public function all($usuario_id)
     {
         try {
             $sql = "SELECT 
@@ -179,4 +179,31 @@ WHERE dp.pedido_id = $pedido_id";
             ORDER BY p.fecha_pedido DESC";
         return $this->db->executeSQL($sql);
     }
+
+
+
+// Eliminar los pedidos de con su productoPersoanlizado completo
+
+   public function eliminarPedidoCompleto(int $pedido_id): bool
+{
+    try {
+        $pedido_id = (int)$pedido_id;
+
+        // 1. Borrar productos personalizados del pedido
+        $this->db->executeSQL_DML("DELETE FROM `producto_personalizado` WHERE `pedido_id` = $pedido_id");
+
+        // 2. Borrar detallepedido (si existe en tu esquema)
+        $this->db->executeSQL_DML("DELETE FROM `detallepedido` WHERE `pedido_id` = $pedido_id");
+
+        // 3. Borrar el pedido
+        $this->db->executeSQL_DML("DELETE FROM `pedido` WHERE `id` = $pedido_id");
+
+        return true; // éxito seguro
+    } catch (Exception $e) {
+        error_log('Error eliminarPedidoCompleto: ' . $e->getMessage());
+        return false;
+    }
+}
+
+
 }
