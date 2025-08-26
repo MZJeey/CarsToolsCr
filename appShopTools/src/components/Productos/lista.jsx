@@ -37,6 +37,7 @@ import Carousel from "react-material-ui-carousel";
 import { useCart } from "../../hooks/useCart";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+
 // Hook para obtener los parámetros de la URL
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -139,7 +140,7 @@ export function Lista() {
   const [favorites, setFavorites] = useState([]);
   const [suggestionOpen, setSuggestionOpen] = useState(false);
   const [suggestedProduct, setSuggestedProduct] = useState(null);
-  const [selectedProduct, setSelectedProduct] = useState(null); // Producto seleccionado para comprar
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [loadingSuggestion, setLoadingSuggestion] = useState(false);
   const BASE_URL =
     import.meta.env.VITE_BASE_URL.replace(/\/$/, "") + "/uploads";
@@ -224,40 +225,18 @@ export function Lista() {
     await getSuggestedProduct(producto.id);
   };
 
-  const handleAddToCart = async (producto) => {
-    setSelectedProduct(producto); // opcional, solo si necesitas el modal
-    await getSuggestedProduct(producto); // PASAMOS el producto completo
-  };
-
-  const getSuggestedProduct = async (producto) => {
-    try {
-      setLoadingSuggestion(true);
-      const response = await ProductosSimilaresService.sugerencias(producto.id);
-
-      let suggestedProductData = null;
-      if (
-        response.data &&
-        Array.isArray(response.data) &&
-        response.data.length > 0
-      ) {
-        suggestedProductData = response.data[0];
-      }
-
-      if (suggestedProductData) {
-        setSuggestedProduct(suggestedProductData);
-        setSuggestionOpen(true);
-      } else {
-        // No hay sugerencia → agregamos directamente
-        addItem(producto); // <-- Usamos el producto directamente
-        setSuccess(`"${producto.nombre}" agregado al carrito`);
-      }
-    } catch (err) {
-      console.error(err);
-      addItem(producto); // mismo caso si falla
-      setSuccess(`"${producto.nombre}" agregado al carrito`);
-    } finally {
-      setLoadingSuggestion(false);
+  const handleAddSuggestionToCart = () => {
+    // Agregar ambos productos al carrito
+    if (selectedProduct) {
+      addItem(selectedProduct);
     }
+    if (suggestedProduct) {
+      addItem(suggestedProduct);
+    }
+    setSuccess("Productos agregados al carrito");
+    setSuggestionOpen(false);
+    setSelectedProduct(null);
+    setSuggestedProduct(null);
   };
 
   const handleContinueWithoutSuggestion = () => {
@@ -272,8 +251,6 @@ export function Lista() {
   const handleViewSuggestionDetails = () => {
     // Cerrar el modal y navegar a la página de detalles del producto sugerido
     setSuggestionOpen(false);
-    // Aquí podrías navegar a la página de detalles del producto sugerido
-    // window.open(`/detalles/${suggestedProduct.id}`, "_blank");
     navigate(`/detalles/${suggestedProduct.id}`);
   };
 
@@ -349,7 +326,7 @@ export function Lista() {
 
   useEffect(() => {
     fetchProductos();
-  }, [searchTerm]); // Volver a cargar cuando cambie el término de búsqueda
+  }, [searchTerm]);
 
   const handleCloseSnackbar = () => {
     setError(null);

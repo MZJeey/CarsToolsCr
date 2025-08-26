@@ -39,6 +39,45 @@ class PedidoModel
         }
     }
 
+    // public function all($usuario_id)
+    // {
+    //     try {
+    //         // Primero obtener el rol del usuario (asumiendo que tienes acceso a esta información)
+    //         $rol = new RolModel();
+
+    //         $rol_usuario = $rol->getRolUser($usuario_id);
+
+    //         $sql = "SELECT 
+    //         Pedido.id,
+    //         Usuario.nombre_usuario,
+    //         Pedido.fecha_pedido,
+    //         Pedido.direccion_envio,
+    //         Pedido.estado
+    //     FROM Pedido
+    //     JOIN Usuario ON Pedido.usuario_id = Usuario.id";
+
+    //         // Si no es administrador, filtrar por usuario
+    //         if ($rol_usuario != 1) {
+    //             $sql .= " WHERE Usuario.id = $usuario_id";
+    //         }
+
+    //         $pedidos = $this->db->executeSQL($sql);
+
+    //         if (is_array($pedidos)) {
+    //             foreach ($pedidos as $pedido) {
+    //                 $pedido->detalles = $this->obtenerDetalles($pedido->id) ?? [];
+    //             }
+    //             return $pedidos;
+    //         }
+
+    //         return [];
+    //     } catch (Exception $e) {
+    //         error_log("Error en PedidoModel::all(): " . $e->getMessage());
+    //         return [];
+    //     }
+    // }
+
+
     public function crearPedido($data)
     {
         try {
