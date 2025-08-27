@@ -42,7 +42,7 @@ import { patch } from "@mui/material";
 import { EditarProducto } from "./components/Productos/updateProducto";
 import ProductosSimilares from "./components/Productos/productoSimilares";
 import { Cart } from "./components/Carrito/carrito";
-import DashboardLayoutBasic from "./components/Layout/dasboard";
+import DashboardLayoutBasic from "./components/Layout/dashboard";
 import PedidoComponent from "./components/pedidos/pedido";
 import Promociones from "./components/Productos/promociones";
 import ProductosPorCategoria from "./components/Productos/ProductosCategorias";
