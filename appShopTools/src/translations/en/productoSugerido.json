@@ -1,0 +1,15 @@
+{
+    "sugerenciasModal": {
+      "titulo": "Similar products you may be interested in",
+      "mensajes": {
+        "sinSugerencias": "No more suggested products available."
+      },
+      "botones": {
+        "continuarCarrito": "Continue to cart",
+        "agregarCarrito": "Add to cart"
+      },
+      "producto": {
+        "ahorro": "You save: {porcentaje}%"
+      }
+    }
+  }

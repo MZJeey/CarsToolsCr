@@ -1,0 +1,49 @@
+{
+    "home": {
+      "hero": {
+        "titulo": "CarsToolsCr",
+        "subtitulo": "Todo lo que tu vehículo necesita hasta la puerta de tu garaje",
+        "botones": {
+          "verCatalogo": "Ver Catálogo",
+          "ofertasEspeciales": "Ofertas Especiales"
+        }
+      },
+      "categorias": {
+        "titulo": "Explora por Categoría"
+      },
+      "productosDestacados": {
+        "titulo": "Productos Destacados",
+        "botones": {
+          "comprar": "Comprar",
+          "detalles": "Detalles",
+          "verTodos": "Ver Todos los Productos"
+        }
+      },
+      "beneficios": {
+        "titulo": "¿Por qué elegirnos?",
+        "items": {
+          "envio": {
+            "titulo": "Envío Rápido",
+            "descripcion": "Entregamos en todo el país en 24-48 horas. Garantizado."
+          },
+          "calidad": {
+            "titulo": "Calidad Garantizada",
+            "descripcion": "Todos nuestros productos tienen garantía del fabricante."
+          },
+          "soporte": {
+            "titulo": "Soporte Expertos",
+            "descripcion": "Nuestros mecánicos te asesoran en la compra correcta."
+          }
+        }
+      },
+      "cta": {
+        "titulo": "¿Necesitas ayuda para encontrar el repuesto correcto?",
+        "subtitulo": "Nuestros expertos están listos para ayudarte a encontrar exactamente lo que necesitas.",
+        "boton": "Contactar a un Experto"
+      },
+      "snackbar": {
+        "error": "Error al cargar los datos",
+        "successAdd": "\"{producto}\" agregado al carrito"
+      }
+    }
+  }

@@ -1,0 +1,24 @@
+{
+    "procesarPago": {
+      "dialogo": {
+        "titulo": "Confirmar Compra",
+        "contenido": {
+          "confirmacion": "¿Estás seguro que deseas procesar {cantidad} productos?",
+          "total": "Total a pagar: {total}",
+          "nota": "Se generará un PDF con los detalles de tu compra."
+        }
+      },
+      "botones": {
+        "cancelar": "Cancelar",
+        "confirmar": "Confirmar Compra",
+        "procesando": "Procesando..."
+      },
+      "mensajes": {
+        "sesionRequerida": "Debes iniciar sesión para continuar",
+        "errorSesion": "Error con la sesión, inicia sesión nuevamente",
+        "carritoVacio": "Tu carrito está vacío",
+        "exito": "Productos registrados en tu carrito",
+        "errorGeneral": "Error al procesar los productos"
+      }
+    }
+  }

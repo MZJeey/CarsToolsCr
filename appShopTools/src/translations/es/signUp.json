@@ -1,0 +1,36 @@
+{
+    "signup": {
+      "title": "Crear Cuenta",
+      "subtitle": "Completa tus datos para registrarte en nuestra plataforma",
+      "fields": {
+        "nombre": "Nombre completo",
+        "correo": "Correo electrónico",
+        "pais": "País de residencia",
+        "clave": "Contraseña",
+        "confirmarClave": "Confirmar contraseña"
+      },
+      "loadingPaises": "Cargando países...",
+      "botones": {
+        "crearCuenta": "Crear Cuenta",
+        "iniciarSesion": "Iniciar Sesión"
+      },
+      "textoDivider": "¿Ya tienes una cuenta?",
+      "errores": {
+        "nombreRequerido": "El nombre es requerido",
+        "nombreMinimo": "El nombre debe tener al menos 2 caracteres",
+        "correoRequerido": "El correo es requerido",
+        "correoInvalido": "Correo inválido",
+        "claveRequerida": "La contraseña es requerida",
+        "claveMinima": "La contraseña debe tener al menos 8 caracteres",
+        "claveInvalida": "Debe contener al menos una mayúscula, una minúscula y un número",
+        "confirmarClaveRequerida": "Confirma tu contraseña",
+        "confirmarClaveNoCoincide": "Las contraseñas no coinciden",
+        "paisRequerido": "Selecciona un país",
+        "registroError": "Error al registrar usuario"
+      },
+      "toast": {
+        "registroExitoso": "Usuario registrado con éxito",
+        "registroError": "Error al registrar usuario"
+      }
+    }
+  }
