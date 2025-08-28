@@ -1,0 +1,26 @@
+{
+    "login": {
+      "title": "Iniciar Sesión",
+      "subtitle": "Ingresa tus credenciales para acceder a tu cuenta",
+      "emailLabel": "Correo electrónico",
+      "passwordLabel": "Contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "loginButton": "Iniciar Sesión",
+      "noAccount": "¿No tienes una cuenta?",
+      "createAccount": "Crear Cuenta",
+      "errors": {
+        "emailRequired": "El correo es requerido",
+        "emailInvalid": "Formato correo inválido",
+        "passwordRequired": "La contraseña es requerida",
+        "invalidCredentials": "Credenciales inválidas. Por favor, verifica tus datos.",
+        "serverError": "Error al conectar con el servidor",
+        "unexpectedError": "Ocurrió un error inesperado",
+        "responseError": "Error en la respuesta del servidor"
+      },
+      "toast": {
+        "welcomeAdmin": "¡Bienvenido Administrador!",
+        "welcomeClient": "¡Bienvenido Cliente!",
+        "invalidCredentials": "Credenciales inválidas"
+      }
+    }
+  }

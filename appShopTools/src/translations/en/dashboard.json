@@ -1,0 +1,28 @@
+{
+    "dashboard": {
+      "menu": {
+        "dashboard": "Dashboard",
+        "productos": "Products",
+        "productosSub": {
+          "lista": "Product List",
+          "similares": "Similar Products"
+        },
+        "resenas": "Reviews",
+        "resenasSub": {
+          "lista": "Review List"
+        },
+        "promociones": "Promotions",
+        "pedidos": "Orders",
+        "pedidosSub": {
+          "lista": "Order List",
+          "personalizados": "Customized Products"
+        }
+      },
+      "pages": {
+        "principal": {
+          "titulo": "Main Dashboard",
+          "descripcion": "Welcome to the administration system. Please select an option from the menu."
+        }
+      }
+    }
+  }

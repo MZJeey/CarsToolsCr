@@ -1,0 +1,36 @@
+{
+    "signup": {
+      "title": "Create Account",
+      "subtitle": "Fill in your details to register on our platform",
+      "fields": {
+        "nombre": "Full name",
+        "correo": "Email address",
+        "pais": "Country of residence",
+        "clave": "Password",
+        "confirmarClave": "Confirm password"
+      },
+      "loadingPaises": "Loading countries...",
+      "botones": {
+        "crearCuenta": "Create Account",
+        "iniciarSesion": "Login"
+      },
+      "textoDivider": "Already have an account?",
+      "errores": {
+        "nombreRequerido": "Name is required",
+        "nombreMinimo": "Name must be at least 2 characters",
+        "correoRequerido": "Email is required",
+        "correoInvalido": "Invalid email",
+        "claveRequerida": "Password is required",
+        "claveMinima": "Password must be at least 8 characters",
+        "claveInvalida": "Must contain at least one uppercase, one lowercase, and one number",
+        "confirmarClaveRequerida": "Confirm your password",
+        "confirmarClaveNoCoincide": "Passwords do not match",
+        "paisRequerido": "Select a country",
+        "registroError": "Error registering user"
+      },
+      "toast": {
+        "registroExitoso": "User registered successfully",
+        "registroError": "Error registering user"
+      }
+    }
+  }

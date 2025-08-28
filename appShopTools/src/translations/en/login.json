@@ -1,0 +1,26 @@
+{
+    "login": {
+      "title": "Login",
+      "subtitle": "Enter your credentials to access your account",
+      "emailLabel": "Email address",
+      "passwordLabel": "Password",
+      "forgotPassword": "Forgot your password?",
+      "loginButton": "Login",
+      "noAccount": "Don’t have an account?",
+      "createAccount": "Create Account",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email format",
+        "passwordRequired": "Password is required",
+        "invalidCredentials": "Invalid credentials. Please check your data.",
+        "serverError": "Error connecting to the server",
+        "unexpectedError": "An unexpected error occurred",
+        "responseError": "Server response error"
+      },
+      "toast": {
+        "welcomeAdmin": "Welcome Admin!",
+        "welcomeClient": "Welcome Client!",
+        "invalidCredentials": "Invalid credentials"
+      }
+    }
+  }

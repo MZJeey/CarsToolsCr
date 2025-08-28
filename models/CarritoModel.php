@@ -15,7 +15,7 @@ class CarritoModel
         return $this->enlace->executeSQL($sql);
     }
 
-    public function agregarProducto($data)
+    public function guardarCarrito($data)
     {
         try {
             $sql = "INSERT INTO carrito (usuario_id, producto_id, cantidad, guardado_en)
@@ -31,9 +31,7 @@ class CarritoModel
 
             return $this->get($carrito_id);
         } catch (Exception $e) {
-            // Manejo de errores: puedes registrar el error y relanzarlo
-            error_log("Error en agregarProducto: " . $e->getMessage());
-            throw $e; // Relanza la excepción para que el controlador también pueda manejarla
+            handleException($e);
         }
     }
 
@@ -83,7 +81,7 @@ class CarritoModel
     //     }
     // }
 
-  
+
 
 
 
@@ -125,16 +123,17 @@ class CarritoModel
     }
     public function get($id)
     {
+        $result = null;
+
         try {
             $sql = "SELECT * FROM carrito WHERE id = $id";
             $result = $this->enlace->executeSQL($sql);
             if (empty($result)) {
-                throw new Exception("Carrito no encontrado");
+                $result = $result[0];
             }
-            return $result[0];
+            return $result;
         } catch (Exception $e) {
-            error_log("Error en modelo CarritoModel::get - " . $e->getMessage());
-            return false;
+            die($e->getMessage());
         }
     }
 }

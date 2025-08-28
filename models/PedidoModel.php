@@ -9,18 +9,21 @@ class PedidoModel
         $this->db = new MySqlConnect();
     }
 
-   public function all($usuario_id)
+    public function all($usuario_id)
     {
         try {
             $sql = "SELECT 
-            Pedido.id,
-            Usuario.nombre_usuario,
-            Pedido.fecha_pedido,
-            Pedido.direccion_envio,
-            Pedido.estado
-        FROM Pedido
-        JOIN Usuario ON Pedido.usuario_id = Usuario.id
-        WHERE Usuario.id = $usuario_id
+    p.id,
+    u.nombre_usuario,
+    p.fecha_pedido,
+    p.direccion_envio,
+    p.estado
+FROM pedido p
+JOIN Usuario u ON p.usuario_id = u.id
+WHERE (
+        (SELECT rol_id FROM Usuario WHERE id = $usuario_id) = 1
+        OR p.usuario_id = $usuario_id
+);
         ";
 
             $pedidos = $this->db->executeSQL($sql);
@@ -36,8 +39,48 @@ class PedidoModel
         } catch (Exception $e) {
             error_log("Error en PedidoModel::all(): " . $e->getMessage());
             return [];
-   }
-  }
+        }
+    }
+
+    // public function all($usuario_id)
+    // {
+    //     try {
+    //         // Primero obtener el rol del usuario (asumiendo que tienes acceso a esta información)
+    //         $rol = new RolModel();
+
+    //         $rol_usuario = $rol->getRolUser($usuario_id);
+
+    //         $sql = "SELECT 
+    //         Pedido.id,
+    //         Usuario.nombre_usuario,
+    //         Pedido.fecha_pedido,
+    //         Pedido.direccion_envio,
+    //         Pedido.estado
+    //     FROM Pedido
+    //     JOIN Usuario ON Pedido.usuario_id = Usuario.id";
+
+    //         // Si no es administrador, filtrar por usuario
+    //         if ($rol_usuario != 1) {
+    //             $sql .= " WHERE Usuario.id = $usuario_id";
+    //         }
+
+    //         $pedidos = $this->db->executeSQL($sql);
+
+    //         if (is_array($pedidos)) {
+    //             foreach ($pedidos as $pedido) {
+    //                 $pedido->detalles = $this->obtenerDetalles($pedido->id) ?? [];
+    //             }
+    //             return $pedidos;
+    //         }
+
+    //         return [];
+    //     } catch (Exception $e) {
+    //         error_log("Error en PedidoModel::all(): " . $e->getMessage());
+    //         return [];
+    //     }
+    // }
+
+
     public function crearPedido($data)
     {
         try {
@@ -142,28 +185,26 @@ WHERE dp.pedido_id = $pedido_id";
 
 
 
-// Eliminar los pedidos de con su productoPersoanlizado completo
+    // Eliminar los pedidos de con su productoPersoanlizado completo
 
-   public function eliminarPedidoCompleto(int $pedido_id): bool
-{
-    try {
-        $pedido_id = (int)$pedido_id;
+    public function eliminarPedidoCompleto(int $pedido_id): bool
+    {
+        try {
+            $pedido_id = (int)$pedido_id;
 
-        // 1. Borrar productos personalizados del pedido
-        $this->db->executeSQL_DML("DELETE FROM `producto_personalizado` WHERE `pedido_id` = $pedido_id");
+            // 1. Borrar productos personalizados del pedido
+            $this->db->executeSQL_DML("DELETE FROM `producto_personalizado` WHERE `pedido_id` = $pedido_id");
 
-        // 2. Borrar detallepedido (si existe en tu esquema)
-        $this->db->executeSQL_DML("DELETE FROM `detallepedido` WHERE `pedido_id` = $pedido_id");
+            // 2. Borrar detallepedido (si existe en tu esquema)
+            $this->db->executeSQL_DML("DELETE FROM `detallepedido` WHERE `pedido_id` = $pedido_id");
 
-        // 3. Borrar el pedido
-        $this->db->executeSQL_DML("DELETE FROM `pedido` WHERE `id` = $pedido_id");
+            // 3. Borrar el pedido
+            $this->db->executeSQL_DML("DELETE FROM `pedido` WHERE `id` = $pedido_id");
 
-        return true; // éxito seguro
-    } catch (Exception $e) {
-        error_log('Error eliminarPedidoCompleto: ' . $e->getMessage());
-        return false;
+            return true; // éxito seguro
+        } catch (Exception $e) {
+            error_log('Error eliminarPedidoCompleto: ' . $e->getMessage());
+            return false;
+        }
     }
-}
-
-
 }

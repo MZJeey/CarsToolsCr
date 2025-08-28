@@ -1,0 +1,28 @@
+{
+    "dashboard": {
+      "menu": {
+        "dashboard": "Dashboard",
+        "productos": "Productos",
+        "productosSub": {
+          "lista": "Lista de Productos",
+          "similares": "Productos Similares"
+        },
+        "resenas": "Reseñas",
+        "resenasSub": {
+          "lista": "Lista de Reseñas"
+        },
+        "promociones": "Promociones",
+        "pedidos": "Pedidos",
+        "pedidosSub": {
+          "lista": "Lista de Pedidos",
+          "personalizados": "Productos Personalizados"
+        }
+      },
+      "pages": {
+        "principal": {
+          "titulo": "Dashboard Principal",
+          "descripcion": "Bienvenido al sistema de administración. Seleccione una opción del menú."
+        }
+      }
+    }
+  }

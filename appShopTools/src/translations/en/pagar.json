@@ -1,0 +1,24 @@
+{
+    "procesarPago": {
+      "dialogo": {
+        "titulo": "Confirm Purchase",
+        "contenido": {
+          "confirmacion": "Are you sure you want to process {cantidad} products?",
+          "total": "Total to pay: {total}",
+          "nota": "A PDF with your purchase details will be generated."
+        }
+      },
+      "botones": {
+        "cancelar": "Cancel",
+        "confirmar": "Confirm Purchase",
+        "procesando": "Processing..."
+      },
+      "mensajes": {
+        "sesionRequerida": "You must log in to continue",
+        "errorSesion": "Session error, please log in again",
+        "carritoVacio": "Your cart is empty",
+        "exito": "Products registered in your cart",
+        "errorGeneral": "Error processing the products"
+      }
+    }
+  }
