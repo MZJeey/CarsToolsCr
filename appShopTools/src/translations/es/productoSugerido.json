@@ -1,0 +1,15 @@
+ {
+    "sugerenciasModal": {
+      "titulo": "Productos similares que te pueden interesar",
+      "mensajes": {
+        "sinSugerencias": "No hay más productos sugeridos disponibles."
+      },
+      "botones": {
+        "continuarCarrito": "Continuar al carrito",
+        "agregarCarrito": "Agregar al carrito"
+      },
+      "producto": {
+        "ahorro": "Ahorras: {porcentaje}%"
+      }
+    }
+  }

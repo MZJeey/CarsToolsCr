@@ -1,0 +1,28 @@
+{
+    "cart": {
+      "tabla": {
+        "producto": "Product",
+        "imagen": "Image",
+        "precio": "Price",
+        "cantidad": "Quantity",
+        "subtotal": "Subtotal",
+        "acciones": "Actions",
+        "total": "Total"
+      },
+      "botones": {
+        "eliminarProducto": {
+          "tooltip": "Remove product",
+          "aria": "Remove"
+        },
+        "borrarItem": {
+          "tooltip": "Delete {nombre}",
+          "aria": "Delete {nombre}"
+        },
+        "procesarPago": "Checkout"
+      },
+      "mensajes": {
+        "carritoVacio": "The cart is empty",
+        "total": "Total"
+      }
+    }
+  }

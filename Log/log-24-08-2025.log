@@ -1,4 +1,0 @@
-[24-08-2025 03:41:28] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
- [24-08-2025 03:41:28] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
- [24-08-2025 05:37:33] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\CategoriaModel.php - line: 23 - Message: Undefined variable $promocion
- 

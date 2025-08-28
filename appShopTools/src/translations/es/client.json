@@ -1,0 +1,46 @@
+{
+    "signup": {
+      "titulo": "Registrar Usuario",
+      "formulario": {
+        "nombre": {
+          "label": "Nombre",
+          "errores": {
+            "requerido": "El nombre es requerido"
+          }
+        },
+        "email": {
+          "label": "Correo Electrónico",
+          "errores": {
+            "requerido": "El email es requerido",
+            "formato": "Formato email inválido"
+          }
+        },
+        "fechaNacimiento": {
+          "label": "Fecha de Nacimiento",
+          "errores": {
+            "requerido": "La fecha de nacimiento es requerida"
+          }
+        },
+        "password": {
+          "label": "Contraseña",
+          "errores": {
+            "requerido": "La contraseña es requerida"
+          }
+        },
+        "confirmPassword": {
+          "label": "Confirmar Contraseña",
+          "errores": {
+            "requerido": "Confirma tu contraseña",
+            "noCoincide": "Las contraseñas no coinciden"
+          }
+        }
+      },
+      "botones": {
+        "registrarse": "Registrarse"
+      },
+      "mensajes": {
+        "exito": "Usuario registrado",
+        "error": "Error: {error}"
+      }
+    }
+  }

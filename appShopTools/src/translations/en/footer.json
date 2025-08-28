@@ -1,0 +1,22 @@
+{
+    "footer": {
+      "followUs": "Follow us",
+      "info": {
+        "title": "CarsToolsCr",
+        "links": [
+          "Automotive solutions",
+          "Wide variety of spare parts",
+          "Instant solutions",
+          "Work with us"
+        ]
+      },
+      "contact": {
+        "title": "Contact us",
+        "email": "info@carstoolscr.com",
+        "phone": "Phone: 2538-0000",
+        "whatsapp": "(506) 7179-5695",
+        "address": "Next to Morera Soto stadium, Alajuela, Costa Rica"
+      },
+      "copyright": "© {year} CarsToolsCr. All rights reserved | Developed by Jeeyson, Berny, Felipe"
+    }
+  }

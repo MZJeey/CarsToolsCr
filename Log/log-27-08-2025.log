@@ -1,0 +1,3 @@
+[27-08-2025 01:38:51] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ [27-08-2025 03:26:05] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\core\MySqlConnect.php - line: 51 - Message: Attempt to read property "num_rows" on bool
+ 

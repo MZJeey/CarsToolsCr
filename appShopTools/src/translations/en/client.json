@@ -1,0 +1,46 @@
+{
+    "signup": {
+      "titulo": "Register User",
+      "formulario": {
+        "nombre": {
+          "label": "Name",
+          "errores": {
+            "requerido": "Name is required"
+          }
+        },
+        "email": {
+          "label": "Email",
+          "errores": {
+            "requerido": "Email is required",
+            "formato": "Invalid email format"
+          }
+        },
+        "fechaNacimiento": {
+          "label": "Birthdate",
+          "errores": {
+            "requerido": "Birthdate is required"
+          }
+        },
+        "password": {
+          "label": "Password",
+          "errores": {
+            "requerido": "Password is required"
+          }
+        },
+        "confirmPassword": {
+          "label": "Confirm Password",
+          "errores": {
+            "requerido": "Please confirm your password",
+            "noCoincide": "Passwords do not match"
+          }
+        }
+      },
+      "botones": {
+        "registrarse": "Sign Up"
+      },
+      "mensajes": {
+        "exito": "User registered",
+        "error": "Error: {error}"
+      }
+    }
+  }

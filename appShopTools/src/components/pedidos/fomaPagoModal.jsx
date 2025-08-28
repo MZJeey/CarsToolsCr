@@ -1,9 +1,19 @@
 // src/components/pedidos/FormaPagoModal.jsx
 import React, { useMemo, useState } from "react";
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, TextField, Grid, Typography, RadioGroup,
-  FormControlLabel, Radio, Alert, InputAdornment
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Grid,
+  Typography,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Alert,
+  InputAdornment,
 } from "@mui/material";
 import axios from "axios";
 
@@ -18,8 +28,9 @@ const BASE1 = `${API_ROOT}factura`;
 const BASE2 = `${API_ROOT}index.php/factura`;
 
 async function postWithFallback(path, data, opts = {}) {
-  try { return await axios.post(`${BASE1}${path}`, data, opts); }
-  catch (e) {
+  try {
+    return await axios.post(`${BASE1}${path}`, data, opts);
+  } catch (e) {
     if (e?.response?.status === 404) {
       return axios.post(`${BASE2}${path}`, data, opts);
     }
@@ -47,8 +58,13 @@ async function tryOpenServerPDF(id) {
 // Intenta leer el carrito con varias claves posibles (igual que tenías)
 function readCarritoLS() {
   const keys = [
-    "carrito", "cart", "cartItems", "productosCarrito",
-    "shoppingCart", "carrito_items", "itemsCarrito"
+    "carrito",
+    "cart",
+    "cartItems",
+    "productosCarrito",
+    "shoppingCart",
+    "carrito_items",
+    "itemsCarrito",
   ];
   for (const k of keys) {
     try {
@@ -62,14 +78,18 @@ function readCarritoLS() {
     const raw = localStorage.getItem("carrito");
     if (raw) {
       const obj = JSON.parse(raw);
-      if (obj && Array.isArray(obj.items) && obj.items.length > 0) return obj.items;
+      if (obj && Array.isArray(obj.items) && obj.items.length > 0)
+        return obj.items;
     }
   } catch {}
   return [];
 }
 
 // ⬇️ NUEVO: helper para Colones
-const CRC = new Intl.NumberFormat("es-CR", { style: "currency", currency: "CRC" });
+const CRC = new Intl.NumberFormat("es-CR", {
+  style: "currency",
+  currency: "CRC",
+});
 
 // ⬇️ NUEVO: genera PDF en el cliente con los datos de la factura
 function generatePDFClient({ factura, items, totalMostrar, metodo }) {
@@ -82,17 +102,27 @@ function generatePDFClient({ factura, items, totalMostrar, metodo }) {
 
   doc.setFontSize(10);
   const fecha = new Date().toLocaleString("es-CR");
-  doc.text(`Factura #${factura?.id ?? "-"}`, left, top + 18);
+  doc.text(`Factura #${factura?.id ?? "TEMP"}`, left, top + 18);
   doc.text(`Fecha: ${fecha}`, left, top + 34);
-  const mp = metodo === "efectivo" ? "Efectivo" : (metodo === "credito" ? "Tarjeta de crédito" : "Tarjeta de débito");
+  const mp =
+    metodo === "efectivo"
+      ? "Efectivo"
+      : metodo === "credito"
+        ? "Tarjeta de crédito"
+        : "Tarjeta de débito";
   doc.text(`Método de pago: ${mp}`, left, top + 50);
 
   // Tabla de items
-  const rows = (items || []).map(it => {
+  const rows = (items || []).map((it) => {
     const cant = Number(it.cantidad || 0);
-    const pu   = Number(it.precio_unitario || 0);
-    const sub  = cant * pu;
-    return [String(cant), it.nombre || "Producto", CRC.format(pu), CRC.format(sub)];
+    const pu = Number(it.precio_unitario || 0);
+    const sub = cant * pu;
+    return [
+      String(cant),
+      it.nombre || "Producto",
+      CRC.format(pu),
+      CRC.format(sub),
+    ];
   });
 
   autoTable(doc, {
@@ -101,17 +131,21 @@ function generatePDFClient({ factura, items, totalMostrar, metodo }) {
     startY: top + 70,
     styles: { fontSize: 10, cellPadding: 4 },
     headStyles: { fillColor: [23, 105, 170] },
-    columnStyles: { 0: { halign: "right", cellWidth: 50 }, 2: { halign: "right" }, 3: { halign: "right" } }
+    columnStyles: {
+      0: { halign: "right", cellWidth: 50 },
+      2: { halign: "right" },
+      3: { halign: "right" },
+    },
   });
 
   // Totales (CR suele usar IVA 13%)
-  const finalY = doc.lastAutoTable.finalY || (top + 70);
+  const finalY = doc.lastAutoTable.finalY || top + 70;
   const subtotal = rows.reduce((acc, r) => {
     const val = Number((r[3] || "").replace(/[^\d.-]/g, "")); // del texto "₡x"
     return acc + (isNaN(val) ? 0 : val);
   }, 0);
   const iva = subtotal * 0.13;
-  const total = factura?.total ?? (subtotal + iva);
+  const total = factura?.total ?? subtotal + iva;
 
   let y = finalY + 16;
   doc.setFontSize(11);
@@ -123,8 +157,7 @@ function generatePDFClient({ factura, items, totalMostrar, metodo }) {
   doc.text(`Total: ${CRC.format(totalMostrar || total)}`, 400, y);
   doc.setFont(undefined, "normal");
 
-  // Guardar o abrir
-  // doc.save(`factura_${factura?.id ?? "carrito"}.pdf`);
+  // Abrir PDF en nueva ventana
   const blob = doc.output("blob");
   const url = URL.createObjectURL(blob);
   window.open(url, "_blank", "noopener,noreferrer");
@@ -134,7 +167,7 @@ export default function FormaPagoModal({
   open,
   onClose,
   total = 0,
-  onSuccess
+  onSuccess,
 }) {
   const [metodo, setMetodo] = useState("credito");
   const [nombre, setNombre] = useState("");
@@ -148,21 +181,42 @@ export default function FormaPagoModal({
   const onlyDigits = (s) => (s || "").replace(/\D/g, "");
   const luhnCheck = (n) => {
     const arr = onlyDigits(n).split("").reverse().map(Number);
-    const sum = arr.reduce((acc, d, i) => acc + (i % 2 ? ((d*=2) > 9 ? d-9 : d) : d), 0);
+    const sum = arr.reduce(
+      (acc, d, i) => acc + (i % 2 ? ((d *= 2) > 9 ? d - 9 : d) : d),
+      0
+    );
     return sum % 10 === 0;
   };
   const validExpiry = (mmYY) => {
     const m = mmYY.match(/^(\d{2})\/?(\d{2})$/);
     if (!m) return false;
-    const month = +m[1], year = 2000 + +m[2];
+    const month = +m[1],
+      year = 2000 + +m[2];
     if (month < 1 || month > 12) return false;
     const last = new Date(year, month, 0);
-    const now  = new Date();
+    const now = new Date();
     return last >= new Date(now.getFullYear(), now.getMonth(), 1);
   };
-  const formatCard = (v) => onlyDigits(v).slice(0,16).replace(/(\d{4})/g,"$1 ").trim();
-  const formatExp  = (v) => { const d = onlyDigits(v).slice(0,4); return d.length<=2 ? d : d.slice(0,2)+"/"+d.slice(2); };
-  const mapMetodo  = (m) => m === "efectivo" ? "efectivo" : m === "credito" ? "tarjeta_credito" : "tarjeta_debito";
+  const formatCard = (v) =>
+    onlyDigits(v)
+      .slice(0, 16)
+      .replace(/(\d{4})/g, "$1 ")
+      .trim();
+  const formatExp = (v) => {
+    const d = onlyDigits(v).slice(0, 4);
+    return d.length <= 2 ? d : d.slice(0, 2) + "/" + d.slice(2);
+  };
+  const mapMetodo = (m) => {
+    console.log("Mapeando método:", m);
+    const mapped =
+      m === "efectivo"
+        ? "efectivo"
+        : m === "credito"
+          ? "tarjeta_credito"
+          : "tarjeta_debito";
+    console.log("Método mapeado:", mapped);
+    return mapped;
+  };
 
   const carrito = useMemo(() => (open ? readCarritoLS() : []), [open]);
 
@@ -184,20 +238,26 @@ export default function FormaPagoModal({
   }, [efectivo, totalMostrar]);
 
   const validate = () => {
-    if ((!Array.isArray(carrito) || carrito.length === 0) && totalMostrar <= 0) {
+    if (
+      (!Array.isArray(carrito) || carrito.length === 0) &&
+      totalMostrar <= 0
+    ) {
       return "El carrito está vacío.";
     }
     if (metodo === "efectivo") {
       const pago = Number(efectivo);
       if (!efectivo || isNaN(pago)) return "El monto debe ser numérico.";
       if (pago <= 0) return "El monto debe ser positivo.";
-      if (pago < totalMostrar) return "El monto debe ser mayor o igual al total.";
+      if (pago < totalMostrar)
+        return "El monto debe ser mayor o igual al total.";
       return "";
     }
     const digits = onlyDigits(numTarjeta);
     if (digits.length !== 16) return "La tarjeta debe tener 16 dígitos.";
-    if (!luhnCheck(digits)) return "Número de tarjeta no supera validación Luhn.";
-    if (!validExpiry(exp)) return "Fecha de expiración inválida o vencida (MM/YY).";
+    if (!luhnCheck(digits))
+      return "Número de tarjeta no supera validación Luhn.";
+    if (!validExpiry(exp))
+      return "Fecha de expiración inválida o vencida (MM/YY).";
     if (!/^\d{3,4}$/.test(cvv)) return "CVV debe tener 3 o 4 dígitos.";
     if (!nombre.trim()) return "Nombre del titular requerido.";
     return "";
@@ -209,10 +269,13 @@ export default function FormaPagoModal({
   const downloadXML = (xml, id) => {
     try {
       const blob = new Blob([xml], { type: "application/xml" });
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement("a");
-      a.href = url; a.download = `factura_${id || "carrito"}.xml`;
-      document.body.appendChild(a); a.click(); a.remove();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `factura_${id || "carrito"}.xml`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
       URL.revokeObjectURL(url);
     } catch {}
   };
@@ -220,7 +283,10 @@ export default function FormaPagoModal({
   const pagar = async () => {
     setErr("");
     const v = validate();
-    if (v) { setErr(v); return; }
+    if (v) {
+      setErr(v);
+      return;
+    }
 
     try {
       setLoading(true);
@@ -228,36 +294,107 @@ export default function FormaPagoModal({
       // Normaliza items
       let items = [];
       if (Array.isArray(carrito) && carrito.length > 0) {
-        items = carrito.map(x => ({
+        items = carrito.map((x) => ({
           producto_id: x.id ?? x.producto_id ?? 0,
           nombre: (x.nombre ?? x.nombre_producto ?? "Producto").toString(),
           cantidad: Number(x.cantidad ?? x.qty ?? 1),
-          precio_unitario: Number(x.precio ?? x.precio_unitario ?? 0)
+          precio_unitario: Number(x.precio ?? x.precio_unitario ?? 0),
         }));
       } else {
-        items = [{ producto_id: 0, nombre: "Carrito", cantidad: 1, precio_unitario: totalMostrar }];
+        items = [
+          {
+            producto_id: 0,
+            nombre: "Carrito",
+            cantidad: 1,
+            precio_unitario: totalMostrar,
+          },
+        ];
       }
 
-      const payload = { metodo_pago: mapMetodo(metodo), items };
+      const payload = {
+        pedido_id: null,
+        metodo_pago: mapMetodo(metodo),
+        items: items,
+      };
+
+      console.log("Enviando payload:", JSON.stringify(payload, null, 2));
+      console.log("URL base:", BASE1);
+
       const res = await postWithFallback("/create", payload);
       const factura = res?.data;
 
+      console.log("Factura creada exitosamente:", factura);
+
       // 1) Descarga XML si lo manda el backend
-      if (factura?.xml_factura) downloadXML(factura.xml_factura, factura.id);
+      if (factura?.xml_factura) {
+        downloadXML(factura.xml_factura, factura.id);
+      }
 
       // 2) Intentar abrir PDF del backend; si no existe, generar en cliente
       const opened = await tryOpenServerPDF(factura?.id);
       if (!opened) {
+        console.log("Generando PDF localmente...");
         generatePDFClient({ factura, items, totalMostrar, metodo });
       }
 
-      // Callback al padre y cerrar todo 
+      // Callback al padre y cerrar todo
       onSuccess && onSuccess(factura);
       handleClose();
     } catch (e) {
-      const msg = e?.response?.data?.error || "Error al procesar el pago. Revisa el backend.";
-      setErr(msg);
-      console.error(e);
+      console.error("Error completo:", e);
+      console.error("Respuesta del error:", e.response?.data);
+
+      // Muestra más detalles del error
+      const serverError =
+        e.response?.data?.error ||
+        e.response?.data?.message ||
+        "Error interno del servidor (500)";
+
+      setErr(`Error del servidor: ${serverError}. Se generará PDF localmente.`);
+
+      // GENERAR PDF DE EMERGENCIA SI HAY ERROR
+      try {
+        let emergencyItems = [];
+        if (Array.isArray(carrito) && carrito.length > 0) {
+          emergencyItems = carrito.map((x) => ({
+            producto_id: x.id ?? x.producto_id ?? 0,
+            nombre: (x.nombre ?? x.nombre_producto ?? "Producto").toString(),
+            cantidad: Number(x.cantidad ?? x.qty ?? 1),
+            precio_unitario: Number(x.precio ?? x.precio_unitario ?? 0),
+          }));
+        } else {
+          emergencyItems = [
+            {
+              producto_id: 0,
+              nombre: "Carrito",
+              cantidad: 1,
+              precio_unitario: totalMostrar,
+            },
+          ];
+        }
+
+        // Generar PDF localmente aunque falle el backend
+        generatePDFClient({
+          factura: {
+            id: "temp-" + Date.now(),
+            total: totalMostrar,
+          },
+          items: emergencyItems,
+          totalMostrar,
+          metodo,
+        });
+
+        // Callback al padre con datos temporales
+        onSuccess &&
+          onSuccess({
+            id: "temp-" + Date.now(),
+            total: totalMostrar,
+            xml_factura: null,
+          });
+      } catch (pdfError) {
+        console.error("Error generando PDF de emergencia:", pdfError);
+        setErr(`Error grave: No se pudo generar el PDF. Contacte soporte.`);
+      }
     } finally {
       setLoading(false);
     }
@@ -265,10 +402,17 @@ export default function FormaPagoModal({
 
   const resetForm = () => {
     setMetodo("credito");
-    setNombre(""); setNumTarjeta(""); setExp(""); setCvv("");
-    setEfectivo(""); setErr("");
+    setNombre("");
+    setNumTarjeta("");
+    setExp("");
+    setCvv("");
+    setEfectivo("");
+    setErr("");
   };
-  const handleClose = () => { resetForm(); onClose && onClose(); };
+  const handleClose = () => {
+    resetForm();
+    onClose && onClose();
+  };
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
@@ -278,10 +422,27 @@ export default function FormaPagoModal({
           Total a pagar: {CRC.format(totalMostrar)}
         </Typography>
 
-        <RadioGroup row value={metodo} onChange={(e) => setMetodo(e.target.value)} sx={{ mb: 2 }}>
-          <FormControlLabel value="credito" control={<Radio />} label="Tarjeta de crédito" />
-          <FormControlLabel value="debito" control={<Radio />} label="Tarjeta de débito" />
-          <FormControlLabel value="efectivo" control={<Radio />} label="Efectivo" />
+        <RadioGroup
+          row
+          value={metodo}
+          onChange={(e) => setMetodo(e.target.value)}
+          sx={{ mb: 2 }}
+        >
+          <FormControlLabel
+            value="credito"
+            control={<Radio />}
+            label="Tarjeta de crédito"
+          />
+          <FormControlLabel
+            value="debito"
+            control={<Radio />}
+            label="Tarjeta de débito"
+          />
+          <FormControlLabel
+            value="efectivo"
+            control={<Radio />}
+            label="Efectivo"
+          />
         </RadioGroup>
 
         {metodo === "efectivo" ? (
@@ -292,7 +453,11 @@ export default function FormaPagoModal({
                 fullWidth
                 value={efectivo}
                 onChange={(e) => setEfectivo(e.target.value)}
-                InputProps={{ startAdornment: <InputAdornment position="start">₡</InputAdornment> }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">₡</InputAdornment>
+                  ),
+                }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -307,7 +472,12 @@ export default function FormaPagoModal({
         ) : (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField label="Nombre del titular" fullWidth value={nombre} onChange={(e) => setNombre(e.target.value)} />
+              <TextField
+                label="Nombre del titular"
+                fullWidth
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+              />
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -341,15 +511,22 @@ export default function FormaPagoModal({
           </Grid>
         )}
 
-        {(err || formError) && <Alert severity="error" sx={{ mt: 2 }}>{err || formError}</Alert>}
+        {(err || formError) && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {err || formError}
+          </Alert>
+        )}
 
         <Alert severity="info" sx={{ mt: 2 }}>
-          Es una simulación: solo se valida formato. No se contacta a pasarelas reales.
+          Es una simulación: solo se valida formato. No se contacta a pasarelas
+          reales.
         </Alert>
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={handleClose} disabled={loading}>Cancelar</Button>
+        <Button onClick={handleClose} disabled={loading}>
+          Cancelar
+        </Button>
         <Button variant="contained" onClick={pagar} disabled={!canSubmit}>
           {loading ? "Procesando..." : "Pagar y generar factura"}
         </Button>
