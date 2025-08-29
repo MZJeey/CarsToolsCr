@@ -1,28 +1,33 @@
 {
-    "dashboard": {
-      "menu": {
-        "dashboard": "Dashboard",
-        "productos": "Productos",
-        "productosSub": {
-          "lista": "Lista de Productos",
-          "similares": "Productos Similares"
-        },
-        "resenas": "Reseñas",
-        "resenasSub": {
-          "lista": "Lista de Reseñas"
-        },
-        "promociones": "Promociones",
-        "pedidos": "Pedidos",
-        "pedidosSub": {
-          "lista": "Lista de Pedidos",
-          "personalizados": "Productos Personalizados"
-        }
+  "dashboard": {
+    "kpis": {
+      "ventasPeriodo": "Ventas (periodo)",
+      "montoTotal": "Monto total (₡)",
+      "calificacionReciente": "Calificación reciente"
+    },
+    "ventas": {
+      "titulo": "Ventas por",
+      "unidad": {
+        "daily": "día",
+        "monthly": "mes"
       },
-      "pages": {
-        "principal": {
-          "titulo": "Dashboard Principal",
-          "descripcion": "Bienvenido al sistema de administración. Seleccione una opción del menú."
-        }
+      "toggle": {
+        "daily": "Diario",
+        "monthly": "Mensual"
       }
+    },
+    "pedidosPorEstado": {
+      "titulo": "Pedidos por estado"
+    },
+    "top": {
+      "titulo": "3 productos más vendidos",
+      "ventas": "Ventas:"
+    },
+    "resenas": {
+      "titulo": "3 reseñas más recientes"
+    },
+    "comunes": {
+      "sinDatos": "Sin datos"
     }
   }
+}

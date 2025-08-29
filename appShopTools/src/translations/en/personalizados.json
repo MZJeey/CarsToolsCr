@@ -1,0 +1,47 @@
+{
+  "personalizados": {
+    "pagina": {
+      "titulo": "All Customized Products",
+      "botones": {
+        "personalizar": "+ Customize product"
+      }
+    },
+    "tabla": {
+      "encabezados": {
+        "pedido": "Order",
+        "nombrePersonalizado": "Custom Name",
+        "productoBase": "Base Product",
+        "base": "Base ₡",
+        "personalizaciones": "Customizations",
+        "adicional": "Additional ₡",
+        "unitario": "Unit ₡",
+        "cantidad": "Quantity",
+        "subtotal": "Subtotal ₡"
+      },
+      "chips": {
+        "sinPersonalizaciones": "No customizations",
+        "etiquetaPersonalizacion": "{{criterio}}: {{opcion}} (+{{costo}})"
+      }
+    },
+    "dialogoDetalle": {
+      "titulo": "Customized Product Details",
+      "campos": {
+        "nombre": "Name:",
+        "productoBase": "Base Product",
+        "base": "Base ₡",
+        "adicional": "Additional ₡",
+        "unitario": "Unit Price ₡",
+        "cantidad": "Quantity",
+        "subtotal": "Subtotal ₡",
+        "personalizaciones": "Customizations"
+      },
+      "botones": {
+        "cerrar": "Close"
+      }
+    },
+    "mensajes": {
+      "guardarOk": "Customized product saved.",
+      "guardarError": "Could not save the customized product."
+    }
+  }
+}
