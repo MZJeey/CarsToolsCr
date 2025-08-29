@@ -1,0 +1,2 @@
+[29-08-2025 05:19:57] [Berny] error: File: C:\xampp\htdocs\CarsToolsCr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ 

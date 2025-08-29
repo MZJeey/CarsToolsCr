@@ -15,8 +15,8 @@
           "aria": "Eliminar"
         },
         "borrarItem": {
-          "tooltip": "Borrar {nombre}",
-          "aria": "Borrar {nombre}"
+          "tooltip2": "Borrar",
+          "ariaB": "Borrar"
         },
         "procesarPago": "Procesar Pago"
       },

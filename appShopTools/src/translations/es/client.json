@@ -11,7 +11,7 @@
         "email": {
           "label": "Correo Electrónico",
           "errores": {
-            "requerido": "El email es requerido",
+            "requerido2": "El email es requerido",
             "formato": "Formato email inválido"
           }
         },

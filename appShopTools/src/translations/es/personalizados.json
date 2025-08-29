@@ -1,0 +1,47 @@
+{
+  "personalizados": {
+    "pagina": {
+      "titulo": "Todos los Productos Personalizados",
+      "botones": {
+        "personalizar": "+ Personalizar producto"
+      }
+    },
+    "tabla": {
+      "encabezados": {
+        "pedido": "Pedido",
+        "nombrePersonalizado": "Nombre Personalizado",
+        "productoBase": "Producto Base",
+        "base": "Base ₡",
+        "personalizaciones": "Personalizaciones",
+        "adicional": "Adicional ₡",
+        "unitario": "Unitario ₡",
+        "cantidad": "Cantidad",
+        "subtotal": "Subtotal ₡"
+      },
+      "chips": {
+        "sinPersonalizaciones": "Sin personalizaciones",
+        "etiquetaPersonalizacion": "{{criterio}}: {{opcion}} (+{{costo}})"
+      }
+    },
+    "dialogoDetalle": {
+      "titulo": "Detalle del Producto Personalizado",
+      "campos": {
+        "nombre": "Nombre:",
+        "productoBase": "Producto Base",
+        "base": "Base ₡",
+        "adicional": "Adicional ₡",
+        "unitario": "Precio Unitario ₡",
+        "cantidad": "Cantidad",
+        "subtotal": "Subtotal ₡",
+        "personalizaciones": "Personalizaciones"
+      },
+      "botones": {
+        "cerrar": "Cerrar"
+      }
+    },
+    "mensajes": {
+      "guardarOk": "Producto personalizado guardado.",
+      "guardarError": "No se pudo guardar el producto personalizado."
+    }
+  }
+}

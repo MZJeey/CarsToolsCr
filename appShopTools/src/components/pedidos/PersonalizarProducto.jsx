@@ -284,7 +284,7 @@ const PersonalizarProductoModal = ({
         costo_base,
         costo_adicional,
         precio_unitario: precio_unit,
-        subtotal: total_con_iva, // ⬅️ guardaremos el total con IVA
+        subtotal: total_con_iva, 
         cantidad: cant,
 
         iva_porcentaje,

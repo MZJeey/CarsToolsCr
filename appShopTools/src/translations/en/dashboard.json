@@ -1,28 +1,33 @@
 {
-    "dashboard": {
-      "menu": {
-        "dashboard": "Dashboard",
-        "productos": "Products",
-        "productosSub": {
-          "lista": "Product List",
-          "similares": "Similar Products"
-        },
-        "resenas": "Reviews",
-        "resenasSub": {
-          "lista": "Review List"
-        },
-        "promociones": "Promotions",
-        "pedidos": "Orders",
-        "pedidosSub": {
-          "lista": "Order List",
-          "personalizados": "Customized Products"
-        }
+  "dashboard": {
+    "kpis": {
+      "ventasPeriodo": "Sales (period)",
+      "montoTotal": "Total amount (₡)",
+      "calificacionReciente": "Recent rating"
+    },
+    "ventas": {
+      "titulo": "Sales by",
+      "unidad": {
+        "daily": "day",
+        "monthly": "month"
       },
-      "pages": {
-        "principal": {
-          "titulo": "Main Dashboard",
-          "descripcion": "Welcome to the administration system. Please select an option from the menu."
-        }
+      "toggle": {
+        "daily": "Daily",
+        "monthly": "Monthly"
       }
+    },
+    "pedidosPorEstado": {
+      "titulo": "Orders by status"
+    },
+    "top": {
+      "titulo": "Top 3 best-selling products",
+      "ventas": "Sales:"
+    },
+    "resenas": {
+      "titulo": "3 most recent reviews"
+    },
+    "comunes": {
+      "sinDatos": "No data"
     }
   }
+}

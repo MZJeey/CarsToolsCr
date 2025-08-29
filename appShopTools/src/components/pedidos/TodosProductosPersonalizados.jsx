@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import ProductoPersonalizadoService from "../../services/ProductoPersonalizadoService";
 import PersonalizarProductoModal from "../../components/pedidos/PersonalizarProducto";
 
+import { useTranslation } from "react-i18next";
+
 import {
   Table,
   TableBody,
@@ -92,6 +94,7 @@ const parseOpciones = (raw) => {
 };
 
 const TodosProductosPersonalizados = () => {
+      const { t } = useTranslation("personalizados");
   const { id } = useParams();
   const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
@@ -138,12 +141,12 @@ const TodosProductosPersonalizados = () => {
         [linea]
       );
 
-      console.log("Personalizado guardado", ultimoPedidoId, linea);
+      console.log(t("personalizados.mensajes.guardarOk"), ultimoPedidoId, linea);
       handleClosePersonalizar();
       cargarLista();
     } catch (e) {
       console.error("No se pudo guardar el personalizado", e);
-      alert("No se pudo guardar el personalizado");
+      alert(t("personalizados.mensajes.guardarError"));
     }
   };
 
@@ -164,7 +167,7 @@ const TodosProductosPersonalizados = () => {
         mb={3}
       >
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Todos los Productos Personalizados
+      {t("personalizados.pagina.titulo")}
         </Typography>
         <Button
           variant="contained"
@@ -174,7 +177,7 @@ const TodosProductosPersonalizados = () => {
           }}
           onClick={handleOpenPersonalizar}
         >
-          + PERSONALIZAR PRODUCTO
+          {t("personalizados.pagina.botones.personalizar")}
         </Button>
       </Box>
 
@@ -182,15 +185,15 @@ const TodosProductosPersonalizados = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <StyledTableHeader>Pedido</StyledTableHeader>
-              <StyledTableHeader>Nombre Personalizado</StyledTableHeader>
-              <StyledTableHeader>Producto Base</StyledTableHeader>
-              <StyledTableHeader>Base ₡</StyledTableHeader>
-              <StyledTableHeader>Personalizaciones</StyledTableHeader>
-              <StyledTableHeader>Adicional ₡</StyledTableHeader>
-              <StyledTableHeader>Unitario ₡</StyledTableHeader>
-              <StyledTableHeader>Cantidad</StyledTableHeader>
-              <StyledTableHeader>Subtotal ₡</StyledTableHeader>
+              <StyledTableHeader> {t("personalizados.tabla.encabezados.pedido")}</StyledTableHeader>
+              <StyledTableHeader> {t("personalizados.tabla.encabezados.nombrePersonalizado")}</StyledTableHeader>
+              <StyledTableHeader> {t("personalizados.tabla.encabezados.productoBase")}</StyledTableHeader>
+              <StyledTableHeader>{t("personalizados.tabla.encabezados.base")}</StyledTableHeader>
+              <StyledTableHeader>{t("personalizados.tabla.encabezados.personalizaciones")}</StyledTableHeader>
+              <StyledTableHeader>{t("personalizados.tabla.encabezados.adicional")}</StyledTableHeader>
+              <StyledTableHeader>{t("personalizados.tabla.encabezados.unitario")}</StyledTableHeader>
+              <StyledTableHeader>{t("personalizados.tabla.encabezados.cantidad")}</StyledTableHeader>
+              <StyledTableHeader>{t("personalizados.tabla.encabezados.subtotal")}</StyledTableHeader>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -222,7 +225,7 @@ const TodosProductosPersonalizados = () => {
                         />
                       ))
                     ) : (
-                      <Chip label="Sin personalizaciones" color="warning" />
+                      <Chip label={t("personalizados.chips.sinPersonalizaciones")} color="warning" />
                     )}
                   </TableCell>
                   <TableCell>{formatCRC(item.costo_adicional)}</TableCell>
@@ -244,38 +247,38 @@ const TodosProductosPersonalizados = () => {
         fullWidth
       >
         <DialogTitle sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>
-          Detalle del Producto Personalizado
+        {t("personalizados.dialogoDetalle.titulo")}
         </DialogTitle>
         <DialogContent dividers>
           {selectedProduct && (
             <Box sx={{ lineHeight: 1.8 }}>
               <Typography>
-                <Label>Nombre:</Label> {selectedProduct.nombre_personalizado}
+                <Label> {t("personalizados.dialogoDetalle.campos.nombre")}</Label> {selectedProduct.nombre_personalizado}
               </Typography>
               <Typography>
-                <Label>Producto Base:</Label>{" "}
+                <Label>{t("personalizados.dialogoDetalle.campos.productoBase")}</Label>{" "}
                 {selectedProduct.nombre_producto_base}
               </Typography>
               <Typography>
-                <Label>Base ₡:</Label> {formatCRC(selectedProduct.costo_base)}
+                <Label>{t("personalizados.dialogoDetalle.campos.base")}</Label> {formatCRC(selectedProduct.costo_base)}
               </Typography>
               <Typography>
-                <Label>Adicional ₡:</Label>{" "}
+                <Label>{t("personalizados.dialogoDetalle.campos.adicional")}</Label>{" "}
                 {formatCRC(selectedProduct.costo_adicional)}
               </Typography>
               <Typography>
-                <Label>Precio Unitario ₡:</Label>{" "}
+                <Label>{t("personalizados.dialogoDetalle.campos.unitario")}</Label>{" "}
                 {formatCRC(selectedProduct.precio_unitario)}
               </Typography>
               <Typography>
-                <Label>Cantidad:</Label> {selectedProduct.cantidad}
+                <Label>{t("personalizados.dialogoDetalle.campos.cantidad")}</Label> {selectedProduct.cantidad}
               </Typography>
               <Typography>
-                <Label>Subtotal ₡:</Label> {formatCRC(selectedProduct.subtotal)}
+                <Label>{t("personalizados.dialogoDetalle.campos.subtotal")}</Label> {formatCRC(selectedProduct.subtotal)}
               </Typography>
               <Divider sx={{ my: 2 }} />
               <Typography variant="subtitle1" fontWeight="bold">
-                Personalizaciones:
+                {t("personalizados.dialogoDetalle.campos.personalizaciones")}
               </Typography>
               <Box sx={{ mt: 1, display: "flex", flexWrap: "wrap" }}>
                 {parseOpciones(selectedProduct.opciones_personalizacion).map(
@@ -295,7 +298,7 @@ const TodosProductosPersonalizados = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal} variant="contained">
-            CERRAR
+            {t("personalizados.dialogoDetalle.botones.cerrar")}
           </Button>
         </DialogActions>
       </Dialog>

@@ -11,7 +11,7 @@
         "email": {
           "label": "Email",
           "errores": {
-            "requerido": "Email is required",
+            "requerido2": "Email is required",
             "formato": "Invalid email format"
           }
         },

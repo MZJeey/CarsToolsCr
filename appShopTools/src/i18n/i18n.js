@@ -28,7 +28,7 @@ i18n
       "listaProductos",
       "listaResenas",
       "pedido",
-      "personalizarProducto",
+      "personalizados",
       "promociones",
       
       "resena",
