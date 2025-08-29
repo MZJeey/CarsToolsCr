@@ -31,10 +31,12 @@ import {
 import PedidoService from "../../services/PedidoService";
 import CrearPedidoModal from "./crearPedido";
 import FormaPagoModal from "../../components/pedidos/formaPagoPedido";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-hot-toast";
 
 const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
   if (!pedido) return null;
+  const { t } = useTranslation("pedido");
 
   const parseOpcionesPersonalizacion = (opciones) => {
     try {
@@ -98,7 +100,10 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
 
   const renderOpcionesPersonalizacion = (opciones) => {
     const parsed = parseOpcionesPersonalizacion(opciones);
-    if (!parsed || parsed.length === 0) return "Sin personalización";
+    if (!parsed || parsed.length === 0) return;
+    {
+      t("pedidoComponent.fields.noCustomization");
+    }
 
     return parsed.map((opcion, i) => (
       <div key={i}>
@@ -113,7 +118,10 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
       <DialogTitle>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="h6">
-            Factura del Pedido N° {pedido.id}
+            <h1>
+              {t("pedidoComponent.invoice.header.commercialInvoice")}{" "}
+              {pedido.id}
+            </h1>
           </Typography>
           <IconButton onClick={onClose}>
             <CloseIcon />
@@ -124,13 +132,14 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
         <Paper elevation={0} sx={{ p: 3, fontFamily: "Arial, sans-serif" }}>
           <Box mb={4} textAlign="center">
             <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
-              FACTURA COMERCIAL
+              {t("pedidoComponent.invoice.header.commercialInvoice")}{" "}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              Número: #{pedido.id}
+              {t("pedidoComponent.invoice.header.number")}
+              {pedido.id}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              Fecha:{" "}
+              {t("pedidoComponent.invoice.header.date")}{" "}
               {new Date(pedido.fecha_pedido).toLocaleDateString("es-ES", {
                 day: "2-digit",
                 month: "2-digit",
@@ -144,28 +153,32 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
           <Grid container spacing={4} mb={4}>
             <Grid item xs={6}>
               <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                DATOS DEL CLIENTE
+                {t("pedidoComponent.invoice.header.number")} {pedido.id}
               </Typography>
               <Divider sx={{ mb: 2 }} />
               <Typography variant="body1">
-                <strong>Cliente:</strong> {pedido.nombre_usuario}
+                <strong> {t("pedidoComponent.invoice.fields.client")}</strong>{" "}
+                {pedido.nombre_usuario}
               </Typography>
               <Typography variant="body1">
-                <strong>Dirección:</strong> {pedido.direccion_envio}
+                <strong>{t("pedidoComponent.invoice.fields.address")}</strong>{" "}
+                {pedido.direccion_envio}
               </Typography>
             </Grid>
 
             <Grid item xs={6}>
               <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                INFORMACIÓN DEL PAGO
+                {t("pedidoComponent.invoice.fields.InformationPay")}
               </Typography>
               <Divider sx={{ mb: 2 }} />
               <Typography variant="body1">
-                <strong>Método de pago:</strong>{" "}
+                <strong>
+                  {t("pedidoComponent.invoice.fields.paymentMethod")}
+                </strong>{" "}
                 {pedido.metodo_pago || "No especificado"}
               </Typography>
               <Typography variant="body1">
-                <strong>Estado:</strong>{" "}
+                <strong> {t("pedidoComponent.invoice.fields.status")}</strong>{" "}
                 <Chip
                   label={(pedido.estado || "desconocido")
                     .replace("_", " ")
@@ -185,27 +198,30 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
 
           <Box mb={4}>
             <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
-              DETALLE DE PRODUCTOS
+              {t("pedidoComponent.invoice.sections.productDetails")}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }}>Producto</TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>
-                    Personalización
+                    {" "}
+                    {t("pedidoComponent.invoice.fields.product")}
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    {t("pedidoComponent.invoice.fields.customization")}
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    Cantidad
+                    {t("pedidoComponent.invoice.fields.quantity")}
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    P. Unitario
+                    {t("pedidoComponent.invoice.fields.unitPrice")}
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    Impuesto
+                    {t("pedidoComponent.invoice.fields.tax")}
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    Subtotal
+                    {t("pedidoComponent.invoice.fields.subtotal")}
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -213,7 +229,7 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
                 {pedido.detalles && pedido.detalles.nombre_producto && (
                   <TableRow>
                     <TableCell>{pedido.detalles.nombre_producto}</TableCell>
-                    <TableCell>Producto estándar</TableCell>
+                    <TableCell></TableCell>
                     <TableCell align="right">
                       {pedido.detalles.cantidad || 0}
                     </TableCell>
@@ -269,13 +285,15 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
 
           <Box textAlign="right" mt={4}>
             <Typography variant="body1">
-              <strong>Subtotal:</strong> ₡{subtotal.toFixed(2)}
+              <strong>{t("pedidoComponent.invoice.fields.subtotal")}</strong> ₡
+              {subtotal.toFixed(2)}
             </Typography>
             <Typography variant="body1">
-              <strong>Impuestos:</strong> ₡{impuestos.toFixed(2)}
+              <strong>{t("pedidoComponent.invoice.fields.tax")}</strong> ₡
+              {impuestos.toFixed(2)}
             </Typography>
             <Typography variant="h5" sx={{ fontWeight: "bold", mt: 1 }}>
-              TOTAL: ₡{total.toFixed(2)}
+              {t("pedidoComponent.invoice.fields.total")} ₡{total.toFixed(2)}
             </Typography>
           </Box>
         </Paper>
@@ -288,10 +306,10 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
           onClick={() => setOpenPago(true)}
           sx={{ mr: 2 }}
         >
-          Pagar / Facturar
+          {t("pedidoComponent.invoice.fields.pay")}
         </Button>
         <Button variant="contained" onClick={onClose}>
-          Cerrar
+          {t("pedidoComponent.button.close")}
         </Button>
       </DialogActions>
     </Dialog>
@@ -309,7 +327,7 @@ const PedidoComponent = () => {
   const [openFactura, setOpenFactura] = useState(false);
   const [openPago, setOpenPago] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
-
+  const { t } = useTranslation("pedido");
   const fetchTodosLosPedidos = useCallback(async () => {
     setLoading(true);
     try {
@@ -480,16 +498,18 @@ const PedidoComponent = () => {
 
       {/* Diálogo de confirmación de eliminación */}
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <DialogTitle>¿Eliminar pedido?</DialogTitle>
+        <DialogTitle>
+          {" "}
+          {t("pedidoComponent.invoice.sections.tooltip.deleteOrder")}
+        </DialogTitle>
         <DialogContent>
           <Typography>
-            ¿Seguro que deseas eliminar este pedido y todos sus productos
-            personalizados?
+            {t("pedidoComponent.invoice.sections.tooltip.deleteConfirmation")}
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmOpen(false)} color="inherit">
-            Cancelar
+            {t("pedidoComponent.button.cancel")}
           </Button>
           <Button
             onClick={handleConfirmDelete}
@@ -519,7 +539,7 @@ const PedidoComponent = () => {
           variant="h4"
           sx={{ fontWeight: "bold", color: "primary.main" }}
         >
-          Gestión de Pedidos
+          {t("pedidoComponent.title")}
         </Typography>
         <Button
           variant="contained"
@@ -528,7 +548,7 @@ const PedidoComponent = () => {
           startIcon={<AddIcon />}
           sx={{ fontWeight: "bold" }}
         >
-          Nuevo Pedido
+          {t("pedidoComponent.button.newOrder")}
         </Button>
       </Box>
 
@@ -542,11 +562,22 @@ const PedidoComponent = () => {
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>N° Pedido</TableCell>
-                <TableCell>Fecha</TableCell>
-                <TableCell>Cliente</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell>Acciones</TableCell>
+                <TableCell>
+                  {t("pedidoComponent.table.header.orderNumber")}
+                </TableCell>
+                <TableCell>{t("pedidoComponent.table.header.date")}</TableCell>
+                <TableCell>
+                  {" "}
+                  {t("pedidoComponent.table.header.customer")}
+                </TableCell>
+                <TableCell>
+                  {" "}
+                  {t("pedidoComponent.table.header.status")}
+                </TableCell>
+                <TableCell>
+                  {" "}
+                  {t("pedidoComponent.table.header.actions")}
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

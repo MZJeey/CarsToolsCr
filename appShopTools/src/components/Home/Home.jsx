@@ -34,6 +34,7 @@ import toast from "react-hot-toast";
 import ProductoService from "../../services/ProductoService";
 import CategoriaService from "../../services/CategoriaService";
 import { useCart } from "../../hooks/useCart";
+import { useTranslation } from "react-i18next";
 
 // Componentes estilizados - HeroSection SIN MÁRGENES
 const HeroSection = styled(Box)(({ theme }) => ({
@@ -92,6 +93,7 @@ const ProductCard = styled(Card)(({ theme }) => ({
 // Componente principal
 export function Home() {
   const theme = useTheme();
+  const { t } = useTranslation("home");
   const { addItem } = useCart();
   const [loading, setLoading] = useState(true);
   const [categorias, setCategorias] = useState([]);
@@ -215,7 +217,7 @@ export function Home() {
               fontWeight="bold"
               sx={{ fontSize: { xs: "2rem", sm: "3rem", md: "4rem" } }}
             >
-              CarsToolsCr
+              {t("home.hero.titulo")}
             </Typography>
             <Typography
               variant="h5"
@@ -225,7 +227,7 @@ export function Home() {
                 fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
               }}
             >
-              Todo lo que tu vehículo necesita hasta la puerta de tu garaje
+              {t("home.hero.subtitulo")}
             </Typography>
             <Box
               sx={{
@@ -243,7 +245,7 @@ export function Home() {
                 to="/lista"
                 sx={{ minWidth: { xs: "200px", sm: "auto" } }}
               >
-                Ver Catálogo
+                {t("home.hero.botones.verCatalogo")}
               </Button>
               <Button
                 variant="outlined"
@@ -260,7 +262,7 @@ export function Home() {
                 component={Link}
                 to="/ListaPromo"
               >
-                Ofertas Especiales
+                {t("home.hero.botones.ofertasEspeciales")}
               </Button>
             </Box>
           </HeroContainer>
@@ -272,7 +274,7 @@ export function Home() {
         {/* Categorías */}
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Typography variant="h4" component="h2" gutterBottom>
-            Explora por Categoría
+            {t("home.categorias.titulo")}
           </Typography>
           <Box
             sx={{
@@ -307,7 +309,7 @@ export function Home() {
             gutterBottom
             textAlign="center"
           >
-            Productos Destacados
+            {t("home.productosDestacados.titulo")}
           </Typography>
 
           <Grid container spacing={4} sx={{ mt: 2 }}>
@@ -400,7 +402,7 @@ export function Home() {
                       fullWidth
                       sx={{ mb: 1 }}
                     >
-                      Comprar
+                      {t("home.productosDestacados.botones.comprar")}
                     </Button>
                     <Button
                       variant="outlined"
@@ -410,7 +412,7 @@ export function Home() {
                       size="small"
                       fullWidth
                     >
-                      Detalles
+                      {t("home.productosDestacados.botones.detalles")}
                     </Button>
                   </CardActions>
                 </ProductCard>
@@ -425,7 +427,7 @@ export function Home() {
               component={Link}
               to="/lista"
             >
-              Ver Todos los Productos
+              {t("home.productosDestacados.botones.verTodos")}
             </Button>
           </Box>
         </Box>
@@ -438,17 +440,17 @@ export function Home() {
             gutterBottom
             textAlign="center"
           >
-            ¿Por qué elegirnos?
+            {t("home.beneficios.titulo")}
           </Typography>
           <Grid container spacing={4} sx={{ mt: 2 }}>
             <Grid item xs={12} md={4}>
               <FeatureCard>
                 <LocalShipping color="primary" sx={{ fontSize: 50, mb: 2 }} />
                 <Typography variant="h5" component="h3" gutterBottom>
-                  Envío Rápido
+                  {t("home.beneficios.items.envio.titulo")}
                 </Typography>
                 <Typography textAlign="center">
-                  Entregamos en todo el país en 24-48 horas. Garantizado.
+                  {t("home.beneficios.items.envio.descripcion")}
                 </Typography>
               </FeatureCard>
             </Grid>
@@ -456,10 +458,10 @@ export function Home() {
               <FeatureCard>
                 <Security color="primary" sx={{ fontSize: 50, mb: 2 }} />
                 <Typography variant="h5" component="h3" gutterBottom>
-                  Calidad Garantizada
+                  {t("home.beneficios.items.calidad.titulo")}
                 </Typography>
                 <Typography textAlign="center">
-                  Todos nuestros productos tienen garantía del fabricante.
+                  {t("home.beneficios.items.calidad.descripcion")}
                 </Typography>
               </FeatureCard>
             </Grid>
@@ -467,10 +469,10 @@ export function Home() {
               <FeatureCard>
                 <SupportAgent color="primary" sx={{ fontSize: 50, mb: 2 }} />
                 <Typography variant="h5" component="h3" gutterBottom>
-                  Soporte Expertos
+                  {t("home.beneficios.items.soporte.titulo")}
                 </Typography>
                 <Typography textAlign="center">
-                  Nuestros mecánicos te asesoran en la compra correcta.
+                  {t("home.beneficios.items.soporte.descripcion")}
                 </Typography>
               </FeatureCard>
             </Grid>
@@ -488,11 +490,10 @@ export function Home() {
           }}
         >
           <Typography variant="h4" component="h2" gutterBottom>
-            ¿Necesitas ayuda para encontrar el repuesto correcto?
+            {t("home.cta.titulo")}
           </Typography>
           <Typography variant="h6" sx={{ mb: 3 }}>
-            Nuestros expertos están listos para ayudarte a encontrar exactamente
-            lo que necesitas.
+            {t("home.cta.subtitulo")}
           </Typography>
           <Button
             variant="contained"
@@ -501,7 +502,7 @@ export function Home() {
             component={Link}
             to="/contacto"
           >
-            Contactar a un Experto
+            {t("home.cta.boton")}
           </Button>
         </Paper>
       </Container>

@@ -6,7 +6,8 @@
       "createFirstOrder": "Crear primer pedido",
       "printInvoice": "Imprimir Factura",
       "close": "Cerrar",
-      "retry": "Reintentar"
+      "retry": "Reintentar",
+      "cancel":"Cancelar"
     },
     "table": {
       "header": {
@@ -33,6 +34,7 @@
       "fields": {
         "client": "Cliente:",
         "address": "Dirección:",
+        "InformationPay":"Información de pago",
         "paymentMethod": "Método de pago:",
         "status": "Estado:",
         "product": "Producto",
@@ -44,7 +46,9 @@
         "subtotalLabel": "Subtotal:",
         "taxesLabel": "Impuestos:",
         "total": "TOTAL:",
-        "noCustomization": "Sin personalización"
+        "pay":"Pagar / Facturar",
+        "noCustomization": "Sin personalización",
+        "number":"N° Pedido"
       },
       "standardProduct": "Producto estándar",
       "customProduct": "Producto personalizado"
@@ -59,7 +63,8 @@
     },
     "tooltip": {
       "editOrder": "Editar pedido",
-      "deleteOrder": "Eliminar pedido"
+      "deleteOrder": "Eliminar pedido",
+       "deleteConfirmation": "¿Seguro que deseas eliminar este pedido y todos sus productos personalizados?"
     },
     "loading": "Cargando..."
   }

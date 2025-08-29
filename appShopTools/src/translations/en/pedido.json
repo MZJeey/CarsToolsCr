@@ -36,6 +36,7 @@
         "paymentMethod": "Payment Method:",
         "status": "Status:",
         "product": "Product",
+        "InformationPay":"Information pay",
         "customization": "Customization",
         "quantity": "Quantity",
         "unitPrice": "Unit Price",

@@ -175,7 +175,10 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
                   required
                 >
                   <MenuItem value="">
-                    <em>Seleccione un producto</em>
+                    <em>
+                      {" "}
+                      {t("crearPedidoModal.formulario.productos.tituloSeccion")}
+                    </em>
                   </MenuItem>
                   {productos.map((p) => (
                     <MenuItem key={p.id} value={p.id}>
