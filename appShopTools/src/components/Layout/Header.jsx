@@ -136,8 +136,8 @@ export default function Header() {
     { name: t("header.menu.repuestos"), link: "/lista", roles: null },
     { name: t("header.menu.pedidos"), link: "/pedidos", roles: null },
     {
-      name: t("header.menu.servicios"),
-      link: "/movie/filter",
+      name: t("header.menu.productos_personalizados"),
+      link: "/productos-personalizados",
       roles: null,
     },
     {
@@ -393,7 +393,7 @@ export default function Header() {
             <FavoriteIcon />
           </Badge>
         </IconButton>
-        <Typography>{t("header.icons.notificaciones")}</Typography>
+        <Typography>{t("header.icons.Favoritos")}</Typography>
       </MenuItem>
 
       {userItems.map((setting, idx) => {

@@ -254,12 +254,19 @@ export function Lista() {
     navigate(`/detalles/${suggestedProduct.id}`);
   };
 
-  // Función para filtrar productos según el término de búsqueda
+  // Función para filtrar productos según el término de búsqueda y estado
   const filtrarProductos = (productos) => {
-    if (!searchTerm) return productos;
+    // Primero filtrar solo productos con estado "1" (activos)
+    const productosActivos = productos.filter(
+      (producto) => producto.estado === "1"
+    );
 
+    // Si no hay término de búsqueda, retornar todos los productos activos
+    if (!searchTerm) return productosActivos;
+
+    // Si hay término de búsqueda, aplicar filtro adicional
     const term = searchTerm.toLowerCase();
-    return productos.filter(
+    return productosActivos.filter(
       (producto) =>
         producto.nombre.toLowerCase().includes(term) ||
         (producto.descripcion &&
@@ -380,7 +387,7 @@ export function Lista() {
     };
   });
 
-  // Filtrar productos según el término de búsqueda
+  // Filtrar productos según el término de búsqueda y estado activo
   const productosFiltrados = filtrarProductos(productosConPromocionValida);
 
   if (loading) {
@@ -427,7 +434,7 @@ export function Lista() {
       )}
 
       {/* Mostrar mensaje si no hay resultados */}
-      {searchTerm && productosFiltrados.length === 0 && (
+      {productosFiltrados.length === 0 && (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography
             variant="h3"
@@ -435,17 +442,21 @@ export function Lista() {
             color="primary"
             gutterBottom
           >
-            No se encontraron productos que coincidan con {searchTerm}
+            {searchTerm
+              ? `No se encontraron productos activos que coincidan con "${searchTerm}"`
+              : "No hay productos disponibles en este momento"}
           </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            component={Link}
-            to="/lista"
-            sx={{ mt: 2 }}
-          >
-            Ver todos los productos
-          </Button>
+          {searchTerm && (
+            <Button
+              variant="contained"
+              color="primary"
+              component={Link}
+              to="/lista"
+              sx={{ mt: 2 }}
+            >
+              Ver todos los productos activos
+            </Button>
+          )}
         </Box>
       )}
 

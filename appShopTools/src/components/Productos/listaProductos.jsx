@@ -289,7 +289,7 @@ export function ListaProductos() {
                     </IconButton>
                   </Tooltip>
 
-                  <Tooltip title="Eliminar">
+                  {/* <Tooltip title="Eliminar">
                     <IconButton
                       aria-label="eliminar"
                       color="error"
@@ -298,7 +298,7 @@ export function ListaProductos() {
                     >
                       <DeleteIcon />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip> */}
                 </Box>
               </CardActions>
             </Card>
@@ -306,7 +306,7 @@ export function ListaProductos() {
         ))}
       </Grid>
 
-      <Dialog
+      {/* <Dialog
         open={confirmarEliminar}
         onClose={() => setConfirmarEliminar(false)}
       >
@@ -321,7 +321,7 @@ export function ListaProductos() {
             Eliminar
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
 
       <Snackbar
         open={!!error || !!success}

@@ -43,7 +43,7 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
   useEffect(() => {
     if (open) {
       const userFromStorage = localStorage.getItem("userData");
-      console.log(('Userdata'));
+      console.log("Userdata");
       if (!userFromStorage) {
         toast.error("Debes iniciar sesión para continuar");
         handleClose();
@@ -114,7 +114,7 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
       };
 
       const response = await PedidoService.crearPedido(pedidoData);
-      
+
       localStorage.setItem("ultimoPedidoId", response.data.id);
       console.log("Último pedido creado:", response.data.id);
       toast.success("Pedido creado con éxito");
@@ -175,7 +175,10 @@ const CrearPedidoModal = ({ open, handleClose, refreshPedidos }) => {
                   required
                 >
                   <MenuItem value="">
-                    <em>Seleccione un producto</em>
+                    <em>
+                      {" "}
+                      {t("crearPedidoModal.formulario.productos.tituloSeccion")}
+                    </em>
                   </MenuItem>
                   {productos.map((p) => (
                     <MenuItem key={p.id} value={p.id}>

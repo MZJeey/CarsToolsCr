@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Container,
   Typography,
@@ -14,7 +14,6 @@ import {
   Tooltip,
   Chip,
   CircularProgress,
-  Alert,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -27,16 +26,17 @@ import {
   Delete,
   Add as AddIcon,
   Close as CloseIcon,
-  Print as PrintIcon,
   Payment as PaymentIcon,
 } from "@mui/icons-material";
 import PedidoService from "../../services/PedidoService";
 import CrearPedidoModal from "./crearPedido";
 import FormaPagoModal from "../../components/pedidos/formaPagoPedido";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-hot-toast";
 
 const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
   if (!pedido) return null;
+  const { t } = useTranslation("pedido");
 
   const parseOpcionesPersonalizacion = (opciones) => {
     try {
@@ -62,6 +62,7 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
       return [];
     }
   };
+
   const calcularTotales = () => {
     let subtotal = 0;
     let impuestos = 0;
@@ -99,7 +100,10 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
 
   const renderOpcionesPersonalizacion = (opciones) => {
     const parsed = parseOpcionesPersonalizacion(opciones);
-    if (!parsed || parsed.length === 0) return "Sin personalización";
+    if (!parsed || parsed.length === 0) return;
+    {
+      t("pedidoComponent.fields.noCustomization");
+    }
 
     return parsed.map((opcion, i) => (
       <div key={i}>
@@ -114,7 +118,10 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
       <DialogTitle>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="h6">
-            Factura del Pedido N° {pedido.id}
+            <h1>
+              {t("pedidoComponent.invoice.header.commercialInvoice")}{" "}
+              {pedido.id}
+            </h1>
           </Typography>
           <IconButton onClick={onClose}>
             <CloseIcon />
@@ -125,13 +132,14 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
         <Paper elevation={0} sx={{ p: 3, fontFamily: "Arial, sans-serif" }}>
           <Box mb={4} textAlign="center">
             <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
-              FACTURA COMERCIAL
+              {t("pedidoComponent.invoice.header.commercialInvoice")}{" "}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              Número: #{pedido.id}
+              {t("pedidoComponent.invoice.header.number")}
+              {pedido.id}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              Fecha:{" "}
+              {t("pedidoComponent.invoice.header.date")}{" "}
               {new Date(pedido.fecha_pedido).toLocaleDateString("es-ES", {
                 day: "2-digit",
                 month: "2-digit",
@@ -145,28 +153,32 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
           <Grid container spacing={4} mb={4}>
             <Grid item xs={6}>
               <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                DATOS DEL CLIENTE
+                {t("pedidoComponent.invoice.header.number")} {pedido.id}
               </Typography>
               <Divider sx={{ mb: 2 }} />
               <Typography variant="body1">
-                <strong>Cliente:</strong> {pedido.nombre_usuario}
+                <strong> {t("pedidoComponent.invoice.fields.client")}</strong>{" "}
+                {pedido.nombre_usuario}
               </Typography>
               <Typography variant="body1">
-                <strong>Dirección:</strong> {pedido.direccion_envio}
+                <strong>{t("pedidoComponent.invoice.fields.address")}</strong>{" "}
+                {pedido.direccion_envio}
               </Typography>
             </Grid>
 
             <Grid item xs={6}>
               <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                INFORMACIÓN DEL PAGO
+                {t("pedidoComponent.invoice.fields.InformationPay")}
               </Typography>
               <Divider sx={{ mb: 2 }} />
               <Typography variant="body1">
-                <strong>Método de pago:</strong>{" "}
+                <strong>
+                  {t("pedidoComponent.invoice.fields.paymentMethod")}
+                </strong>{" "}
                 {pedido.metodo_pago || "No especificado"}
               </Typography>
               <Typography variant="body1">
-                <strong>Estado:</strong>{" "}
+                <strong> {t("pedidoComponent.invoice.fields.status")}</strong>{" "}
                 <Chip
                   label={(pedido.estado || "desconocido")
                     .replace("_", " ")
@@ -186,27 +198,30 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
 
           <Box mb={4}>
             <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
-              DETALLE DE PRODUCTOS
+              {t("pedidoComponent.invoice.sections.productDetails")}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }}>Producto</TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>
-                    Personalización
+                    {" "}
+                    {t("pedidoComponent.invoice.fields.product")}
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    {t("pedidoComponent.invoice.fields.customization")}
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    Cantidad
+                    {t("pedidoComponent.invoice.fields.quantity")}
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    P. Unitario
+                    {t("pedidoComponent.invoice.fields.unitPrice")}
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    Impuesto
+                    {t("pedidoComponent.invoice.fields.tax")}
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                    Subtotal
+                    {t("pedidoComponent.invoice.fields.subtotal")}
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -214,7 +229,7 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
                 {pedido.detalles && pedido.detalles.nombre_producto && (
                   <TableRow>
                     <TableCell>{pedido.detalles.nombre_producto}</TableCell>
-                    <TableCell>Producto estándar</TableCell>
+                    <TableCell></TableCell>
                     <TableCell align="right">
                       {pedido.detalles.cantidad || 0}
                     </TableCell>
@@ -270,13 +285,15 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
 
           <Box textAlign="right" mt={4}>
             <Typography variant="body1">
-              <strong>Subtotal:</strong> ₡{subtotal.toFixed(2)}
+              <strong>{t("pedidoComponent.invoice.fields.subtotal")}</strong> ₡
+              {subtotal.toFixed(2)}
             </Typography>
             <Typography variant="body1">
-              <strong>Impuestos:</strong> ₡{impuestos.toFixed(2)}
+              <strong>{t("pedidoComponent.invoice.fields.tax")}</strong> ₡
+              {impuestos.toFixed(2)}
             </Typography>
             <Typography variant="h5" sx={{ fontWeight: "bold", mt: 1 }}>
-              TOTAL: ₡{total.toFixed(2)}
+              {t("pedidoComponent.invoice.fields.total")} ₡{total.toFixed(2)}
             </Typography>
           </Box>
         </Paper>
@@ -289,10 +306,10 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
           onClick={() => setOpenPago(true)}
           sx={{ mr: 2 }}
         >
-          Pagar / Facturar
+          {t("pedidoComponent.invoice.fields.pay")}
         </Button>
         <Button variant="contained" onClick={onClose}>
-          Cerrar
+          {t("pedidoComponent.button.close")}
         </Button>
       </DialogActions>
     </Dialog>
@@ -303,33 +320,26 @@ const PedidoComponent = () => {
   const [pedidos, setPedidos] = useState([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pedidoToDelete, setPedidoToDelete] = useState(null);
-    const [deletingId, setDeletingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [selectedPedido, setSelectedPedido] = useState(null);
   const [openFactura, setOpenFactura] = useState(false);
   const [openPago, setOpenPago] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
-
+  const { t } = useTranslation("pedido");
   const fetchTodosLosPedidos = useCallback(async () => {
     setLoading(true);
-    setError(null);
     try {
       const userFromStorage = localStorage.getItem("userData");
-   
       if (!userFromStorage) {
         toast.error("Debes iniciar sesión para continuar");
         return;
       }
-      
 
       const parsedUser = JSON.parse(userFromStorage);
-       console.log("Datos del usuario---->", parsedUser);
-
-
-
       setUserInfo(parsedUser);
+
       const response = await PedidoService.listarTodosLosPedidos(parsedUser.id);
 
       const pedidosConEstado = response.data.map((pedido) => ({
@@ -342,7 +352,7 @@ const PedidoComponent = () => {
       setPedidos(pedidosConEstado);
     } catch (error) {
       console.error("Error al obtener pedidos:", error);
-      setError("Error al cargar los pedidos. Intente nuevamente.");
+      // NO mostramos error al usuario, solo en consola
     } finally {
       setLoading(false);
     }
@@ -357,30 +367,25 @@ const PedidoComponent = () => {
     setOpenFactura(true);
   };
 
+  const handleOpenConfirm = (pedidoId) => {
+    setPedidoToDelete(pedidoId);
+    setConfirmOpen(true);
+  };
 
-const handleOpenConfirm = (pedidoId) => {
-  setPedidoToDelete(pedidoId);
-  setConfirmOpen(true);
-};
-
-const handleConfirmDelete = async () => {
-  try {
-    setDeletingId(pedidoToDelete);
-    await PedidoService.eliminarPedido(pedidoToDelete);
-    toast.success("Pedido eliminado");
-    await fetchTodosLosPedidos();
-  } catch (e) {
-    toast.error("No se pudo eliminar el pedido");
-  } finally {
-    setDeletingId(null);
-    setConfirmOpen(false);
-    setPedidoToDelete(null);
-  }
-};
-
-
-
-
+  const handleConfirmDelete = async () => {
+    try {
+      setDeletingId(pedidoToDelete);
+      await PedidoService.eliminarPedido(pedidoToDelete);
+      toast.success("Pedido eliminado");
+      await fetchTodosLosPedidos();
+    } catch (e) {
+      toast.error("No se pudo eliminar el pedido");
+    } finally {
+      setDeletingId(null);
+      setConfirmOpen(false);
+      setPedidoToDelete(null);
+    }
+  };
 
   const transformPedidoForPago = (pedido) => {
     if (!pedido) return null;
@@ -459,29 +464,9 @@ const handleConfirmDelete = async () => {
     (a, b) => (estadoOrden[a.estado] ?? 99) - (estadoOrden[b.estado] ?? 99)
   );
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-        <Button variant="contained" onClick={fetchTodosLosPedidos}>
-          Reintentar
-        </Button>
-      </Container>
-    );
-  }
-
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      {/* MODAL DE CREAR PEDIDO */}
       <CrearPedidoModal
         open={openModal}
         handleClose={() => setOpenModal(false)}
@@ -511,33 +496,37 @@ const handleConfirmDelete = async () => {
         userId={userInfo?.id}
       />
 
-<Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-  <DialogTitle>¿Eliminar pedido?</DialogTitle>
-  <DialogContent>
-    <Typography>
-      ¿Seguro que deseas eliminar este pedido y todos sus productos personalizados?
-    </Typography>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={() => setConfirmOpen(false)} color="inherit">
-      Cancelar
-    </Button>
-    <Button
-      onClick={handleConfirmDelete}
-      color="error"
-      variant="contained"
-      disabled={deletingId === pedidoToDelete}
-    >
-      {deletingId === pedidoToDelete ? <CircularProgress size={20} /> : "Eliminar"}
-    </Button>
-  </DialogActions>
-</Dialog>
+      {/* Diálogo de confirmación de eliminación */}
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>
+          {" "}
+          {t("pedidoComponent.invoice.sections.tooltip.deleteOrder")}
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            {t("pedidoComponent.invoice.sections.tooltip.deleteConfirmation")}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)} color="inherit">
+            {t("pedidoComponent.button.cancel")}
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="contained"
+            disabled={deletingId === pedidoToDelete}
+          >
+            {deletingId === pedidoToDelete ? (
+              <CircularProgress size={20} />
+            ) : (
+              "Eliminar"
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-
-
-
-
-
+      {/* HEADER CON BOTÓN DE CREAR PEDIDO */}
       <Box
         sx={{
           display: "flex",
@@ -550,7 +539,7 @@ const handleConfirmDelete = async () => {
           variant="h4"
           sx={{ fontWeight: "bold", color: "primary.main" }}
         >
-          Gestión de Pedidos
+          {t("pedidoComponent.title")}
         </Typography>
         <Button
           variant="contained"
@@ -559,20 +548,36 @@ const handleConfirmDelete = async () => {
           startIcon={<AddIcon />}
           sx={{ fontWeight: "bold" }}
         >
-          Nuevo Pedido
+          {t("pedidoComponent.button.newOrder")}
         </Button>
       </Box>
 
-      {pedidosOrdenados.length > 0 ? (
+      {/* CONTENIDO PRINCIPAL */}
+      {loading ? (
+        <Box display="flex" justifyContent="center" mt={4}>
+          <CircularProgress />
+        </Box>
+      ) : pedidosOrdenados.length > 0 ? (
         <Paper elevation={3} sx={{ overflow: "auto" }}>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>N° Pedido</TableCell>
-                <TableCell>Fecha</TableCell>
-                <TableCell>Cliente</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell>Acciones</TableCell>
+                <TableCell>
+                  {t("pedidoComponent.table.header.orderNumber")}
+                </TableCell>
+                <TableCell>{t("pedidoComponent.table.header.date")}</TableCell>
+                <TableCell>
+                  {" "}
+                  {t("pedidoComponent.table.header.customer")}
+                </TableCell>
+                <TableCell>
+                  {" "}
+                  {t("pedidoComponent.table.header.status")}
+                </TableCell>
+                <TableCell>
+                  {" "}
+                  {t("pedidoComponent.table.header.actions")}
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -639,21 +644,19 @@ const handleConfirmDelete = async () => {
                           <Edit fontSize="small" />
                         </IconButton>
                       </Tooltip>
-<Tooltip title="Eliminar pedido">
-  <IconButton
-    onClick={(e) => {
-      e.stopPropagation();
-      handleOpenConfirm(pedido.id);
-    }}
-    color="error"
-    size="small"
-    disabled={deletingId === pedido.id}
-  >
-    <Delete fontSize="small" />
-  </IconButton>
-</Tooltip>
-
-
+                      <Tooltip title="Eliminar pedido">
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenConfirm(pedido.id);
+                          }}
+                          color="error"
+                          size="small"
+                          disabled={deletingId === pedido.id}
+                        >
+                          <Delete fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 );
@@ -662,16 +665,36 @@ const handleConfirmDelete = async () => {
           </Table>
         </Paper>
       ) : (
-        <Paper sx={{ p: 3, textAlign: "center" }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
+        // ESTADO CUANDO NO HAY PEDIDOS - SOLO OPCIÓN DE CREAR
+        <Paper
+          sx={{
+            p: 6,
+            textAlign: "center",
+            bgcolor: "#f5f5f5",
+            borderRadius: 2,
+            boxShadow: "none",
+          }}
+        >
+          <Typography variant="h5" gutterBottom sx={{ color: "#666", mb: 2 }}>
             No hay pedidos registrados
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 3, color: "#888" }}>
+            Comienza creando tu primer pedido
           </Typography>
           <Button
             variant="contained"
+            size="large"
             startIcon={<AddIcon />}
             onClick={() => setOpenModal(true)}
+            sx={{
+              fontWeight: "bold",
+              px: 4,
+              py: 1.5,
+              backgroundColor: "#438892",
+              "&:hover": { backgroundColor: "#356a75" },
+            }}
           >
-            Crear primer pedido
+            Crear Primer Pedido
           </Button>
         </Paper>
       )}

@@ -79,24 +79,32 @@ class producto
             //Acción del modelo a ejecutar
             $result = $producto->update($inputJSON);
 
-            
+
             //Dar respuesta
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
-           
         }
     }
-    public function delete($id)
+    public function cambiarEstado($id)
     {
         try {
             $response = new Response();
-            //Instancia del modelo
             $producto = new ProductoModel();
-            //Acción del modelo a ejecutar
-            $result = $producto->delete($id);
-            //Dar respuesta
-            $response->toJSON($result);
+
+            $result = $producto->desactivar($id);
+
+            if ($result) {
+                $response->toJSON([
+                    "status" => "success",
+                    "message" => "Producto desactivado correctamente"
+                ]);
+            } else {
+                $response->toJSON([
+                    "status" => "error",
+                    "message" => "No se pudo desactivar el producto (id inexistente o ya estaba inactivo)"
+                ]);
+            }
         } catch (Exception $e) {
             handleException($e);
         }
