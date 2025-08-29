@@ -208,10 +208,12 @@ JOIN Impuesto i ON p.IdImpuesto = i.IdImpuesto;
         }
     }
 
-    public function delete($id)
+    public function desactivar($id)
     {
         try {
-            $sql = "UPDATE Producto SET estado = true WHERE id = $id";
+            $sql = "UPDATE Producto 
+                SET estado = true 
+                WHERE id = $id AND estado = false";
             return $this->enlace->executeSQL_DML($sql);
         } catch (Exception $e) {
             handleException($e);

@@ -1,0 +1,32 @@
+[29-08-2025 02:10:37] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:17:14] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:17:14] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:17:17] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:17:17] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:20:08] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:20:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:20:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:25:06] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:25:06] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:30:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:30:13] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:30:30] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:30:30] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:30:48] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:30:58] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:31:46] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:31:46] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:36:11] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:36:17] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:36:17] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:36:37] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:36:54] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 02:43:28] [jason] error: File: C:\xampp\htdocs\carstoolscr\controllers\PedidoController.php - line: 76 - Message: Undefined property: stdClass::$usuario_id
+ [29-08-2025 03:12:42] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 145 - Message: Attempt to read property "nombre" on null
+ [29-08-2025 03:14:08] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 145 - Message: Attempt to read property "nombre" on null
+ [29-08-2025 03:17:53] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 145 - Message: Attempt to read property "nombre" on null
+ [29-08-2025 03:19:00] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 145 - Message: Attempt to read property "nombre" on null
+ [29-08-2025 03:22:12] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 145 - Message: Attempt to read property "nombre" on null
+ [29-08-2025 03:23:41] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 145 - Message: Attempt to read property "nombre" on null
+ [29-08-2025 03:27:36] [jason] error: File: C:\xampp\htdocs\carstoolscr\models\ProductosModel.php - line: 145 - Message: Attempt to read property "nombre" on null
+ 

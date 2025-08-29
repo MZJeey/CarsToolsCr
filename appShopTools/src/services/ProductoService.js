@@ -26,7 +26,7 @@ class ProductoService {
   }
 
   deleteProducto(id) {
-    return axios.delete(BASE_URL + "/" + id);
+    return axios.put(BASE_URL + "/cambiarEstado/" + id);
     // Asegúrate de que esta ruta coincida con el método `delete($id)` en el controlador PHP
   }
 }
