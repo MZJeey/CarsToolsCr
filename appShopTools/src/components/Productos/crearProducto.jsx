@@ -265,7 +265,7 @@ export function CrearProducto() {
         );
       }
 
-      toast.success(t("crearProducto.form.toasts.successs"), {
+      toast.success(t("crearProducto.form.toasts.success"), {
         duration: 5000,
       });
       navigate("/productos");
