@@ -109,6 +109,7 @@ const FacturaDialog = ({ pedido, open, onClose, setOpenPago }) => {
     ));
   };
 
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
@@ -378,6 +379,63 @@ const handleConfirmDelete = async () => {
   }
 };
 
+// === utilidades para estados ===
+const ESTADOS = ["en_proceso", "pagado", "entregado"];
+const pretty = (e) =>
+  e === "en_proceso" ? "EN PROCESO" :
+  e === "pagado"     ? "PAGADO"     :
+  e === "entregado"  ? "ENTREGADO"  : (e || "").toUpperCase();
+
+const getSiguiente = (estadoActual) => {
+  const i = ESTADOS.indexOf(estadoActual);
+  return i >= 0 && i < ESTADOS.length - 1 ? ESTADOS[i + 1] : null;
+};
+
+// === control modal de cambio de estado ===
+const [openEstado, setOpenEstado] = useState(false);
+const [pedidoSel, setPedidoSel] = useState(null);
+const [nuevoEstado, setNuevoEstado] = useState("");
+
+// === detectar admin (usa tu userData del localStorage) ===
+const isAdmin = useMemo(() => {
+  try {
+    const raw = localStorage.getItem("userData");
+    if (!raw) return false;
+    const u = JSON.parse(raw);
+    const rid = String(u?.rol?.id || "").trim();
+    const rnm = String(u?.rol?.nombre || "").toLowerCase().trim();
+    return rid === "1" || rnm === "administrador";
+  } catch { return false; }
+}, []);
+
+const abrirCambioEstado = (pedido) => {
+  const siguiente = getSiguiente(pedido.estado);
+  if (!siguiente) { toast("Este pedido ya está ENTREGADO."); return; }
+  setPedidoSel(pedido);
+  setNuevoEstado(siguiente);
+  setOpenEstado(true);
+};
+
+const cerrarCambioEstado = () => {
+  setOpenEstado(false);
+  setPedidoSel(null);
+  setNuevoEstado("");
+};
+
+const guardarCambioEstado = async () => {
+  try {
+    if (!pedidoSel?.id || !nuevoEstado) return;
+    await PedidoService.cambiarEstadoPedido(pedidoSel.id, nuevoEstado);
+    toast.success(`Estado cambiado a ${pretty(nuevoEstado)}`);
+    cerrarCambioEstado();
+    await fetchTodosLosPedidos();
+  } catch (e) {
+    console.error(e);
+    toast.error("No se pudo cambiar el estado");
+  }
+};
+
+
 
 
 
@@ -518,6 +576,7 @@ const handleConfirmDelete = async () => {
       ¿Seguro que deseas eliminar este pedido y todos sus productos personalizados?
     </Typography>
   </DialogContent>
+
   <DialogActions>
     <Button onClick={() => setConfirmOpen(false)} color="inherit">
       Cancelar
@@ -534,6 +593,30 @@ const handleConfirmDelete = async () => {
 </Dialog>
 
 
+<Dialog open={openEstado} onClose={cerrarCambioEstado} maxWidth="xs" fullWidth>
+  <DialogTitle>Cambiar estado del pedido</DialogTitle>
+  <DialogContent dividers>
+    <Typography variant="body2" sx={{ mb: 1 }}>
+      <b>Pedido #:</b> {pedidoSel?.id}
+    </Typography>
+    <Typography variant="body2" sx={{ mb: 1 }}>
+      <b>Estado actual:</b> {pretty(pedidoSel?.estado)}
+    </Typography>
+    <Typography variant="body2">
+      <b>Siguiente estado:</b> {pretty(nuevoEstado) || "—"}
+    </Typography>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={cerrarCambioEstado}>Cancelar</Button>
+    <Button
+      onClick={guardarCambioEstado}
+      variant="contained"
+      disabled={!nuevoEstado}
+    >
+      Guardar
+    </Button>
+  </DialogActions>
+</Dialog>
 
 
 
@@ -627,18 +710,21 @@ const handleConfirmDelete = async () => {
                       />
                     </TableCell>
                     <TableCell>
-                      <Tooltip title="Editar pedido">
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Lógica para editar
-                          }}
-                          color="primary"
-                          size="small"
-                        >
-                          <Edit fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
+              {isAdmin && (
+  <Tooltip title="Cambiar estado">
+    <IconButton
+      onClick={(e) => {
+        e.stopPropagation();
+        abrirCambioEstado(pedido); // <-- abre modal para pasar al siguiente estado
+      }}
+      color="primary"
+      size="small"
+    >
+      <Edit fontSize="small" />
+    </IconButton>
+  </Tooltip>
+)}
+
 <Tooltip title="Eliminar pedido">
   <IconButton
     onClick={(e) => {
