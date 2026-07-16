@@ -161,6 +161,21 @@ Los usuarios pueden guardar productos en su lista de favoritos, consultar sus ca
 
 ---
 
+
+---
+
+## 🔗 Gestión de productos similares
+
+<p align="center">
+  <img src="assets/productosimilar.png" width="950" alt="Gestión de productos similares en CarsToolsCR"/>
+</p>
+
+El sistema permite crear relaciones entre productos similares tomando en cuenta su compatibilidad, marca, modelo y motor. Esta funcionalidad facilita la recomendación de repuestos relacionados y ayuda al usuario a encontrar alternativas compatibles con el producto seleccionado.
+
+
+
+
+
 ## 🔐 Inicio de sesión
 
 <p align="center">
