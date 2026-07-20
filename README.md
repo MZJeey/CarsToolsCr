@@ -23,7 +23,7 @@ Sistema web Full Stack desarrollado para facilitar la compra, administración y 
 
 ---
 
-# 📖 Descripción
+#  Descripción
 
 CarsToolsCR es una plataforma de comercio electrónico desarrollada como proyecto académico para facilitar la venta y administración de repuestos automotrices.
 
@@ -33,7 +33,7 @@ La plataforma incorpora autenticación mediante JWT, traducción entre español 
 
 ---
 
-# 🎥 Demostración del sistema
+#  Demostración del sistema
 
 A continuación se presenta un recorrido por las principales funcionalidades de CarsToolsCR.
 
@@ -45,7 +45,7 @@ https://github.com/user-attachments/assets/13879caf-4a9f-46ec-8a0e-1a4d03d4a0e9
 
 ---
 
-# ✨ Funcionalidades
+#  Funcionalidades
 
 - Registro e inicio de sesión de usuarios.
 - Autenticación y protección de rutas mediante JWT.
@@ -71,7 +71,7 @@ https://github.com/user-attachments/assets/13879caf-4a9f-46ec-8a0e-1a4d03d4a0e9
 
 ---
 
-# 🛠 Tecnologías utilizadas
+#  Tecnologías utilizadas
 
 | Frontend | Backend | Base de datos | Herramientas |
 |----------|---------|---------------|--------------|
@@ -91,7 +91,7 @@ https://github.com/user-attachments/assets/13879caf-4a9f-46ec-8a0e-1a4d03d4a0e9
 
 ---
 
-# 🏗 Arquitectura
+#  Arquitectura
 
 ```text
                        Usuario
@@ -119,9 +119,9 @@ https://github.com/user-attachments/assets/13879caf-4a9f-46ec-8a0e-1a4d03d4a0e9
 
 ---
 
-# 📷 Vista previa del sistema
+#  Vista previa del sistema
 
-## 📊 Panel administrativo
+##  Panel administrativo
 
 <p align="center">
   <img src="assets/dashboardCarsTools.png" width="950" alt="Panel administrativo de CarsToolsCR"/>
@@ -131,7 +131,7 @@ El panel muestra indicadores de ventas, montos registrados, productos más vendi
 
 ---
 
-## 🌎 Internacionalización
+##  Internacionalización
 
 <p align="center">
   <img src="assets/traduccion.png" width="950" alt="Traducción de CarsToolsCR al inglés"/>
@@ -141,7 +141,7 @@ CarsToolsCR incorpora soporte para español e inglés mediante `i18next` y `reac
 
 ---
 
-## 🛒 Carrito de compras
+##  Carrito de compras
 
 <p align="center">
   <img src="assets/carrito.png" width="950" alt="Carrito de compras de CarsToolsCR"/>
@@ -151,7 +151,7 @@ El carrito permite visualizar los productos seleccionados, modificar cantidades,
 
 ---
 
-## ❤️ Productos favoritos
+##  Productos favoritos
 
 <p align="center">
   <img src="assets/favoritos.png" width="950" alt="Productos favoritos de CarsToolsCR"/>
@@ -164,7 +164,7 @@ Los usuarios pueden guardar productos en su lista de favoritos, consultar sus ca
 
 ---
 
-## 🔗 Gestión de productos similares
+##  Gestión de productos similares
 
 <p align="center">
   <img src="assets/productosimilar.png" width="950" alt="Gestión de productos similares en CarsToolsCR"/>
@@ -176,7 +176,7 @@ El sistema permite crear relaciones entre productos similares tomando en cuenta 
 
 
 
-## 🔐 Inicio de sesión
+##  Inicio de sesión
 
 <p align="center">
   <img src="assets/logincars.png" width="700" alt="Inicio de sesión de CarsToolsCR"/>
@@ -186,7 +186,7 @@ El sistema incorpora autenticación de usuarios, protección de contraseñas y c
 
 ---
 
-# 🚀 Características técnicas
+#  Características técnicas
 
 - Arquitectura cliente-servidor.
 - Frontend desarrollado con componentes reutilizables de React.
@@ -207,7 +207,7 @@ El sistema incorpora autenticación de usuarios, protección de contraseñas y c
 
 ---
 
-# 👨‍💻 Mi participación
+#  Mi participación
 
 Participé como desarrollador **Full Stack** durante el desarrollo de CarsToolsCR, trabajando tanto en la interfaz como en la lógica del servidor y la integración con la base de datos.
 
@@ -276,7 +276,7 @@ CarsToolsCR
 
 ---
 
-# ⚙ Instalación
+#  Instalación
 
 ## Requisitos
 
@@ -342,7 +342,7 @@ El backend debe ejecutarse desde el servidor local configurado para PHP.
 
 ---
 
-# 📌 Estado del proyecto
+#  Estado del proyecto
 
 🟢 **Proyecto finalizado**
 
@@ -350,7 +350,7 @@ Desarrollado como parte de la formación en Ingeniería de Software.
 
 ---
 
-# 👨‍💻 Autores
+#  Autores
 
 - Berny Dávila
 - Jeeyson Martínez
@@ -368,6 +368,6 @@ Desarrollado como parte de la formación en Ingeniería de Software.
 
 ---
 
-# 📄 Licencia
+#  Licencia
 
 Proyecto desarrollado con fines académicos y educativos.
